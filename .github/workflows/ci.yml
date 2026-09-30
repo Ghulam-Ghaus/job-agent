@@ -1,0 +1,89 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  validate:
+    name: Build, Lint & Test
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: jobagent
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/jobagent
+      REDIS_URL: redis://localhost:6379
+      JWT_ACCESS_SECRET: ci_access_secret_super_secure_32chars_test
+      JWT_REFRESH_SECRET: ci_refresh_secret_super_secure_32chars_test
+      JWT_ACCESS_EXPIRES_IN: 15m
+      JWT_REFRESH_EXPIRES_IN: 7d
+      API_PORT: 4000
+      WEB_URL: http://localhost:3000
+      SUPER_ADMIN_EMAIL: admin@jobagent.local
+      SUPER_ADMIN_PASSWORD: Admin123!Secure
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Apply Prisma Migrations & Generate Client
+        run: |
+          pnpm --filter backend exec prisma migrate deploy
+          pnpm --filter backend exec prisma generate
+          pnpm --filter backend exec prisma db seed
+
+      - name: Backend - Lint
+        run: pnpm --filter backend run lint
+
+      - name: Backend - Typecheck & Build
+        run: pnpm --filter backend run build
+
+      - name: Backend - Unit & Integration Tests
+        run: pnpm --filter backend run test
+
+      - name: Frontend - Lint
+        run: pnpm --filter frontend run lint
+
+      - name: Frontend - Typecheck & Production Build
+        run: pnpm --filter frontend run build

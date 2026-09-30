@@ -1,0 +1,13 @@
+{
+  "name": "job-agent",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "pnpm --filter backend run build && pnpm --filter frontend run build",
+    "lint": "pnpm --filter backend run lint && pnpm --filter frontend run lint",
+    "test": "pnpm --filter backend run test",
+    "test:e2e": "pnpm --filter backend run test:e2e",
+    "db:migrate": "pnpm --filter backend exec prisma migrate dev",
+    "db:seed": "pnpm --filter backend exec prisma db seed"
+  }
+}
