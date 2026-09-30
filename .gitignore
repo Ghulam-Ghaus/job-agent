@@ -9,11 +9,21 @@ build/
 out/
 *.tsbuildinfo
 
-# Environment files
+# Environment files and credentials
 .env
 .env.local
 .env.*.local
 !.env.example
+*.pem
+*.key
+*.cert
+*.crt
+
+# Local databases and dumps
+*.sqlite
+*.sqlite3
+*.db
+*.dump
 
 # Logs
 *.log
@@ -27,6 +37,8 @@ pnpm-debug.log*
 Thumbs.db
 .idea/
 .vscode/
+.claude/
+.windsurf/
 *.suo
 *.ntvs*
 *.njsproj
@@ -36,7 +48,6 @@ Thumbs.db
 # Testing
 coverage/
 
-# Turbopack
+# Turbopack & caches
 .turbo/
-
-
+.cache/
