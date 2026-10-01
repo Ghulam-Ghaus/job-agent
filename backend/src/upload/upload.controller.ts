@@ -12,6 +12,7 @@ import { memoryStorage } from 'multer';
 import { CurrentUser } from '../auth/decorators/current-user/current-user.decorator.js';
 import { StorageService } from '../storage/storage.service.js';
 import { CvsService } from '../cvs/cvs.service.js';
+import { CvParserService } from './cv-parser/cv-parser.service.js';
 import { UploadCvBodyDto } from './dto/upload-cv-body.dto.js';
 
 /** Allowed MIME types for CV uploads */
@@ -30,6 +31,7 @@ export class UploadController {
   constructor(
     private readonly storageService: StorageService,
     private readonly cvsService: CvsService,
+    private readonly cvParserService: CvParserService,
   ) {}
 
   @Post('cv')
@@ -54,7 +56,7 @@ export class UploadController {
   })
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: memoryStorage(), // buffer in memory; we persist in StorageService
+      storage: memoryStorage(),
       limits: { fileSize: MAX_FILE_SIZE_BYTES },
     }),
   )
@@ -73,14 +75,12 @@ export class UploadController {
       );
     }
 
-    // Persist to disk (or S3 — depends on bound StorageService)
     const stored = await this.storageService.saveFile(
       file.buffer,
       file.originalname,
       file.mimetype,
     );
 
-    // Create CV metadata record scoped to this user
     const cv = await this.cvsService.create(userId, body, {
       filename: stored.filename,
       storagePath: stored.storagePath,
@@ -89,5 +89,68 @@ export class UploadController {
     });
 
     return { cv, url: stored.url };
+  }
+
+  @Post('cv/parse')
+  @ApiOperation({ summary: 'Upload a CV, save it as default, and parse structured profile with AI' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'CV file to upload and parse',
+    schema: {
+      type: 'object',
+      required: ['file'],
+      properties: {
+        file: { type: 'string', format: 'binary' },
+      },
+    },
+  })
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: memoryStorage(),
+      limits: { fileSize: MAX_FILE_SIZE_BYTES },
+    }),
+  )
+  async uploadAndParseCv(
+    @CurrentUser('id') userId: string,
+    @UploadedFile() file: Express.Multer.File | undefined,
+  ) {
+    if (!file) {
+      throw new BadRequestException('No file uploaded — include a "file" field');
+    }
+
+    if (!ALLOWED_MIME_TYPES.has(file.mimetype)) {
+      throw new BadRequestException(
+        `Unsupported file type "${file.mimetype}". Allowed: PDF, DOCX, DOC`,
+      );
+    }
+
+    // 1. Save file to storage
+    const stored = await this.storageService.saveFile(
+      file.buffer,
+      file.originalname,
+      file.mimetype,
+    );
+
+    // 2. Create CV metadata in DB marked default
+    const label = file.originalname.replace(/\.[^/.]+$/, '');
+    const cv = await this.cvsService.create(
+      userId,
+      { label, isDefault: true, tags: ['parsed', 'master'] },
+      {
+        filename: stored.filename,
+        storagePath: stored.storagePath,
+        mimeType: stored.mimeType,
+        sizeBytes: stored.sizeBytes,
+      },
+    );
+
+    // 3. Extract raw text & parse into structured profile data via LLM
+    const parsed = await this.cvParserService.parseCv(file.buffer, file.mimetype, userId);
+
+    return {
+      cv,
+      url: stored.url,
+      parsed,
+    };
   }
 }

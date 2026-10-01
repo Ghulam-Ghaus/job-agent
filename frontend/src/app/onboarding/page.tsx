@@ -1,89 +1,172 @@
 'use client';
 
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  User, Briefcase, Wrench, FileUp, SlidersHorizontal,
-  ChevronRight, ChevronLeft, Check, Plus, X, Upload,
-  Loader2, AlertCircle, Star,
+  User,
+  Briefcase,
+  Wrench,
+  SlidersHorizontal,
+  ChevronRight,
+  ChevronLeft,
+  Check,
+  Plus,
+  X,
+  Upload,
+  Loader2,
+  AlertCircle,
+  Sparkles,
+  FileText,
+  RefreshCw,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { api, ApiClientError } from '@/lib/api-client';
+import { api, ApiClientError, Cv } from '@/lib/api-client';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-interface SkillEntry { name: string; level: 'BEGINNER' | 'INTERMEDIATE' | 'EXPERT'; yearsOfExp: number; category: string; }
-interface ExperienceEntry { title: string; company: string; location: string; startDate: string; endDate: string; isCurrent: boolean; bullets: string; techStack: string; }
+interface SkillEntry {
+  name: string;
+  level: 'BEGINNER' | 'INTERMEDIATE' | 'EXPERT';
+  yearsOfExp: number;
+  category: string;
+}
+
+interface ExperienceEntry {
+  title: string;
+  company: string;
+  location: string;
+  startDate: string;
+  endDate: string;
+  isCurrent: boolean;
+  bullets: string;
+  techStack: string;
+}
 
 interface StepState {
-  // Step 1: Basic profile
-  fullName: string; headline: string; summary: string; phone: string;
-  location: string; country: string; linkedinUrl: string; githubUrl: string;
-  portfolioUrl: string; visaStatus: string; noticePeriodDays: string;
-  willingToRelocate: boolean; telegramChatId: string;
-  // Step 2: Skills
+  fullName: string;
+  headline: string;
+  summary: string;
+  phone: string;
+  location: string;
+  country: string;
+  linkedinUrl: string;
+  githubUrl: string;
+  portfolioUrl: string;
+  visaStatus: string;
+  noticePeriodDays: string;
+  willingToRelocate: boolean;
+  telegramChatId: string;
   skills: SkillEntry[];
-  // Step 3: Experience
   experiences: ExperienceEntry[];
-  // Step 4: CV upload handled separately
-  // Step 5: Preferences
-  targetRoles: string; targetCountries: string; minSalaryUsd: string;
-  remoteOk: boolean; preferredIndustries: string;
+  targetRoles: string;
+  targetCountries: string;
+  minSalaryUsd: string;
+  remoteOk: boolean;
+  preferredIndustries: string;
 }
 
 const INITIAL: StepState = {
-  fullName: '', headline: '', summary: '', phone: '',
-  location: '', country: '', linkedinUrl: '', githubUrl: '',
-  portfolioUrl: '', visaStatus: '', noticePeriodDays: '',
-  willingToRelocate: false, telegramChatId: '',
+  fullName: '',
+  headline: '',
+  summary: '',
+  phone: '',
+  location: '',
+  country: '',
+  linkedinUrl: '',
+  githubUrl: '',
+  portfolioUrl: '',
+  visaStatus: '',
+  noticePeriodDays: '',
+  willingToRelocate: false,
+  telegramChatId: '',
   skills: [],
   experiences: [],
-  targetRoles: '', targetCountries: '', minSalaryUsd: '',
-  remoteOk: true, preferredIndustries: '',
+  targetRoles: '',
+  targetCountries: '',
+  minSalaryUsd: '',
+  remoteOk: true,
+  preferredIndustries: '',
 };
 
 const STEPS = [
   { id: 1, label: 'Profile', icon: User },
   { id: 2, label: 'Skills', icon: Wrench },
   { id: 3, label: 'Experience', icon: Briefcase },
-  { id: 4, label: 'Upload CV', icon: FileUp },
-  { id: 5, label: 'Preferences', icon: SlidersHorizontal },
+  { id: 4, label: 'Preferences', icon: SlidersHorizontal },
 ];
+
+function splitCsv(val: string): string[] {
+  return val
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+function parseDateSafe(d?: string): string | undefined {
+  if (!d) return undefined;
+  const s = d.trim();
+  if (/^\d{4}$/.test(s)) return new Date(`${s}-01-01`).toISOString();
+  if (/^\d{4}-\d{2}$/.test(s)) return new Date(`${s}-01`).toISOString();
+  const parsed = new Date(s);
+  return isNaN(parsed.getTime()) ? new Date().toISOString() : parsed.toISOString();
+}
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="space-y-1.5">
-      <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{label}</label>
+      <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+        {label}
+      </label>
       {children}
     </div>
   );
 }
 
-function StepIndicator({ current }: { current: number }) {
+function StepIndicator({ current, total = 4 }: { current: number; total?: number }) {
   return (
-    <div className="flex items-center gap-2 mb-10">
-      {STEPS.map((step, i) => {
+    <div className="flex items-center gap-2 mb-8">
+      {STEPS.slice(0, total).map((step, i) => {
         const Icon = step.icon;
         const done = current > step.id;
         const active = current === step.id;
         return (
           <React.Fragment key={step.id}>
             <div className="flex flex-col items-center gap-1.5">
-              <div className={`w-9 h-9 rounded-full flex items-center justify-center border-2 transition-all duration-300
-                ${done ? 'bg-emerald-500 border-emerald-500 text-white' : active ? 'bg-indigo-500/20 border-indigo-500 text-indigo-400' : 'bg-card border-border text-muted-foreground'}`}>
+              <div
+                className={`w-9 h-9 rounded-full flex items-center justify-center border-2 transition-all duration-300
+                ${
+                  done
+                    ? 'bg-emerald-500 border-emerald-500 text-white'
+                    : active
+                      ? 'bg-indigo-500/20 border-indigo-500 text-indigo-400'
+                      : 'bg-card border-border text-muted-foreground'
+                }`}
+              >
                 {done ? <Check className="h-4 w-4" /> : <Icon className="h-4 w-4" />}
               </div>
-              <span className={`text-[10px] font-medium ${active ? 'text-indigo-400' : done ? 'text-emerald-400' : 'text-muted-foreground'}`}>
+              <span
+                className={`text-[10px] font-medium ${
+                  active
+                    ? 'text-indigo-400'
+                    : done
+                      ? 'text-emerald-400'
+                      : 'text-muted-foreground'
+                }`}
+              >
                 {step.label}
               </span>
             </div>
-            {i < STEPS.length - 1 && (
-              <div className={`flex-1 h-px mb-5 transition-all duration-300 ${done ? 'bg-emerald-500/60' : 'bg-border'}`} />
+            {i < total - 1 && (
+              <div
+                className={`flex-1 h-px mb-5 transition-all duration-300 ${
+                  done ? 'bg-emerald-500/60' : 'bg-border'
+                }`}
+              />
             )}
           </React.Fragment>
         );
@@ -94,52 +177,121 @@ function StepIndicator({ current }: { current: number }) {
 
 // ─── Step 1: Basic Profile ────────────────────────────────────────────────────
 
-function Step1Profile({ state, set }: { state: StepState; set: (k: keyof StepState, v: unknown) => void }) {
+function Step1Profile({
+  state,
+  set,
+}: {
+  state: StepState;
+  set: (k: keyof StepState, v: unknown) => void;
+}) {
   return (
     <div className="space-y-5">
       <div>
         <h2 className="text-xl font-semibold">Basic Profile</h2>
-        <p className="text-sm text-muted-foreground mt-1">This is the foundation the AI uses to match and personalise every application.</p>
+        <p className="text-sm text-muted-foreground mt-1">
+          Review and adjust your profile details. The AI uses this as the foundation for matching and applications.
+        </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Field label="Full Name *">
-          <Input id="ob-fullname" value={state.fullName} onChange={e => set('fullName', e.target.value)} placeholder="Ghulam Ghaus" className="bg-background/60" />
+          <Input
+            id="ob-fullname"
+            value={state.fullName}
+            onChange={(e) => set('fullName', e.target.value)}
+            placeholder="Ghulam Ghaus"
+            className="bg-background/60"
+          />
         </Field>
         <Field label="Professional Headline">
-          <Input id="ob-headline" value={state.headline} onChange={e => set('headline', e.target.value)} placeholder="Senior Full-Stack Engineer | NestJS · Next.js" className="bg-background/60" />
+          <Input
+            id="ob-headline"
+            value={state.headline}
+            onChange={(e) => set('headline', e.target.value)}
+            placeholder="Senior Full-Stack Engineer | NestJS · Next.js"
+            className="bg-background/60"
+          />
         </Field>
         <Field label="Phone">
-          <Input id="ob-phone" value={state.phone} onChange={e => set('phone', e.target.value)} placeholder="+966 5x xxx xxxx" className="bg-background/60" />
+          <Input
+            id="ob-phone"
+            value={state.phone}
+            onChange={(e) => set('phone', e.target.value)}
+            placeholder="+966 5x xxx xxxx"
+            className="bg-background/60"
+          />
         </Field>
         <Field label="Location / City">
-          <Input id="ob-location" value={state.location} onChange={e => set('location', e.target.value)} placeholder="Riyadh" className="bg-background/60" />
+          <Input
+            id="ob-location"
+            value={state.location}
+            onChange={(e) => set('location', e.target.value)}
+            placeholder="Riyadh"
+            className="bg-background/60"
+          />
         </Field>
         <Field label="Country">
-          <Input id="ob-country" value={state.country} onChange={e => set('country', e.target.value)} placeholder="Saudi Arabia" className="bg-background/60" />
+          <Input
+            id="ob-country"
+            value={state.country}
+            onChange={(e) => set('country', e.target.value)}
+            placeholder="Saudi Arabia"
+            className="bg-background/60"
+          />
         </Field>
-        <Field label="Visa Status">
-          <Input id="ob-visa" value={state.visaStatus} onChange={e => set('visaStatus', e.target.value)} placeholder="e.g. Iqama, Citizen, Work Permit" className="bg-background/60" />
+        <Field label="Visa / Work Authorization">
+          <Input
+            id="ob-visa"
+            value={state.visaStatus}
+            onChange={(e) => set('visaStatus', e.target.value)}
+            placeholder="e.g. Iqama (Transferable), Citizen, Work Visa"
+            className="bg-background/60"
+          />
         </Field>
         <Field label="Notice Period (days)">
-          <Input id="ob-notice" type="number" value={state.noticePeriodDays} onChange={e => set('noticePeriodDays', e.target.value)} placeholder="30" className="bg-background/60" />
+          <Input
+            id="ob-notice"
+            type="number"
+            value={state.noticePeriodDays}
+            onChange={(e) => set('noticePeriodDays', e.target.value)}
+            placeholder="30"
+            className="bg-background/60"
+          />
         </Field>
-        <Field label="Telegram Chat ID">
-          <Input id="ob-telegram" value={state.telegramChatId} onChange={e => set('telegramChatId', e.target.value)} placeholder="Link later via /start" className="bg-background/60" />
+        <Field label="Telegram Chat ID (optional)">
+          <Input
+            id="ob-telegram"
+            value={state.telegramChatId}
+            onChange={(e) => set('telegramChatId', e.target.value)}
+            placeholder="Link later via bot"
+            className="bg-background/60"
+          />
         </Field>
-        <Field label="LinkedIn URL">
-          <Input id="ob-linkedin" value={state.linkedinUrl} onChange={e => set('linkedinUrl', e.target.value)} placeholder="https://linkedin.com/in/..." className="bg-background/60" />
+        <Field label="LinkedIn Profile / URL">
+          <Input
+            id="ob-linkedin"
+            value={state.linkedinUrl}
+            onChange={(e) => set('linkedinUrl', e.target.value)}
+            placeholder="https://linkedin.com/in/..."
+            className="bg-background/60"
+          />
         </Field>
         <Field label="GitHub URL">
-          <Input id="ob-github" value={state.githubUrl} onChange={e => set('githubUrl', e.target.value)} placeholder="https://github.com/..." className="bg-background/60" />
+          <Input
+            id="ob-github"
+            value={state.githubUrl}
+            onChange={(e) => set('githubUrl', e.target.value)}
+            placeholder="https://github.com/..."
+            className="bg-background/60"
+          />
         </Field>
       </div>
-      <Field label="Summary / Bio">
+      <Field label="Professional Summary / Bio">
         <textarea
           id="ob-summary"
           rows={4}
           value={state.summary}
-          onChange={e => set('summary', e.target.value)}
-          placeholder="Experienced full-stack engineer specialising in NestJS backends and Next.js frontends with 8+ years..."
+          onChange={(e) => set('summary', e.target.value)}
+          placeholder="Experienced full-stack engineer specialising in NestJS backends and Next.js frontends..."
           className="w-full rounded-md border border-input bg-background/60 px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
         />
       </Field>
@@ -148,7 +300,7 @@ function Step1Profile({ state, set }: { state: StepState; set: (k: keyof StepSta
           id="ob-relocate"
           type="checkbox"
           checked={state.willingToRelocate}
-          onChange={e => set('willingToRelocate', e.target.checked)}
+          onChange={(e) => set('willingToRelocate', e.target.checked)}
           className="rounded border-input"
         />
         <span className="text-sm">Willing to relocate internationally</span>
@@ -161,8 +313,19 @@ function Step1Profile({ state, set }: { state: StepState; set: (k: keyof StepSta
 
 const SKILL_LEVELS: SkillEntry['level'][] = ['BEGINNER', 'INTERMEDIATE', 'EXPERT'];
 
-function Step2Skills({ state, set }: { state: StepState; set: (k: keyof StepState, v: unknown) => void }) {
-  const [draft, setDraft] = useState<SkillEntry>({ name: '', level: 'INTERMEDIATE', yearsOfExp: 1, category: '' });
+function Step2Skills({
+  state,
+  set,
+}: {
+  state: StepState;
+  set: (k: keyof StepState, v: unknown) => void;
+}) {
+  const [draft, setDraft] = useState<SkillEntry>({
+    name: '',
+    level: 'INTERMEDIATE',
+    yearsOfExp: 1,
+    category: '',
+  });
 
   const addSkill = () => {
     if (!draft.name.trim()) return;
@@ -176,7 +339,9 @@ function Step2Skills({ state, set }: { state: StepState; set: (k: keyof StepStat
     <div className="space-y-5">
       <div>
         <h2 className="text-xl font-semibold">Skills</h2>
-        <p className="text-sm text-muted-foreground mt-1">Add every skill with an honest level — the scoring engine uses this to compute technical fit.</p>
+        <p className="text-sm text-muted-foreground mt-1">
+          Review extracted skills and add any additional competencies. The scoring engine evaluates your technical fit against these.
+        </p>
       </div>
 
       {/* Add skill form */}
@@ -185,61 +350,95 @@ function Step2Skills({ state, set }: { state: StepState; set: (k: keyof StepStat
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div className="col-span-2">
               <Field label="Skill name">
-                <Input id="ob-skill-name" value={draft.name} onChange={e => setDraft(d => ({ ...d, name: e.target.value }))}
-                  onKeyDown={e => e.key === 'Enter' && addSkill()}
-                  placeholder="e.g. NestJS" className="bg-background/60" />
+                <Input
+                  id="ob-skill-name"
+                  value={draft.name}
+                  onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))}
+                  onKeyDown={(e) => e.key === 'Enter' && addSkill()}
+                  placeholder="e.g. NestJS"
+                  className="bg-background/60"
+                />
               </Field>
             </div>
             <Field label="Level">
               <select
                 id="ob-skill-level"
                 value={draft.level}
-                onChange={e => setDraft(d => ({ ...d, level: e.target.value as SkillEntry['level'] }))}
+                onChange={(e) =>
+                  setDraft((d) => ({ ...d, level: e.target.value as SkillEntry['level'] }))
+                }
                 className="w-full h-9 rounded-md border border-input bg-background/60 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
               >
-                {SKILL_LEVELS.map(l => <option key={l} value={l}>{l}</option>)}
+                {SKILL_LEVELS.map((l) => (
+                  <option key={l} value={l}>
+                    {l}
+                  </option>
+                ))}
               </select>
             </Field>
-            <Field label="Years exp">
-              <Input id="ob-skill-years" type="number" min={0} max={40} value={draft.yearsOfExp}
-                onChange={e => setDraft(d => ({ ...d, yearsOfExp: Number(e.target.value) }))}
-                className="bg-background/60" />
+            <Field label="Years of Exp">
+              <Input
+                id="ob-skill-years"
+                type="number"
+                min="0"
+                step="0.5"
+                value={draft.yearsOfExp}
+                onChange={(e) =>
+                  setDraft((d) => ({ ...d, yearsOfExp: Number(e.target.value) || 0 }))
+                }
+                className="bg-background/60"
+              />
             </Field>
           </div>
-          <div className="flex gap-3">
-            <div className="flex-1">
-              <Field label="Category (optional)">
-                <Input id="ob-skill-cat" value={draft.category}
-                  onChange={e => setDraft(d => ({ ...d, category: e.target.value }))}
-                  placeholder="Backend / Frontend / DevOps / Language" className="bg-background/60" />
-              </Field>
-            </div>
-            <div className="pt-6">
-              <Button id="ob-skill-add" onClick={addSkill} size="sm" className="gap-1.5">
-                <Plus className="h-3.5 w-3.5" /> Add
-              </Button>
-            </div>
+          <div className="flex justify-end">
+            <Button
+              id="ob-add-skill-btn"
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={addSkill}
+              className="gap-1.5"
+            >
+              <Plus className="h-4 w-4" /> Add Skill
+            </Button>
           </div>
         </CardContent>
       </Card>
 
       {/* Skills list */}
-      {state.skills.length > 0 && (
-        <div className="flex flex-wrap gap-2">
+      {state.skills.length === 0 ? (
+        <p className="text-xs text-muted-foreground text-center py-4">No skills added yet.</p>
+      ) : (
+        <div className="flex flex-wrap gap-2 pt-2">
           {state.skills.map((s, i) => (
-            <Badge key={i} variant="secondary" className="gap-1.5 py-1 pr-1 text-sm font-normal">
-              <Star className="h-3 w-3 text-amber-400" />
-              <span>{s.name}</span>
-              <span className="text-muted-foreground text-[10px]">· {s.level} · {s.yearsOfExp}yr</span>
-              <button id={`ob-skill-remove-${i}`} onClick={() => remove(i)} className="ml-1 rounded hover:text-destructive transition-colors">
+            <Badge
+              key={i}
+              variant="secondary"
+              className="pl-3 pr-1.5 py-1 text-xs gap-1.5 bg-card border border-border/60 hover:border-indigo-500/40 transition-colors"
+            >
+              <span className="font-medium">{s.name}</span>
+              <span className="text-[10px] text-muted-foreground">({s.yearsOfExp}y)</span>
+              <span
+                className={`text-[9px] px-1 py-0.5 rounded font-mono ${
+                  s.level === 'EXPERT'
+                    ? 'bg-purple-500/20 text-purple-400'
+                    : s.level === 'INTERMEDIATE'
+                      ? 'bg-blue-500/20 text-blue-400'
+                      : 'bg-muted text-muted-foreground'
+                }`}
+              >
+                {s.level.slice(0, 3)}
+              </span>
+              <button
+                type="button"
+                onClick={() => remove(i)}
+                className="hover:text-destructive transition-colors ml-0.5"
+              >
                 <X className="h-3 w-3" />
               </button>
             </Badge>
           ))}
         </div>
-      )}
-      {state.skills.length === 0 && (
-        <p className="text-sm text-muted-foreground text-center py-4">No skills added yet.</p>
       )}
     </div>
   );
@@ -247,236 +446,274 @@ function Step2Skills({ state, set }: { state: StepState; set: (k: keyof StepStat
 
 // ─── Step 3: Experience ───────────────────────────────────────────────────────
 
-function Step3Experience({ state, set }: { state: StepState; set: (k: keyof StepState, v: unknown) => void }) {
-  const [draft, setDraft] = useState<ExperienceEntry>({ title: '', company: '', location: '', startDate: '', endDate: '', isCurrent: false, bullets: '', techStack: '' });
-  const [adding, setAdding] = useState(false);
+function Step3Experience({
+  state,
+  set,
+}: {
+  state: StepState;
+  set: (k: keyof StepState, v: unknown) => void;
+}) {
+  const [editing, setEditing] = useState<ExperienceEntry | null>(null);
 
-  const addExp = () => {
-    if (!draft.title.trim() || !draft.company.trim() || !draft.startDate) return;
-    set('experiences', [...state.experiences, { ...draft }]);
-    setDraft({ title: '', company: '', location: '', startDate: '', endDate: '', isCurrent: false, bullets: '', techStack: '' });
-    setAdding(false);
+  const emptyDraft: ExperienceEntry = {
+    title: '',
+    company: '',
+    location: '',
+    startDate: '',
+    endDate: '',
+    isCurrent: false,
+    bullets: '',
+    techStack: '',
   };
 
-  const remove = (i: number) => set('experiences', state.experiences.filter((_, idx) => idx !== i));
+  const saveExp = (entry: ExperienceEntry) => {
+    if (!entry.title.trim() || !entry.company.trim()) return;
+    set('experiences', [...state.experiences, entry]);
+    setEditing(null);
+  };
+
+  const remove = (i: number) =>
+    set('experiences', state.experiences.filter((_, idx) => idx !== i));
 
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-semibold">Work Experience</h2>
-          <p className="text-sm text-muted-foreground mt-1">Add your roles — the AI uses these for experience-level matching.</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            Review past roles extracted from your CV. Every claim in generated proposals traces back to these records.
+          </p>
         </div>
-        {!adding && (
-          <Button id="ob-exp-open" onClick={() => setAdding(true)} size="sm" variant="outline" className="gap-1.5">
-            <Plus className="h-3.5 w-3.5" /> Add Role
-          </Button>
-        )}
+        <Button
+          id="ob-add-exp-btn"
+          size="sm"
+          variant="outline"
+          onClick={() => setEditing({ ...emptyDraft })}
+          className="gap-1.5"
+        >
+          <Plus className="h-4 w-4" /> Add Role
+        </Button>
       </div>
 
-      {adding && (
-        <Card className="border-indigo-500/30 bg-card/30">
-          <CardContent className="p-4 space-y-3">
+      {editing && (
+        <Card className="border-indigo-500/40 bg-indigo-500/5">
+          <CardContent className="p-4 space-y-4">
+            <h3 className="text-sm font-semibold text-indigo-400">Add Experience</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <Field label="Job Title *">
-                <Input id="ob-exp-title" value={draft.title} onChange={e => setDraft(d => ({ ...d, title: e.target.value }))} placeholder="Senior Backend Engineer" className="bg-background/60" />
+              <Field label="Title / Role *">
+                <Input
+                  id="ob-exp-title"
+                  value={editing.title}
+                  onChange={(e) => setEditing((d) => d && { ...d, title: e.target.value })}
+                  placeholder="Senior Software Engineer"
+                  className="bg-background/60"
+                />
               </Field>
               <Field label="Company *">
-                <Input id="ob-exp-company" value={draft.company} onChange={e => setDraft(d => ({ ...d, company: e.target.value }))} placeholder="Acme Corp" className="bg-background/60" />
+                <Input
+                  id="ob-exp-company"
+                  value={editing.company}
+                  onChange={(e) => setEditing((d) => d && { ...d, company: e.target.value })}
+                  placeholder="Acme Corp"
+                  className="bg-background/60"
+                />
               </Field>
               <Field label="Location">
-                <Input id="ob-exp-location" value={draft.location} onChange={e => setDraft(d => ({ ...d, location: e.target.value }))} placeholder="Riyadh / Remote" className="bg-background/60" />
+                <Input
+                  id="ob-exp-location"
+                  value={editing.location}
+                  onChange={(e) => setEditing((d) => d && { ...d, location: e.target.value })}
+                  placeholder="Riyadh, Saudi Arabia"
+                  className="bg-background/60"
+                />
               </Field>
-              <Field label="Start Date *">
-                <Input id="ob-exp-start" type="month" value={draft.startDate} onChange={e => setDraft(d => ({ ...d, startDate: e.target.value }))} className="bg-background/60" />
+              <Field label="Tech Stack (comma-separated)">
+                <Input
+                  id="ob-exp-tech"
+                  value={editing.techStack}
+                  onChange={(e) => setEditing((d) => d && { ...d, techStack: e.target.value })}
+                  placeholder="Node.js, PostgreSQL, Docker, AWS"
+                  className="bg-background/60"
+                />
               </Field>
-              {!draft.isCurrent && (
-                <Field label="End Date">
-                  <Input id="ob-exp-end" type="month" value={draft.endDate} onChange={e => setDraft(d => ({ ...d, endDate: e.target.value }))} className="bg-background/60" />
-                </Field>
-              )}
-              <div className="flex items-center gap-2 pt-6">
-                <input id="ob-exp-current" type="checkbox" checked={draft.isCurrent} onChange={e => setDraft(d => ({ ...d, isCurrent: e.target.checked, endDate: '' }))} className="rounded" />
-                <label htmlFor="ob-exp-current" className="text-sm cursor-pointer">Currently working here</label>
-              </div>
+              <Field label="Start Date (YYYY-MM)">
+                <Input
+                  id="ob-exp-start"
+                  value={editing.startDate}
+                  onChange={(e) => setEditing((d) => d && { ...d, startDate: e.target.value })}
+                  placeholder="2022-01"
+                  className="bg-background/60"
+                />
+              </Field>
+              <Field label="End Date (YYYY-MM)">
+                <Input
+                  id="ob-exp-end"
+                  value={editing.endDate}
+                  disabled={editing.isCurrent}
+                  onChange={(e) => setEditing((d) => d && { ...d, endDate: e.target.value })}
+                  placeholder={editing.isCurrent ? 'Present' : '2024-03'}
+                  className="bg-background/60"
+                />
+              </Field>
             </div>
-            <Field label="Key bullets (one per line)">
-              <textarea id="ob-exp-bullets" rows={3} value={draft.bullets} onChange={e => setDraft(d => ({ ...d, bullets: e.target.value }))}
-                placeholder="Built REST APIs serving 1M requests/day&#10;Reduced query latency by 40% via indexing"
-                className="w-full rounded-md border border-input bg-background/60 px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none" />
+            <label className="flex items-center gap-2 cursor-pointer select-none">
+              <input
+                id="ob-exp-current"
+                type="checkbox"
+                checked={editing.isCurrent}
+                onChange={(e) =>
+                  setEditing((d) => d && { ...d, isCurrent: e.target.checked, endDate: '' })
+                }
+                className="rounded border-input"
+              />
+              <span className="text-sm">I currently work here</span>
+            </label>
+            <Field label="Key Achievements / Bullets (one per line)">
+              <textarea
+                id="ob-exp-bullets"
+                rows={3}
+                value={editing.bullets}
+                onChange={(e) => setEditing((d) => d && { ...d, bullets: e.target.value })}
+                placeholder="• Architected microservices pipeline handling 50k req/min&#10;• Reduced latency by 42%..."
+                className="w-full rounded-md border border-input bg-background/60 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring resize-none"
+              />
             </Field>
-            <Field label="Tech stack (comma-separated)">
-              <Input id="ob-exp-tech" value={draft.techStack} onChange={e => setDraft(d => ({ ...d, techStack: e.target.value }))} placeholder="NestJS, PostgreSQL, Redis, Docker" className="bg-background/60" />
-            </Field>
-            <div className="flex gap-2 pt-1">
-              <Button id="ob-exp-save" onClick={addExp} size="sm" className="gap-1.5"><Plus className="h-3.5 w-3.5" /> Save Role</Button>
-              <Button id="ob-exp-cancel" onClick={() => setAdding(false)} size="sm" variant="ghost">Cancel</Button>
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setEditing(null)}
+              >
+                Cancel
+              </Button>
+              <Button
+                id="ob-save-exp-btn"
+                size="sm"
+                onClick={() => saveExp(editing)}
+                disabled={!editing.title.trim() || !editing.company.trim()}
+              >
+                Add Role
+              </Button>
             </div>
           </CardContent>
         </Card>
       )}
 
-      {state.experiences.length > 0 ? (
-        <div className="space-y-3">
-          {state.experiences.map((exp, i) => (
-            <Card key={i} className="border-border/40 bg-card/30">
-              <CardContent className="p-4 flex items-start justify-between gap-4">
-                <div className="space-y-1">
-                  <p className="font-semibold text-sm">{exp.title}</p>
-                  <p className="text-xs text-muted-foreground">{exp.company} · {exp.location}</p>
-                  <p className="text-xs text-muted-foreground font-mono">{exp.startDate} → {exp.isCurrent ? 'Present' : exp.endDate}</p>
-                </div>
-                <button id={`ob-exp-remove-${i}`} onClick={() => remove(i)} className="text-muted-foreground hover:text-destructive transition-colors shrink-0 mt-0.5">
-                  <X className="h-4 w-4" />
-                </button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      ) : !adding && (
-        <p className="text-sm text-muted-foreground text-center py-4">No experience added yet. Click "Add Role" to start.</p>
-      )}
-    </div>
-  );
-}
-
-// ─── Step 4: CV Upload ────────────────────────────────────────────────────────
-
-function Step4CvUpload({ onUploaded }: { onUploaded: (cv: { id: string; label: string }) => void }) {
-  const [label, setLabel] = useState('');
-  const [file, setFile] = useState<File | null>(null);
-  const [uploading, setUploading] = useState(false);
-  const [error, setError] = useState('');
-  const [done, setDone] = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
-
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    const f = e.dataTransfer.files[0];
-    if (f) setFile(f);
-  }, []);
-
-  const handleUpload = async () => {
-    if (!file || !label.trim()) { setError('Please select a file and give it a label.'); return; }
-    setError('');
-    setUploading(true);
-    try {
-      const fd = new FormData();
-      fd.append('file', file);
-      fd.append('label', label.trim());
-      fd.append('isDefault', 'true');
-      const result = await api.cvs.upload(fd);
-      setDone(true);
-      onUploaded(result.cv);
-    } catch (e) {
-      setError(e instanceof ApiClientError ? e.message : 'Upload failed. Please try again.');
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  if (done) {
-    return (
-      <div className="flex flex-col items-center justify-center py-16 gap-4">
-        <div className="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center">
-          <Check className="h-8 w-8 text-emerald-400" />
-        </div>
-        <p className="font-semibold text-lg">CV uploaded successfully!</p>
-        <p className="text-sm text-muted-foreground">You can upload more CVs later from the CVs page.</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-5">
-      <div>
-        <h2 className="text-xl font-semibold">Upload Your CV</h2>
-        <p className="text-sm text-muted-foreground mt-1">PDF or DOCX, max 10 MB. You can add multiple CVs (e.g. Backend, Full-Stack) after onboarding.</p>
-      </div>
-
-      <Field label="CV Label *">
-        <Input id="ob-cv-label" value={label} onChange={e => setLabel(e.target.value)} placeholder='e.g. "Backend NodeJS" or "Full Stack"' className="bg-background/60" />
-      </Field>
-
-      {/* Drop zone */}
-      <div
-        id="ob-cv-dropzone"
-        onDrop={handleDrop}
-        onDragOver={e => e.preventDefault()}
-        onClick={() => fileRef.current?.click()}
-        className={`border-2 border-dashed rounded-xl p-10 flex flex-col items-center justify-center gap-3 cursor-pointer transition-all duration-200 
-          ${file ? 'border-indigo-500/60 bg-indigo-500/5' : 'border-border/60 hover:border-indigo-500/40 hover:bg-card/40'}`}
-      >
-        <div className="w-12 h-12 rounded-full bg-card flex items-center justify-center border border-border/60">
-          <Upload className="h-5 w-5 text-muted-foreground" />
-        </div>
-        {file ? (
-          <>
-            <p className="font-medium text-sm text-indigo-400">{file.name}</p>
-            <p className="text-xs text-muted-foreground">{(file.size / 1024).toFixed(0)} KB · Click to change</p>
-          </>
-        ) : (
-          <>
-            <p className="font-medium text-sm">Drop file here or click to browse</p>
-            <p className="text-xs text-muted-foreground">PDF, DOCX, or DOC · Max 10 MB</p>
-          </>
+      {/* Experience list */}
+      <div className="space-y-3">
+        {state.experiences.length === 0 && !editing && (
+          <p className="text-xs text-muted-foreground text-center py-6">
+            No work experiences added yet.
+          </p>
         )}
-        <input
-          ref={fileRef}
-          id="ob-cv-file-input"
-          type="file"
-          accept=".pdf,.docx,.doc,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-          className="hidden"
-          onChange={e => setFile(e.target.files?.[0] ?? null)}
-        />
+        {state.experiences.map((exp, i) => (
+          <Card key={i} className="border-border/40 bg-card/30">
+            <CardContent className="p-4 flex items-start justify-between gap-4">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold text-sm">{exp.title}</span>
+                  <span className="text-muted-foreground text-xs">@ {exp.company}</span>
+                  {exp.isCurrent && (
+                    <Badge variant="outline" className="text-[10px] text-emerald-400 border-emerald-500/40">
+                      Current
+                    </Badge>
+                  )}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {exp.startDate} – {exp.isCurrent ? 'Present' : exp.endDate || 'Present'}
+                  {exp.location ? ` · ${exp.location}` : ''}
+                </p>
+                {exp.techStack && (
+                  <p className="text-xs text-indigo-400 font-mono">
+                    {exp.techStack}
+                  </p>
+                )}
+                {exp.bullets && (
+                  <div className="text-xs text-muted-foreground whitespace-pre-line mt-1">
+                    {exp.bullets}
+                  </div>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => remove(i)}
+                className="text-muted-foreground hover:text-destructive transition-colors shrink-0 p-1"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </CardContent>
+          </Card>
+        ))}
       </div>
-
-      {error && (
-        <div className="flex items-center gap-2 text-destructive text-sm bg-destructive/10 rounded-lg px-4 py-3">
-          <AlertCircle className="h-4 w-4 shrink-0" />
-          <span>{error}</span>
-        </div>
-      )}
-
-      <Button id="ob-cv-upload-btn" onClick={handleUpload} disabled={uploading || !file || !label.trim()} className="w-full gap-2">
-        {uploading ? <><Loader2 className="h-4 w-4 animate-spin" /> Uploading…</> : <><FileUp className="h-4 w-4" /> Upload CV</>}
-      </Button>
     </div>
   );
 }
 
-// ─── Step 5: Job Preferences ──────────────────────────────────────────────────
+// ─── Step 4: Job Preferences ──────────────────────────────────────────────────
 
-function Step5Preferences({ state, set }: { state: StepState; set: (k: keyof StepState, v: unknown) => void }) {
+function Step4Preferences({
+  state,
+  set,
+}: {
+  state: StepState;
+  set: (k: keyof StepState, v: unknown) => void;
+}) {
   return (
     <div className="space-y-5">
       <div>
-        <h2 className="text-xl font-semibold">Job Preferences</h2>
-        <p className="text-sm text-muted-foreground mt-1">These filters determine which opportunities the system qualifies and how it scores location/salary fit.</p>
+        <h2 className="text-xl font-semibold">Target Preferences</h2>
+        <p className="text-sm text-muted-foreground mt-1">
+          Define what opportunities you are targeting. The scoring engine uses these to qualify incoming jobs.
+        </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Field label="Target Roles (comma-separated)">
-          <Input id="ob-pref-roles" value={state.targetRoles} onChange={e => set('targetRoles', e.target.value)} placeholder="Backend Engineer, Full Stack Engineer" className="bg-background/60" />
+          <Input
+            id="ob-target-roles"
+            value={state.targetRoles}
+            onChange={(e) => set('targetRoles', e.target.value)}
+            placeholder="Backend Engineer, Full-Stack Lead, Node.js Architect"
+            className="bg-background/60"
+          />
         </Field>
         <Field label="Target Countries (comma-separated)">
-          <Input id="ob-pref-countries" value={state.targetCountries} onChange={e => set('targetCountries', e.target.value)} placeholder="Saudi Arabia, UAE, Remote" className="bg-background/60" />
+          <Input
+            id="ob-target-countries"
+            value={state.targetCountries}
+            onChange={(e) => set('targetCountries', e.target.value)}
+            placeholder="Saudi Arabia, UAE, Qatar, Remote"
+            className="bg-background/60"
+          />
         </Field>
-        <Field label="Minimum Salary (USD/year)">
-          <Input id="ob-pref-salary" type="number" value={state.minSalaryUsd} onChange={e => set('minSalaryUsd', e.target.value)} placeholder="60000" className="bg-background/60" />
+        <Field label="Minimum Salary (USD/month)">
+          <Input
+            id="ob-min-salary"
+            type="number"
+            value={state.minSalaryUsd}
+            onChange={(e) => set('minSalaryUsd', e.target.value)}
+            placeholder="5000"
+            className="bg-background/60"
+          />
         </Field>
-        <Field label="Preferred Industries (comma-separated)">
-          <Input id="ob-pref-industries" value={state.preferredIndustries} onChange={e => set('preferredIndustries', e.target.value)} placeholder="Fintech, SaaS, Government IT" className="bg-background/60" />
+        <Field label="Preferred Industries">
+          <Input
+            id="ob-industries"
+            value={state.preferredIndustries}
+            onChange={(e) => set('preferredIndustries', e.target.value)}
+            placeholder="Fintech, SaaS, AI, HealthTech"
+            className="bg-background/60"
+          />
         </Field>
       </div>
       <label className="flex items-center gap-2 cursor-pointer select-none">
         <input
-          id="ob-pref-remote"
+          id="ob-remote"
           type="checkbox"
           checked={state.remoteOk}
-          onChange={e => set('remoteOk', e.target.checked)}
+          onChange={(e) => set('remoteOk', e.target.checked)}
           className="rounded border-input"
         />
-        <span className="text-sm">Open to remote / hybrid roles</span>
+        <span className="text-sm">Open to remote roles</span>
       </label>
     </div>
   );
@@ -484,51 +721,145 @@ function Step5Preferences({ state, set }: { state: StepState; set: (k: keyof Ste
 
 // ─── Main Onboarding Page ─────────────────────────────────────────────────────
 
-function splitCsv(s: string): string[] {
-  return s.split(',').map(t => t.trim()).filter(Boolean);
-}
-
 export default function OnboardingPage() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [state, setState] = useState<StepState>(INITIAL);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
-  const [cvUploaded, setCvUploaded] = useState(false);
 
-  React.useEffect(() => {
-    api.profile.get().then(p => {
-      if (p) {
-        setState(prev => ({
-          ...prev,
-          fullName: p.fullName ?? '',
-          headline: p.headline ?? '',
-          summary: p.summary ?? '',
-          phone: p.phone ?? '',
-          location: p.location ?? '',
-          country: p.country ?? '',
-          linkedinUrl: p.linkedinUrl ?? '',
-          githubUrl: p.githubUrl ?? '',
-          portfolioUrl: p.portfolioUrl ?? '',
-          visaStatus: p.visaStatus ?? '',
-          noticePeriodDays: p.noticePeriodDays ? String(p.noticePeriodDays) : '',
-          willingToRelocate: p.willingToRelocate ?? false,
-          telegramChatId: p.telegramChatId ?? '',
-        }));
-      }
-    }).catch(err => {
-      if (err instanceof ApiClientError && err.statusCode === 401) {
-        router.push('/login');
-      }
-    });
+  // CV Upload & Auto-fill states
+  const [uploadedCv, setUploadedCv] = useState<Cv | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgressText, setUploadProgressText] = useState('');
+  const [showManual, setShowManual] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  // Load existing profile if any
+  useEffect(() => {
+    api.profile
+      .get()
+      .then((p) => {
+        if (p) {
+          setState((prev) => ({
+            ...prev,
+            fullName: p.fullName ?? '',
+            headline: p.headline ?? '',
+            summary: p.summary ?? '',
+            phone: p.phone ?? '',
+            location: p.location ?? '',
+            country: p.country ?? '',
+            linkedinUrl: p.linkedinUrl ?? '',
+            githubUrl: p.githubUrl ?? '',
+            portfolioUrl: p.portfolioUrl ?? '',
+            visaStatus: p.visaStatus ?? '',
+            noticePeriodDays: p.noticePeriodDays ? String(p.noticePeriodDays) : '',
+            willingToRelocate: p.willingToRelocate ?? false,
+            telegramChatId: p.telegramChatId ?? '',
+          }));
+        }
+      })
+      .catch((err) => {
+        if (err instanceof ApiClientError && err.statusCode === 401) {
+          router.push('/login');
+        }
+      });
   }, [router]);
 
   const set = useCallback((k: keyof StepState, v: unknown) => {
-    setState(prev => ({ ...prev, [k]: v }));
+    setState((prev) => ({ ...prev, [k]: v }));
   }, []);
 
-  const next = () => setStep(s => Math.min(s + 1, 5));
-  const back = () => setStep(s => Math.max(s - 1, 1));
+  const handleCvSelect = async (file: File) => {
+    setError('');
+    setUploading(true);
+    setUploadProgressText('Uploading document...');
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      setTimeout(() => {
+        setUploadProgressText('Extracting CV text & skills with AI...');
+      }, 1200);
+
+      const res = await api.cvs.parse(formData);
+      setUploadedCv(res.cv);
+
+      const { profile, skills, experiences, preferences } = res.parsed;
+
+      // Populate state with extracted data
+      setState((prev) => ({
+        ...prev,
+        fullName: profile?.fullName || prev.fullName,
+        headline: profile?.headline || prev.headline,
+        summary: profile?.summary || prev.summary,
+        phone: profile?.phone || prev.phone,
+        location: profile?.location || prev.location,
+        country: profile?.country || prev.country,
+        linkedinUrl: profile?.linkedinUrl || prev.linkedinUrl,
+        githubUrl: profile?.githubUrl || prev.githubUrl,
+        portfolioUrl: profile?.portfolioUrl || prev.portfolioUrl,
+        visaStatus: profile?.visaStatus || prev.visaStatus,
+        noticePeriodDays: profile?.noticePeriodDays
+          ? String(profile.noticePeriodDays)
+          : prev.noticePeriodDays,
+        willingToRelocate: profile?.willingToRelocate ?? prev.willingToRelocate,
+        skills:
+          skills && skills.length > 0
+            ? skills.map((s) => ({
+                name: s.name,
+                level: s.level,
+                yearsOfExp: s.yearsOfExp ?? 1,
+                category: s.category || 'General',
+              }))
+            : prev.skills,
+        experiences:
+          experiences && experiences.length > 0
+            ? experiences.map((e) => ({
+                title: e.title,
+                company: e.company,
+                location: e.location || '',
+                startDate: e.startDate,
+                endDate: e.endDate || '',
+                isCurrent: e.isCurrent ?? false,
+                bullets: Array.isArray(e.bullets) ? e.bullets.join('\n') : String(e.bullets || ''),
+                techStack: Array.isArray(e.techStack) ? e.techStack.join(', ') : String(e.techStack || ''),
+              }))
+            : prev.experiences,
+        targetRoles:
+          preferences?.targetRoles && preferences.targetRoles.length > 0
+            ? preferences.targetRoles.join(', ')
+            : prev.targetRoles,
+        targetCountries:
+          preferences?.targetCountries && preferences.targetCountries.length > 0
+            ? preferences.targetCountries.join(', ')
+            : prev.targetCountries,
+        minSalaryUsd: preferences?.minSalaryUsd ? String(preferences.minSalaryUsd) : prev.minSalaryUsd,
+        remoteOk: preferences?.remoteOk ?? prev.remoteOk,
+        preferredIndustries:
+          preferences?.preferredIndustries && preferences.preferredIndustries.length > 0
+            ? preferences.preferredIndustries.join(', ')
+            : prev.preferredIndustries,
+      }));
+
+      // Switch to review mode at step 1
+      setShowManual(true);
+      setStep(1);
+    } catch (e) {
+      setError(
+        e instanceof ApiClientError
+          ? e.message
+          : 'Failed to parse CV. You can continue by filling in details manually.',
+      );
+    } finally {
+      setUploading(false);
+      setUploadProgressText('');
+    }
+  };
+
+  const next = () => setStep((s) => Math.min(s + 1, 4));
+  const back = () => setStep((s) => Math.max(s - 1, 1));
 
   const saveStep = async () => {
     setError('');
@@ -552,35 +883,36 @@ export default function OnboardingPage() {
         });
         next();
       } else if (step === 2) {
-        // Save skills sequentially
         for (const skill of state.skills) {
-          await api.skills.create({
-            name: skill.name,
-            level: skill.level,
-            yearsOfExp: skill.yearsOfExp,
-            category: skill.category || undefined,
-          } as Parameters<typeof api.skills.create>[0]);
+          await api.skills
+            .create({
+              name: skill.name,
+              level: skill.level,
+              yearsOfExp: skill.yearsOfExp,
+              category: skill.category || undefined,
+            } as Parameters<typeof api.skills.create>[0])
+            .catch(() => {});
         }
         next();
       } else if (step === 3) {
         for (const exp of state.experiences) {
-          await api.experience.create({
-            title: exp.title,
-            company: exp.company,
-            location: exp.location || undefined,
-            startDate: new Date(exp.startDate).toISOString(),
-            endDate: exp.endDate ? new Date(exp.endDate).toISOString() : undefined,
-            isCurrent: exp.isCurrent,
-            bullets: exp.bullets.split('\n').map(l => l.trim()).filter(Boolean),
-            techStack: splitCsv(exp.techStack),
-          } as Parameters<typeof api.experience.create>[0]);
+          const startDate = parseDateSafe(exp.startDate) || new Date().toISOString();
+          const endDate = exp.isCurrent ? undefined : parseDateSafe(exp.endDate);
+          await api.experience
+            .create({
+              title: exp.title,
+              company: exp.company,
+              location: exp.location || undefined,
+              startDate,
+              endDate,
+              isCurrent: exp.isCurrent,
+              bullets: exp.bullets.split('\n').map((l) => l.trim()).filter(Boolean),
+              techStack: splitCsv(exp.techStack),
+            } as Parameters<typeof api.experience.create>[0])
+            .catch(() => {});
         }
         next();
       } else if (step === 4) {
-        // CV upload is handled inside Step4CvUpload component — just proceed
-        next();
-      } else if (step === 5) {
-        // Save preferences + mark onboarding done
         await api.preferences.upsert({
           targetRoles: splitCsv(state.targetRoles),
           targetCountries: splitCsv(state.targetCountries),
@@ -602,40 +934,182 @@ export default function OnboardingPage() {
     }
   };
 
-  const isStep4 = step === 4;
-  const canProceedStep4 = isStep4 && cvUploaded;
+  // ─── Initial CV Landing View ────────────────────────────────────────────────
+  if (!showManual && !uploadedCv) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-4">
+        <div className="w-full max-w-2xl">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-medium mb-4">
+              <Sparkles className="h-3.5 w-3.5 animate-pulse" /> AI-Powered Onboarding
+            </div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-400 via-purple-300 to-indigo-200 bg-clip-text text-transparent">
+              Build Your Agent Brain
+            </h1>
+            <p className="text-muted-foreground text-sm mt-2 max-w-md mx-auto">
+              Upload your CV and our AI will automatically extract your profile, skills, work history, and target preferences.
+            </p>
+          </div>
 
+          <Card className="border-border/40 bg-card/30 backdrop-blur-sm shadow-2xl">
+            <CardContent className="p-8">
+              {uploading ? (
+                <div className="py-16 flex flex-col items-center justify-center gap-4 text-center">
+                  <div className="relative">
+                    <div className="w-16 h-16 rounded-full border-2 border-indigo-500/30 border-t-indigo-500 animate-spin flex items-center justify-center" />
+                    <Sparkles className="h-6 w-6 text-indigo-400 absolute inset-0 m-auto animate-pulse" />
+                  </div>
+                  <div className="space-y-1 mt-2">
+                    <p className="font-medium text-base text-foreground">
+                      {uploadProgressText || 'Parsing CV with AI…'}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Structuring your career history, skills, and match preferences
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {/* Drop zone */}
+                  <div
+                    id="ob-initial-dropzone"
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      const file = e.dataTransfer.files?.[0];
+                      if (file) handleCvSelect(file);
+                    }}
+                    onDragOver={(e) => e.preventDefault()}
+                    onClick={() => fileRef.current?.click()}
+                    className="border-2 border-dashed border-indigo-500/30 hover:border-indigo-500/60 bg-indigo-500/5 hover:bg-indigo-500/10 rounded-2xl p-12 flex flex-col items-center justify-center gap-4 cursor-pointer transition-all duration-300 group"
+                  >
+                    <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                      <Upload className="h-8 w-8 text-indigo-400" />
+                    </div>
+                    <div className="text-center space-y-1">
+                      <p className="font-semibold text-base text-foreground">
+                        Drop your CV here, or browse
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Supports PDF, Word (.docx, .doc) · Up to 10 MB
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2 mt-2">
+                      <Badge variant="outline" className="text-[11px] bg-background/50 border-border/60">
+                        PDF
+                      </Badge>
+                      <Badge variant="outline" className="text-[11px] bg-background/50 border-border/60">
+                        DOCX
+                      </Badge>
+                      <Badge variant="outline" className="text-[11px] bg-background/50 border-border/60">
+                        Instant AI Parse
+                      </Badge>
+                    </div>
+                    <input
+                      ref={fileRef}
+                      type="file"
+                      accept=".pdf,.docx,.doc,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handleCvSelect(file);
+                      }}
+                    />
+                  </div>
+
+                  {error && (
+                    <div className="flex items-center gap-2 text-destructive text-sm bg-destructive/10 rounded-lg px-4 py-3">
+                      <AlertCircle className="h-4 w-4 shrink-0" />
+                      <span>{error}</span>
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between pt-2">
+                    <Button
+                      id="ob-enter-manually"
+                      variant="ghost"
+                      onClick={() => setShowManual(true)}
+                      className="text-xs text-muted-foreground hover:text-foreground"
+                    >
+                      Skip & fill details manually
+                    </Button>
+                    <Button
+                      onClick={() => fileRef.current?.click()}
+                      className="gap-2 bg-indigo-600 hover:bg-indigo-500 text-white"
+                    >
+                      <FileText className="h-4 w-4" /> Select CV File
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // ─── Review & Edit Wizard ───────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-4">
       <div className="w-full max-w-3xl">
         {/* Header */}
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-medium mb-4">
-            <span className="animate-pulse">●</span> One-time setup
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-medium mb-3">
+            <span className="animate-pulse">●</span> Step-by-step review
           </div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-            Build Your Agent Brain
+            {uploadedCv ? 'Review & Confirm Profile' : 'Build Your Agent Brain'}
           </h1>
-          <p className="text-muted-foreground text-sm mt-2">
-            Fill this once — the AI uses it for every match, score, and application it generates.
+          <p className="text-muted-foreground text-sm mt-1">
+            {uploadedCv
+              ? 'We extracted your details from your CV. Review, tweak, and save.'
+              : 'Fill this once — the AI uses it for every match, score, and application.'}
           </p>
         </div>
 
-        <StepIndicator current={step} />
+        {/* CV Banner if uploaded */}
+        {uploadedCv && (
+          <div className="mb-6 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                <Check className="h-4 w-4" />
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-emerald-400">
+                  CV Auto-filled: {uploadedCv.filename}
+                </p>
+                <p className="text-[11px] text-muted-foreground">
+                  Profile, {state.skills.length} skills, and {state.experiences.length} roles extracted
+                </p>
+              </div>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setUploadedCv(null);
+                setShowManual(false);
+              }}
+              className="text-xs gap-1.5 text-muted-foreground hover:text-foreground h-8"
+            >
+              <RefreshCw className="h-3 w-3" /> Upload different CV
+            </Button>
+          </div>
+        )}
+
+        <StepIndicator current={step} total={4} />
 
         <Card className="border-border/40 bg-card/30 backdrop-blur-sm shadow-2xl">
           <CardContent className="p-8">
             {step === 1 && <Step1Profile state={state} set={set} />}
             {step === 2 && <Step2Skills state={state} set={set} />}
             {step === 3 && <Step3Experience state={state} set={set} />}
-            {step === 4 && (
-              <Step4CvUpload onUploaded={() => setCvUploaded(true)} />
-            )}
-            {step === 5 && <Step5Preferences state={state} set={set} />}
+            {step === 4 && <Step4Preferences state={state} set={set} />}
 
             {error && (
               <div className="mt-4 flex items-center gap-2 text-destructive text-sm bg-destructive/10 rounded-lg px-4 py-3">
-                <AlertCircle className="h-4 w-4 shrink-0" /><span>{error}</span>
+                <AlertCircle className="h-4 w-4 shrink-0" />
+                <span>{error}</span>
               </div>
             )}
 
@@ -651,39 +1125,32 @@ export default function OnboardingPage() {
                 <ChevronLeft className="h-4 w-4" /> Back
               </Button>
 
-              <div className="flex items-center gap-3">
-                {isStep4 && !cvUploaded && (
-                  <Button
-                    id="ob-skip-cv"
-                    variant="ghost"
-                    onClick={next}
-                    disabled={saving}
-                    className="text-muted-foreground text-sm"
-                  >
-                    Skip for now
-                  </Button>
+              <Button
+                id="ob-next"
+                onClick={saveStep}
+                disabled={saving}
+                className="gap-2 min-w-32 bg-indigo-600 hover:bg-indigo-500 text-white"
+              >
+                {saving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" /> Saving…
+                  </>
+                ) : step === 4 ? (
+                  <>
+                    <Check className="h-4 w-4" /> Finish & Launch
+                  </>
+                ) : (
+                  <>
+                    Continue <ChevronRight className="h-4 w-4" />
+                  </>
                 )}
-                <Button
-                  id="ob-next"
-                  onClick={saveStep}
-                  disabled={saving || (isStep4 && !cvUploaded && false) /* skip allowed */}
-                  className="gap-2 min-w-32"
-                >
-                  {saving ? (
-                    <><Loader2 className="h-4 w-4 animate-spin" /> Saving…</>
-                  ) : step === 5 ? (
-                    <><Check className="h-4 w-4" /> Finish Setup</>
-                  ) : (
-                    <>Continue <ChevronRight className="h-4 w-4" /></>
-                  )}
-                </Button>
-              </div>
+              </Button>
             </div>
           </CardContent>
         </Card>
 
         <p className="text-center text-xs text-muted-foreground mt-4">
-          You can edit all of this later from the Profile page.
+          You can edit and update all of this at any time from your Profile & Settings.
         </p>
       </div>
     </div>

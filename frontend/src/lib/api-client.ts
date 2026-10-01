@@ -152,6 +152,50 @@ async function uploadFile<T>(endpoint: string, formData: FormData): Promise<T> {
   return (json && 'data' in json ? json.data : json) as T;
 }
 
+export interface ParsedCvResult {
+  cv: Cv;
+  url: string;
+  parsed: {
+    profile: {
+      fullName?: string;
+      headline?: string;
+      summary?: string;
+      phone?: string;
+      location?: string;
+      country?: string;
+      linkedinUrl?: string;
+      githubUrl?: string;
+      portfolioUrl?: string;
+      visaStatus?: string;
+      noticePeriodDays?: number;
+      willingToRelocate?: boolean;
+    };
+    skills: Array<{
+      name: string;
+      level: 'BEGINNER' | 'INTERMEDIATE' | 'EXPERT';
+      yearsOfExp?: number;
+      category?: string;
+    }>;
+    experiences: Array<{
+      title: string;
+      company: string;
+      location?: string;
+      startDate: string;
+      endDate?: string;
+      isCurrent: boolean;
+      bullets: string[];
+      techStack: string[];
+    }>;
+    preferences: {
+      targetRoles: string[];
+      targetCountries: string[];
+      minSalaryUsd?: number;
+      remoteOk: boolean;
+      preferredIndustries: string[];
+    };
+  };
+}
+
 export const api = {
   get: <T>(endpoint: string, options?: RequestInit) =>
     request<T>(endpoint, { ...options, method: 'GET' }),
@@ -220,6 +264,8 @@ export const api = {
     list: () => api.get<Cv[]>('/cvs'),
     upload: (formData: FormData) =>
       uploadFile<{ cv: Cv; url: string }>('/upload/cv', formData),
+    parse: (formData: FormData) =>
+      uploadFile<ParsedCvResult>('/upload/cv/parse', formData),
     update: (
       id: string,
       data: { label?: string; tags?: string[]; isDefault?: boolean },

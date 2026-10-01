@@ -5,7 +5,6 @@ import {
   IsInt,
   IsOptional,
   IsString,
-  IsUrl,
   MaxLength,
   Min,
   ValidateNested,
@@ -39,13 +38,13 @@ export class CreateProfileDto {
   @ApiPropertyOptional() @IsOptional() @IsString()
   country?: string;
 
-  @ApiPropertyOptional() @IsOptional() @IsUrl()
+  @ApiPropertyOptional() @IsOptional() @IsString()
   linkedinUrl?: string;
 
-  @ApiPropertyOptional() @IsOptional() @IsUrl()
+  @ApiPropertyOptional() @IsOptional() @IsString()
   githubUrl?: string;
 
-  @ApiPropertyOptional() @IsOptional() @IsUrl()
+  @ApiPropertyOptional() @IsOptional() @IsString()
   portfolioUrl?: string;
 
   @ApiPropertyOptional({ type: [LanguageEntryDto] })
@@ -74,4 +73,3 @@ export class CreateProfileDto {
   @ApiPropertyOptional() @IsOptional() @IsBoolean()
   onboardingDone?: boolean;
 }
-

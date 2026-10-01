@@ -23,6 +23,7 @@ import { PreferencesModule } from './preferences/preferences.module.js';
 import { OpportunitiesModule } from './opportunities/opportunities.module.js';
 import { StorageModule } from './storage/storage.module.js';
 import { UploadModule } from './upload/upload.module.js';
+import { LlmModule } from './llm/llm.module.js';
 
 @Module({
   imports: [
@@ -89,6 +90,8 @@ import { UploadModule } from './upload/upload.module.js';
     StorageModule,
 
     UploadModule,
+
+    LlmModule,
   ],
   controllers: [HealthController],
 })
