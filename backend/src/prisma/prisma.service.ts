@@ -20,6 +20,20 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
   get auditLog() { return this.client.auditLog; }
   get setting() { return this.client.setting; }
 
+  // Sprint 1 — profile & sub-resources
+  get profile() { return this.client.profile; }
+  get experience() { return this.client.experience; }
+  get skill() { return this.client.skill; }
+  get project() { return this.client.project; }
+  get cv() { return this.client.cv; }
+  get answerBankItem() { return this.client.answerBankItem; }
+  get jobPreference() { return this.client.jobPreference; }
+  get opportunity() { return this.client.opportunity; }
+  get opportunityRequirement() { return this.client.opportunityRequirement; }
+  get opportunityMatch() { return this.client.opportunityMatch; }
+  get llmCall() { return this.client.llmCall; }
+  get notification() { return this.client.notification; }
+
   /** Run raw SQL — used by health check and migrations helpers */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   $queryRaw(...args: Parameters<PrismaClient['$queryRaw']>): Promise<any> {

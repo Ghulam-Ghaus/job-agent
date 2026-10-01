@@ -54,7 +54,19 @@ export const ModelName = {
   User: 'User',
   Session: 'Session',
   AuditLog: 'AuditLog',
-  Setting: 'Setting'
+  Setting: 'Setting',
+  Profile: 'Profile',
+  Experience: 'Experience',
+  Skill: 'Skill',
+  Project: 'Project',
+  Cv: 'Cv',
+  AnswerBankItem: 'AnswerBankItem',
+  JobPreference: 'JobPreference',
+  Opportunity: 'Opportunity',
+  OpportunityRequirement: 'OpportunityRequirement',
+  OpportunityMatch: 'OpportunityMatch',
+  LlmCall: 'LlmCall',
+  Notification: 'Notification'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -122,6 +134,215 @@ export const SettingScalarFieldEnum = {
 } as const
 
 export type SettingScalarFieldEnum = (typeof SettingScalarFieldEnum)[keyof typeof SettingScalarFieldEnum]
+
+
+export const ProfileScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  fullName: 'fullName',
+  headline: 'headline',
+  summary: 'summary',
+  phone: 'phone',
+  location: 'location',
+  country: 'country',
+  linkedinUrl: 'linkedinUrl',
+  githubUrl: 'githubUrl',
+  portfolioUrl: 'portfolioUrl',
+  languages: 'languages',
+  visaStatus: 'visaStatus',
+  noticePeriodDays: 'noticePeriodDays',
+  willingToRelocate: 'willingToRelocate',
+  relocationCountries: 'relocationCountries',
+  telegramChatId: 'telegramChatId',
+  onboardingDone: 'onboardingDone',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProfileScalarFieldEnum = (typeof ProfileScalarFieldEnum)[keyof typeof ProfileScalarFieldEnum]
+
+
+export const ExperienceScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  title: 'title',
+  company: 'company',
+  location: 'location',
+  country: 'country',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  isCurrent: 'isCurrent',
+  bullets: 'bullets',
+  techStack: 'techStack',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ExperienceScalarFieldEnum = (typeof ExperienceScalarFieldEnum)[keyof typeof ExperienceScalarFieldEnum]
+
+
+export const SkillScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  level: 'level',
+  yearsOfExp: 'yearsOfExp',
+  category: 'category',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SkillScalarFieldEnum = (typeof SkillScalarFieldEnum)[keyof typeof SkillScalarFieldEnum]
+
+
+export const ProjectScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  title: 'title',
+  description: 'description',
+  techStack: 'techStack',
+  url: 'url',
+  repoUrl: 'repoUrl',
+  highlights: 'highlights',
+  tags: 'tags',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
+
+
+export const CvScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  label: 'label',
+  filename: 'filename',
+  storagePath: 'storagePath',
+  mimeType: 'mimeType',
+  sizeBytes: 'sizeBytes',
+  tags: 'tags',
+  isDefault: 'isDefault',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CvScalarFieldEnum = (typeof CvScalarFieldEnum)[keyof typeof CvScalarFieldEnum]
+
+
+export const AnswerBankItemScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  question: 'question',
+  answer: 'answer',
+  tags: 'tags',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AnswerBankItemScalarFieldEnum = (typeof AnswerBankItemScalarFieldEnum)[keyof typeof AnswerBankItemScalarFieldEnum]
+
+
+export const JobPreferenceScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  targetRoles: 'targetRoles',
+  targetCountries: 'targetCountries',
+  minSalaryUsd: 'minSalaryUsd',
+  remoteOk: 'remoteOk',
+  blacklistCompanies: 'blacklistCompanies',
+  blacklistKeywords: 'blacklistKeywords',
+  preferredIndustries: 'preferredIndustries',
+  scoreWeights: 'scoreWeights',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type JobPreferenceScalarFieldEnum = (typeof JobPreferenceScalarFieldEnum)[keyof typeof JobPreferenceScalarFieldEnum]
+
+
+export const OpportunityScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  status: 'status',
+  contentHash: 'contentHash',
+  fingerprint: 'fingerprint',
+  sourceType: 'sourceType',
+  sourceRef: 'sourceRef',
+  title: 'title',
+  company: 'company',
+  country: 'country',
+  city: 'city',
+  url: 'url',
+  rawText: 'rawText',
+  language: 'language',
+  postedAt: 'postedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OpportunityScalarFieldEnum = (typeof OpportunityScalarFieldEnum)[keyof typeof OpportunityScalarFieldEnum]
+
+
+export const OpportunityRequirementScalarFieldEnum = {
+  id: 'id',
+  opportunityId: 'opportunityId',
+  fieldsJson: 'fieldsJson',
+  evidenceJson: 'evidenceJson',
+  promptVersion: 'promptVersion',
+  model: 'model',
+  extractedAt: 'extractedAt'
+} as const
+
+export type OpportunityRequirementScalarFieldEnum = (typeof OpportunityRequirementScalarFieldEnum)[keyof typeof OpportunityRequirementScalarFieldEnum]
+
+
+export const OpportunityMatchScalarFieldEnum = {
+  id: 'id',
+  opportunityId: 'opportunityId',
+  score: 'score',
+  breakdownJson: 'breakdownJson',
+  gapsJson: 'gapsJson',
+  recommendedCvId: 'recommendedCvId',
+  scoredAt: 'scoredAt'
+} as const
+
+export type OpportunityMatchScalarFieldEnum = (typeof OpportunityMatchScalarFieldEnum)[keyof typeof OpportunityMatchScalarFieldEnum]
+
+
+export const LlmCallScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  provider: 'provider',
+  model: 'model',
+  promptHash: 'promptHash',
+  cached: 'cached',
+  tokensIn: 'tokensIn',
+  tokensOut: 'tokensOut',
+  costUsd: 'costUsd',
+  durationMs: 'durationMs',
+  purpose: 'purpose',
+  status: 'status',
+  errorMsg: 'errorMsg',
+  createdAt: 'createdAt'
+} as const
+
+export type LlmCallScalarFieldEnum = (typeof LlmCallScalarFieldEnum)[keyof typeof LlmCallScalarFieldEnum]
+
+
+export const NotificationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  title: 'title',
+  body: 'body',
+  link: 'link',
+  read: 'read',
+  createdAt: 'createdAt'
+} as const
+
+export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
 
 
 export const SortOrder = {

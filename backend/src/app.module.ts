@@ -13,6 +13,16 @@ import { PrismaModule } from './prisma/prisma.module.js';
 import { RequestIdMiddleware } from './common/middleware/request-id.middleware.js';
 import { HealthController } from './health/health.controller.js';
 import { AuthModule } from './auth/auth.module.js';
+import { ProfileModule } from './profile/profile.module.js';
+import { ExperienceModule } from './experience/experience.module.js';
+import { SkillsModule } from './skills/skills.module.js';
+import { ProjectsModule } from './projects/projects.module.js';
+import { CvsModule } from './cvs/cvs.module.js';
+import { AnswerBankModule } from './answer-bank/answer-bank.module.js';
+import { PreferencesModule } from './preferences/preferences.module.js';
+import { OpportunitiesModule } from './opportunities/opportunities.module.js';
+import { StorageModule } from './storage/storage.module.js';
+import { UploadModule } from './upload/upload.module.js';
 
 @Module({
   imports: [
@@ -59,6 +69,26 @@ import { AuthModule } from './auth/auth.module.js';
     PrismaModule,
 
     AuthModule,
+
+    ProfileModule,
+
+    ExperienceModule,
+
+    SkillsModule,
+
+    ProjectsModule,
+
+    CvsModule,
+
+    AnswerBankModule,
+
+    PreferencesModule,
+
+    OpportunitiesModule,
+
+    StorageModule,
+
+    UploadModule,
   ],
   controllers: [HealthController],
 })

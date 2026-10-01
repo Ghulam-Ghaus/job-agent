@@ -12,6 +12,7 @@ import {
   LogOut,
   ShieldCheck,
   CheckCircle2,
+  Sparkles,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -22,6 +23,7 @@ const navigation = [
   { name: 'Opportunities', href: '/opportunities', icon: Briefcase, badge: '12 new' },
   { name: 'Approval Queue', href: '/approvals', icon: CheckCircle2, badge: '3 pending' },
   { name: 'Master Profile', href: '/profile', icon: FileText },
+  { name: 'Onboarding Setup', href: '/onboarding', icon: Sparkles },
   { name: 'Agent Settings', href: '/settings', icon: Settings },
 ];
 

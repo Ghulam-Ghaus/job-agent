@@ -1,6 +1,6 @@
-// AI Job & Client Agent — Sprint 0 Schema
+// AI Job & Client Agent — Sprint 0 + Sprint 1 Schema
 // Prisma 7 · PostgreSQL (pgvector/pgvector:pg16)
-// Extend with pgvector in a separate --create-only migration when needed.
+// pgvector extension is enabled via a separate --create-only migration.
 
 generator client {
   provider = "prisma-client"
@@ -11,7 +11,7 @@ datasource db {
   provider = "postgresql"
 }
 
-// ─── Sprint 0: Foundation ────────────────────────────────────────────────────
+// ─── Enums ───────────────────────────────────────────────────────────────────
 
 enum Role {
   SUPER_ADMIN
@@ -28,6 +28,41 @@ enum AuditAction {
   RECORD_DELETE
 }
 
+enum SkillLevel {
+  BEGINNER
+  INTERMEDIATE
+  EXPERT
+}
+
+enum OpportunityType {
+  JOB
+  FREELANCE
+  LEAD
+}
+
+enum OpportunityStatus {
+  DISCOVERED
+  QUALIFIED
+  DRAFT_READY
+  AWAITING_APPROVAL
+  APPLIED
+  VIEWED
+  SHORTLISTED
+  INTERVIEW
+  OFFER
+  REJECTED
+  WITHDRAWN
+  CLOSED
+}
+
+enum LlmProvider {
+  GEMINI
+  GROQ
+  OLLAMA
+}
+
+// ─── Sprint 0: Foundation ────────────────────────────────────────────────────
+
 model User {
   id           String    @id @default(cuid())
   email        String    @unique
@@ -37,8 +72,20 @@ model User {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
-  sessions     Session[]
-  auditLogs    AuditLog[]
+  sessions      Session[]
+  auditLogs     AuditLog[]
+
+  // Sprint 1 relations
+  profile       Profile?
+  experiences   Experience[]
+  skills        Skill[]
+  projects      Project[]
+  cvs           Cv[]
+  answerBank    AnswerBankItem[]
+  preferences   JobPreference?
+  opportunities Opportunity[]
+  llmCalls      LlmCall[]
+  notifications Notification[]
 
   @@map("users")
 }
@@ -83,4 +130,249 @@ model Setting {
   updatedAt DateTime @updatedAt
 
   @@map("settings")
+}
+
+// ─── Sprint 1: Profile ───────────────────────────────────────────────────────
+
+model Profile {
+  id                  String   @id @default(cuid())
+  userId              String   @unique
+  fullName            String?
+  headline            String?
+  summary             String?
+  phone               String?
+  location            String?
+  country             String?
+  linkedinUrl         String?
+  githubUrl           String?
+  portfolioUrl        String?
+  languages           Json     @default("[]") // [{ language, level }]
+  visaStatus          String?
+  noticePeriodDays    Int?
+  willingToRelocate   Boolean  @default(false)
+  relocationCountries Json     @default("[]") // string[]
+  telegramChatId      String?
+  onboardingDone      Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("profiles")
+}
+
+model Experience {
+  id        String    @id @default(cuid())
+  userId    String
+  title     String
+  company   String
+  location  String?
+  country   String?
+  startDate DateTime
+  endDate   DateTime?
+  isCurrent Boolean   @default(false)
+  bullets   Json      @default("[]") // string[]
+  techStack Json      @default("[]") // string[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("experiences")
+}
+
+model Skill {
+  id         String     @id @default(cuid())
+  userId     String
+  name       String
+  level      SkillLevel @default(INTERMEDIATE)
+  yearsOfExp Float?
+  category   String? // e.g. "Backend", "DevOps", "Language"
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, name])
+  @@index([userId])
+  @@map("skills")
+}
+
+model Project {
+  id          String    @id @default(cuid())
+  userId      String
+  title       String
+  description String?
+  techStack   Json      @default("[]") // string[]
+  url         String?
+  repoUrl     String?
+  highlights  Json      @default("[]") // string[]
+  tags        Json      @default("[]") // string[]
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("projects")
+}
+
+model Cv {
+  id          String   @id @default(cuid())
+  userId      String
+  label       String // e.g. "Backend NodeJS", "Full Stack"
+  filename    String
+  storagePath String
+  mimeType    String
+  sizeBytes   Int
+  tags        Json     @default("[]") // string[]
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  opportunityMatches OpportunityMatch[]
+
+  @@index([userId])
+  @@map("cvs")
+}
+
+model AnswerBankItem {
+  id        String   @id @default(cuid())
+  userId    String
+  question  String
+  answer    String
+  tags      Json     @default("[]") // string[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("answer_bank_items")
+}
+
+model JobPreference {
+  id                  String   @id @default(cuid())
+  userId              String   @unique
+  targetRoles         Json     @default("[]") // string[]
+  targetCountries     Json     @default("[]") // string[]
+  minSalaryUsd        Int?
+  remoteOk            Boolean  @default(true)
+  blacklistCompanies  Json     @default("[]") // string[]
+  blacklistKeywords   Json     @default("[]") // string[]
+  preferredIndustries Json     @default("[]") // string[]
+  scoreWeights        Json? // override default weights from Setting
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("job_preferences")
+}
+
+// ─── Sprint 1: Opportunities ─────────────────────────────────────────────────
+
+model Opportunity {
+  id          String            @id @default(cuid())
+  userId      String
+  type        OpportunityType   @default(JOB)
+  status      OpportunityStatus @default(DISCOVERED)
+  contentHash String
+  fingerprint String?
+  sourceType  String? // EMAIL | ATS | MANUAL | PLACES
+  sourceRef   String? // e.g. email message-id or ATS job id
+  title       String?
+  company     String?
+  country     String?
+  city        String?
+  url         String?
+  rawText     String
+  language    String?           @default("en")
+  postedAt    DateTime?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  user        User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  requirement OpportunityRequirement?
+  match       OpportunityMatch?
+
+  @@unique([userId, contentHash])
+  @@index([userId])
+  @@index([userId, status])
+  @@index([userId, type])
+  @@map("opportunities")
+}
+
+model OpportunityRequirement {
+  id            String   @id @default(cuid())
+  opportunityId String   @unique
+  fieldsJson    Json // { title, company, skills[], yearsExp, seniority, salary, visa, remote, ... }
+  evidenceJson  Json // { fieldName: "quoted text from rawText" }
+  promptVersion String
+  model         String
+  extractedAt   DateTime @default(now())
+
+  opportunity Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+
+  @@map("opportunity_requirements")
+}
+
+model OpportunityMatch {
+  id              String   @id @default(cuid())
+  opportunityId   String   @unique
+  score           Int // 0–100
+  breakdownJson   Json // { technical, experience, location, seniority, salary, visa, industry, other }
+  gapsJson        Json     @default("[]") // [{ field, reason }]
+  recommendedCvId String?
+  scoredAt        DateTime @default(now())
+
+  opportunity   Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  recommendedCv Cv?         @relation(fields: [recommendedCvId], references: [id], onDelete: SetNull)
+
+  @@map("opportunity_matches")
+}
+
+// ─── Sprint 1: LLM Audit + Notifications ─────────────────────────────────────
+
+model LlmCall {
+  id         String      @id @default(cuid())
+  userId     String?
+  provider   LlmProvider
+  model      String
+  promptHash String // sha256 of prompt — cache key
+  cached     Boolean     @default(false)
+  tokensIn   Int?
+  tokensOut  Int?
+  costUsd    Float?
+  durationMs Int?
+  purpose    String? // extraction | scoring_explanation | proposal
+  status     String      @default("ok") // ok | error | needs_review
+  errorMsg   String?
+  createdAt  DateTime    @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([promptHash])
+  @@index([createdAt])
+  @@map("llm_calls")
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  body      String?
+  link      String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
+  @@map("notifications")
 }

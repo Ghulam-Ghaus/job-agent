@@ -22,9 +22,14 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     const { status, message } = this.resolveException(exception);
 
+    const errorDetails =
+      exception instanceof Error
+        ? { name: exception.name, message: exception.message, stack: exception.stack }
+        : { raw: exception };
+
     this.logger.error(
-      { requestId: request.requestId, path: request.url, status, message },
-      'Unhandled exception',
+      { requestId: request.requestId, path: request.url, status, message, error: errorDetails },
+      exception instanceof Error ? exception.stack : 'Unhandled exception',
     );
 
     response.status(status).json({
@@ -58,6 +63,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
       if (exception.code === 'P2025') {
         return { status: HttpStatus.NOT_FOUND, message: 'Record not found.' };
       }
+    }
+
+    if (process.env.NODE_ENV !== 'production' && exception instanceof Error) {
+      return { status: HttpStatus.INTERNAL_SERVER_ERROR, message: exception.message };
     }
 
     return { status: HttpStatus.INTERNAL_SERVER_ERROR, message: 'An unexpected error occurred.' };

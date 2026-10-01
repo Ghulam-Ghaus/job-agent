@@ -61,3 +61,63 @@ export type AuditLog = Prisma.AuditLogModel
  * 
  */
 export type Setting = Prisma.SettingModel
+/**
+ * Model Profile
+ * 
+ */
+export type Profile = Prisma.ProfileModel
+/**
+ * Model Experience
+ * 
+ */
+export type Experience = Prisma.ExperienceModel
+/**
+ * Model Skill
+ * 
+ */
+export type Skill = Prisma.SkillModel
+/**
+ * Model Project
+ * 
+ */
+export type Project = Prisma.ProjectModel
+/**
+ * Model Cv
+ * 
+ */
+export type Cv = Prisma.CvModel
+/**
+ * Model AnswerBankItem
+ * 
+ */
+export type AnswerBankItem = Prisma.AnswerBankItemModel
+/**
+ * Model JobPreference
+ * 
+ */
+export type JobPreference = Prisma.JobPreferenceModel
+/**
+ * Model Opportunity
+ * 
+ */
+export type Opportunity = Prisma.OpportunityModel
+/**
+ * Model OpportunityRequirement
+ * 
+ */
+export type OpportunityRequirement = Prisma.OpportunityRequirementModel
+/**
+ * Model OpportunityMatch
+ * 
+ */
+export type OpportunityMatch = Prisma.OpportunityMatchModel
+/**
+ * Model LlmCall
+ * 
+ */
+export type LlmCall = Prisma.LlmCallModel
+/**
+ * Model Notification
+ * 
+ */
+export type Notification = Prisma.NotificationModel

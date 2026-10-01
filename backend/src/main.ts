@@ -1,15 +1,17 @@
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Logger } from 'nestjs-pino';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
+import { join } from 'node:path';
 import { AppModule } from './app.module.js';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter.js';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor.js';
 
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AppModule, { bufferLogs: true });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, { bufferLogs: true });
 
   // ── Logging ──────────────────────────────────────────────────────────────
   app.useLogger(app.get(Logger));
@@ -21,6 +23,10 @@ async function bootstrap(): Promise<void> {
     credentials: true,
   });
   app.use(cookieParser());
+
+  // ── Static Files ─────────────────────────────────────────────────────────
+  // Serve uploaded CVs at GET /uploads/<filename>
+  app.useStaticAssets(join(process.cwd(), 'uploads'), { prefix: '/uploads' });
 
   // ── Versioning ───────────────────────────────────────────────────────────
   app.setGlobalPrefix('api');

@@ -28,3 +28,48 @@ export const AuditAction = {
 } as const
 
 export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction]
+
+
+export const SkillLevel = {
+  BEGINNER: 'BEGINNER',
+  INTERMEDIATE: 'INTERMEDIATE',
+  EXPERT: 'EXPERT'
+} as const
+
+export type SkillLevel = (typeof SkillLevel)[keyof typeof SkillLevel]
+
+
+export const OpportunityType = {
+  JOB: 'JOB',
+  FREELANCE: 'FREELANCE',
+  LEAD: 'LEAD'
+} as const
+
+export type OpportunityType = (typeof OpportunityType)[keyof typeof OpportunityType]
+
+
+export const OpportunityStatus = {
+  DISCOVERED: 'DISCOVERED',
+  QUALIFIED: 'QUALIFIED',
+  DRAFT_READY: 'DRAFT_READY',
+  AWAITING_APPROVAL: 'AWAITING_APPROVAL',
+  APPLIED: 'APPLIED',
+  VIEWED: 'VIEWED',
+  SHORTLISTED: 'SHORTLISTED',
+  INTERVIEW: 'INTERVIEW',
+  OFFER: 'OFFER',
+  REJECTED: 'REJECTED',
+  WITHDRAWN: 'WITHDRAWN',
+  CLOSED: 'CLOSED'
+} as const
+
+export type OpportunityStatus = (typeof OpportunityStatus)[keyof typeof OpportunityStatus]
+
+
+export const LlmProvider = {
+  GEMINI: 'GEMINI',
+  GROQ: 'GROQ',
+  OLLAMA: 'OLLAMA'
+} as const
+
+export type LlmProvider = (typeof LlmProvider)[keyof typeof LlmProvider]
