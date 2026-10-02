@@ -85,6 +85,124 @@ export interface Cv {
   url?: string;
 }
 
+export type OpportunityType = 'JOB' | 'FREELANCE' | 'LEAD';
+export type OpportunityStatus =
+  | 'DISCOVERED'
+  | 'QUALIFIED'
+  | 'DRAFT_READY'
+  | 'AWAITING_APPROVAL'
+  | 'APPLIED'
+  | 'VIEWED'
+  | 'SHORTLISTED'
+  | 'REJECTED'
+  | 'ARCHIVED';
+
+export interface ScoreBreakdown {
+  technical: number;
+  experience: number;
+  location: number;
+  seniority: number;
+  salary: number;
+  visa: number;
+}
+
+export interface SkillGap {
+  skill: string;
+  required: boolean;
+  reason: string;
+}
+
+export interface JobRequirementFields {
+  title?: string;
+  company?: string;
+  country?: string;
+  city?: string;
+  remote?: boolean;
+  seniority?: string;
+  yearsExp?: number;
+  skills?: { name: string; required: boolean; yearsExp?: number }[];
+  salaryMin?: number;
+  salaryMax?: number;
+  salaryCurrency?: string;
+  salaryPeriod?: string;
+  visaSponsorship?: boolean;
+  industry?: string;
+  description?: string;
+  postedAt?: string;
+}
+
+export interface OpportunityRequirement {
+  id: string;
+  opportunityId: string;
+  fieldsJson: JobRequirementFields;
+  evidenceJson: Record<string, string>;
+  promptVersion: string;
+  model: string;
+  extractedAt: string;
+}
+
+export interface OpportunityMatch {
+  id: string;
+  opportunityId: string;
+  score: number;
+  breakdownJson: ScoreBreakdown;
+  gapsJson: SkillGap[];
+  recommendedCvId: string | null;
+  scoredAt: string;
+}
+
+export interface Opportunity {
+  id: string;
+  userId: string;
+  type: OpportunityType;
+  status: OpportunityStatus;
+  contentHash: string;
+  sourceType?: string;
+  title?: string;
+  company?: string;
+  country?: string;
+  city?: string;
+  url?: string;
+  rawText: string;
+  language?: string;
+  postedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+  requirement?: OpportunityRequirement | null;
+  match?: OpportunityMatch | null;
+  applyPack?: ApplyPack | null;
+}
+
+export interface VerifierIssue {
+  claim: string;
+  reason: string;
+}
+
+export interface ApplyPack {
+  id: string;
+  opportunityId: string;
+  userId: string;
+  coverNote: string;
+  coverNoteEdited?: string | null;
+  selectedCvId?: string | null;
+  answersFilled: { question: string; answer: string }[];
+  verifierStatus: 'pending' | 'passed' | 'flagged';
+  verifierIssues: VerifierIssue[];
+  createdAt: string;
+  updatedAt: string;
+  approval?: ApprovalRecord | null;
+  opportunity?: Opportunity;
+}
+
+export interface ApprovalRecord {
+  id: string;
+  applyPackId: string;
+  userId: string;
+  decision: 'approved' | 'rejected';
+  notes?: string | null;
+  decidedAt: string;
+}
+
 export class ApiClientError extends Error {
   constructor(
     public statusCode: number,
@@ -271,6 +389,46 @@ export const api = {
       data: { label?: string; tags?: string[]; isDefault?: boolean },
     ) => api.patch<Cv>(`/cvs/${id}`, data),
     delete: (id: string) => api.delete<void>(`/cvs/${id}`),
+  },
+
+  opportunities: {
+    create: (data: { text?: string; url?: string; type?: OpportunityType }) =>
+      api.post<Opportunity>('/opportunities', data),
+    list: () => api.get<Opportunity[]>('/opportunities'),
+    get: (id: string) => api.get<Opportunity>(`/opportunities/${id}`),
+    reprocess: (id: string) => api.post<Opportunity>(`/opportunities/${id}/reprocess`),
+    patch: (id: string, data: Partial<Pick<Opportunity, 'status'>>) =>
+      api.patch<Opportunity>(`/opportunities/${id}`, data),
+    delete: (id: string) => api.delete<void>(`/opportunities/${id}`),
+    buildPack: (id: string) => api.post<ApplyPack>(`/opportunities/${id}/apply-pack`),
+    getPack: (id: string) => api.get<ApplyPack>(`/opportunities/${id}/apply-pack`),
+    updateCoverNote: (id: string, coverNoteEdited: string) =>
+      api.patch<ApplyPack>(`/opportunities/${id}/apply-pack/cover-note`, { coverNoteEdited }),
+  },
+
+  approvals: {
+    pending: () => api.get<ApplyPack[]>('/opportunities/queue/pending'),
+    decided: () => api.get<ApprovalRecord[]>('/opportunities/queue/decided'),
+    decide: (packId: string, decision: 'approved' | 'rejected', notes?: string) =>
+      api.post<ApprovalRecord>(`/opportunities/queue/${packId}/decide`, { decision, notes }),
+  },
+
+  connectors: {
+    syncAll: () =>
+      api.post<{
+        email: { totalProcessed: number; jobsEnqueued: number; errors: string[] };
+        ats: { companiesChecked: number; jobsEnqueued: number; errors: string[] };
+        timestamp: string;
+      }>('/connectors/sync'),
+    syncEmail: () =>
+      api.post<{ totalProcessed: number; jobsEnqueued: number; errors: string[] }>(
+        '/connectors/email/sync',
+      ),
+    syncAts: (targets?: { platform: 'greenhouse' | 'lever'; slug: string }[]) =>
+      api.post<{ companiesChecked: number; jobsEnqueued: number; errors: string[] }>(
+        '/connectors/ats/sync',
+        { targets },
+      ),
   },
 
   health: {

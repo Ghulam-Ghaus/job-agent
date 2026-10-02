@@ -83,9 +83,11 @@ model User {
   cvs           Cv[]
   answerBank    AnswerBankItem[]
   preferences   JobPreference?
-  opportunities Opportunity[]
-  llmCalls      LlmCall[]
-  notifications Notification[]
+  opportunities    Opportunity[]
+  llmCalls         LlmCall[]
+  notifications    Notification[]
+  applyPacks       ApplyPack[]
+  approvalRecords  ApprovalRecord[]
 
   @@map("users")
 }
@@ -299,6 +301,7 @@ model Opportunity {
   user        User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
   requirement OpportunityRequirement?
   match       OpportunityMatch?
+  applyPack   ApplyPack?
 
   @@unique([userId, contentHash])
   @@index([userId])
@@ -376,3 +379,44 @@ model Notification {
   @@index([userId, read])
   @@map("notifications")
 }
+
+// ─── Sprint 2: Apply Packs & Approval ─────────────────────────────────────────
+
+model ApplyPack {
+  id              String   @id @default(cuid())
+  opportunityId   String   @unique
+  userId          String
+  coverNote       String   // AI-generated tailored cover letter
+  coverNoteEdited String?  // User's edited version (if any)
+  selectedCvId    String?
+  answersFilled   Json     @default("[]") // [{ question, answer }]
+  verifierStatus  String   @default("pending") // pending | passed | flagged
+  verifierIssues  Json     @default("[]") // [{ claim, reason }]
+  promptVersion   String   @default("v1")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  opportunity Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  approval    ApprovalRecord?
+
+  @@index([userId])
+  @@index([verifierStatus])
+  @@map("apply_packs")
+}
+
+model ApprovalRecord {
+  id          String   @id @default(cuid())
+  applyPackId String   @unique
+  userId      String
+  decision    String   // approved | rejected
+  notes       String?  // Optional reviewer notes
+  decidedAt   DateTime @default(now())
+
+  applyPack ApplyPack @relation(fields: [applyPackId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("approval_records")
+}
+

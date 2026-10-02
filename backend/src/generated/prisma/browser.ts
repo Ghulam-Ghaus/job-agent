@@ -97,3 +97,13 @@ export type LlmCall = Prisma.LlmCallModel
  * 
  */
 export type Notification = Prisma.NotificationModel
+/**
+ * Model ApplyPack
+ * 
+ */
+export type ApplyPack = Prisma.ApplyPackModel
+/**
+ * Model ApprovalRecord
+ * 
+ */
+export type ApprovalRecord = Prisma.ApprovalRecordModel

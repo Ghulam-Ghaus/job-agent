@@ -66,7 +66,9 @@ export const ModelName = {
   OpportunityRequirement: 'OpportunityRequirement',
   OpportunityMatch: 'OpportunityMatch',
   LlmCall: 'LlmCall',
-  Notification: 'Notification'
+  Notification: 'Notification',
+  ApplyPack: 'ApplyPack',
+  ApprovalRecord: 'ApprovalRecord'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -343,6 +345,36 @@ export const NotificationScalarFieldEnum = {
 } as const
 
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const ApplyPackScalarFieldEnum = {
+  id: 'id',
+  opportunityId: 'opportunityId',
+  userId: 'userId',
+  coverNote: 'coverNote',
+  coverNoteEdited: 'coverNoteEdited',
+  selectedCvId: 'selectedCvId',
+  answersFilled: 'answersFilled',
+  verifierStatus: 'verifierStatus',
+  verifierIssues: 'verifierIssues',
+  promptVersion: 'promptVersion',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ApplyPackScalarFieldEnum = (typeof ApplyPackScalarFieldEnum)[keyof typeof ApplyPackScalarFieldEnum]
+
+
+export const ApprovalRecordScalarFieldEnum = {
+  id: 'id',
+  applyPackId: 'applyPackId',
+  userId: 'userId',
+  decision: 'decision',
+  notes: 'notes',
+  decidedAt: 'decidedAt'
+} as const
+
+export type ApprovalRecordScalarFieldEnum = (typeof ApprovalRecordScalarFieldEnum)[keyof typeof ApprovalRecordScalarFieldEnum]
 
 
 export const SortOrder = {

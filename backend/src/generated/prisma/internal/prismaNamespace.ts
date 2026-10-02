@@ -412,7 +412,9 @@ export const ModelName = {
   OpportunityRequirement: 'OpportunityRequirement',
   OpportunityMatch: 'OpportunityMatch',
   LlmCall: 'LlmCall',
-  Notification: 'Notification'
+  Notification: 'Notification',
+  ApplyPack: 'ApplyPack',
+  ApprovalRecord: 'ApprovalRecord'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -428,7 +430,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "session" | "auditLog" | "setting" | "profile" | "experience" | "skill" | "project" | "cv" | "answerBankItem" | "jobPreference" | "opportunity" | "opportunityRequirement" | "opportunityMatch" | "llmCall" | "notification"
+    modelProps: "user" | "session" | "auditLog" | "setting" | "profile" | "experience" | "skill" | "project" | "cv" | "answerBankItem" | "jobPreference" | "opportunity" | "opportunityRequirement" | "opportunityMatch" | "llmCall" | "notification" | "applyPack" | "approvalRecord"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1616,6 +1618,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ApplyPack: {
+      payload: Prisma.$ApplyPackPayload<ExtArgs>
+      fields: Prisma.ApplyPackFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ApplyPackFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplyPackPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ApplyPackFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplyPackPayload>
+        }
+        findFirst: {
+          args: Prisma.ApplyPackFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplyPackPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ApplyPackFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplyPackPayload>
+        }
+        findMany: {
+          args: Prisma.ApplyPackFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplyPackPayload>[]
+        }
+        create: {
+          args: Prisma.ApplyPackCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplyPackPayload>
+        }
+        createMany: {
+          args: Prisma.ApplyPackCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ApplyPackCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplyPackPayload>[]
+        }
+        delete: {
+          args: Prisma.ApplyPackDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplyPackPayload>
+        }
+        update: {
+          args: Prisma.ApplyPackUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplyPackPayload>
+        }
+        deleteMany: {
+          args: Prisma.ApplyPackDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ApplyPackUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ApplyPackUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplyPackPayload>[]
+        }
+        upsert: {
+          args: Prisma.ApplyPackUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplyPackPayload>
+        }
+        aggregate: {
+          args: Prisma.ApplyPackAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateApplyPack>
+        }
+        groupBy: {
+          args: Prisma.ApplyPackGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ApplyPackGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ApplyPackCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ApplyPackCountAggregateOutputType> | number
+        }
+      }
+    }
+    ApprovalRecord: {
+      payload: Prisma.$ApprovalRecordPayload<ExtArgs>
+      fields: Prisma.ApprovalRecordFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ApprovalRecordFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApprovalRecordPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ApprovalRecordFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApprovalRecordPayload>
+        }
+        findFirst: {
+          args: Prisma.ApprovalRecordFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApprovalRecordPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ApprovalRecordFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApprovalRecordPayload>
+        }
+        findMany: {
+          args: Prisma.ApprovalRecordFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApprovalRecordPayload>[]
+        }
+        create: {
+          args: Prisma.ApprovalRecordCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApprovalRecordPayload>
+        }
+        createMany: {
+          args: Prisma.ApprovalRecordCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ApprovalRecordCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApprovalRecordPayload>[]
+        }
+        delete: {
+          args: Prisma.ApprovalRecordDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApprovalRecordPayload>
+        }
+        update: {
+          args: Prisma.ApprovalRecordUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApprovalRecordPayload>
+        }
+        deleteMany: {
+          args: Prisma.ApprovalRecordDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ApprovalRecordUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ApprovalRecordUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApprovalRecordPayload>[]
+        }
+        upsert: {
+          args: Prisma.ApprovalRecordUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApprovalRecordPayload>
+        }
+        aggregate: {
+          args: Prisma.ApprovalRecordAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateApprovalRecord>
+        }
+        groupBy: {
+          args: Prisma.ApprovalRecordGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ApprovalRecordGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ApprovalRecordCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ApprovalRecordCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1913,6 +2063,36 @@ export const NotificationScalarFieldEnum = {
 } as const
 
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const ApplyPackScalarFieldEnum = {
+  id: 'id',
+  opportunityId: 'opportunityId',
+  userId: 'userId',
+  coverNote: 'coverNote',
+  coverNoteEdited: 'coverNoteEdited',
+  selectedCvId: 'selectedCvId',
+  answersFilled: 'answersFilled',
+  verifierStatus: 'verifierStatus',
+  verifierIssues: 'verifierIssues',
+  promptVersion: 'promptVersion',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ApplyPackScalarFieldEnum = (typeof ApplyPackScalarFieldEnum)[keyof typeof ApplyPackScalarFieldEnum]
+
+
+export const ApprovalRecordScalarFieldEnum = {
+  id: 'id',
+  applyPackId: 'applyPackId',
+  userId: 'userId',
+  decision: 'decision',
+  notes: 'notes',
+  decidedAt: 'decidedAt'
+} as const
+
+export type ApprovalRecordScalarFieldEnum = (typeof ApprovalRecordScalarFieldEnum)[keyof typeof ApprovalRecordScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -2296,6 +2476,8 @@ export type GlobalOmitConfig = {
   opportunityMatch?: Prisma.OpportunityMatchOmit
   llmCall?: Prisma.LlmCallOmit
   notification?: Prisma.NotificationOmit
+  applyPack?: Prisma.ApplyPackOmit
+  approvalRecord?: Prisma.ApprovalRecordOmit
 }
 
 /* Types for Logging */

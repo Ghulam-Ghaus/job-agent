@@ -34,6 +34,10 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
   get llmCall() { return this.client.llmCall; }
   get notification() { return this.client.notification; }
 
+  // Sprint 2 — apply packs & approvals
+  get applyPack() { return this.client.applyPack; }
+  get approvalRecord() { return this.client.approvalRecord; }
+
   /** Run raw SQL — used by health check and migrations helpers */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   $queryRaw(...args: Parameters<PrismaClient['$queryRaw']>): Promise<any> {

@@ -1,0 +1,1032 @@
+'use client';
+
+import { useState, useEffect, useCallback } from 'react';
+import {
+  api,
+  type Opportunity,
+  type SkillGap,
+  type ScoreBreakdown,
+  type JobRequirementFields,
+} from '@/lib/api-client';
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function scoreColor(score: number): string {
+  if (score >= 75) return '#22c55e';
+  if (score >= 50) return '#f59e0b';
+  return '#ef4444';
+}
+
+function scoreLabel(score: number): string {
+  if (score >= 75) return 'Strong match';
+  if (score >= 50) return 'Moderate match';
+  return 'Weak match';
+}
+
+function formatDate(iso?: string): string {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+}
+
+function statusBadge(status: string): { label: string; color: string; bg: string } {
+  const map: Record<string, { label: string; color: string; bg: string }> = {
+    DISCOVERED: { label: 'Discovered', color: '#93c5fd', bg: 'rgba(59,130,246,.15)' },
+    QUALIFIED: { label: 'Qualified', color: '#6ee7b7', bg: 'rgba(16,185,129,.15)' },
+    DRAFT_READY: { label: 'Draft Ready', color: '#fde68a', bg: 'rgba(245,158,11,.15)' },
+    AWAITING_APPROVAL: { label: 'Awaiting Approval', color: '#fca5a5', bg: 'rgba(239,68,68,.15)' },
+    APPLIED: { label: 'Applied', color: '#c4b5fd', bg: 'rgba(139,92,246,.15)' },
+    VIEWED: { label: 'Viewed', color: '#94a3b8', bg: 'rgba(148,163,184,.15)' },
+    SHORTLISTED: { label: 'Shortlisted', color: '#67e8f9', bg: 'rgba(6,182,212,.15)' },
+    REJECTED: { label: 'Rejected', color: '#f87171', bg: 'rgba(239,68,68,.1)' },
+    ARCHIVED: { label: 'Archived', color: '#6b7280', bg: 'rgba(107,114,128,.1)' },
+  };
+  return map[status] ?? { label: status, color: '#94a3b8', bg: 'rgba(148,163,184,.1)' };
+}
+
+// ─── Score Ring SVG ───────────────────────────────────────────────────────────
+
+function ScoreRing({ score }: { score: number }) {
+  const r = 28;
+  const circ = 2 * Math.PI * r;
+  const offset = circ - (score / 100) * circ;
+  const color = scoreColor(score);
+  return (
+    <svg width="72" height="72" viewBox="0 0 72 72">
+      <circle cx="36" cy="36" r={r} fill="none" stroke="rgba(255,255,255,.08)" strokeWidth="6" />
+      <circle
+        cx="36"
+        cy="36"
+        r={r}
+        fill="none"
+        stroke={color}
+        strokeWidth="6"
+        strokeDasharray={circ}
+        strokeDashoffset={offset}
+        strokeLinecap="round"
+        transform="rotate(-90 36 36)"
+        style={{ transition: 'stroke-dashoffset .6s ease' }}
+      />
+      <text x="36" y="40" textAnchor="middle" fill={color} fontSize="15" fontWeight="700">
+        {score}
+      </text>
+    </svg>
+  );
+}
+
+// ─── Breakdown bar ────────────────────────────────────────────────────────────
+
+function BreakdownBar({
+  label,
+  value,
+  max,
+}: {
+  label: string;
+  value: number;
+  max: number;
+}) {
+  const pct = Math.round((value / max) * 100);
+  return (
+    <div style={{ marginBottom: 8 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: '#94a3b8', marginBottom: 4 }}>
+        <span>{label}</span>
+        <span>
+          {value}/{max}
+        </span>
+      </div>
+      <div style={{ height: 6, borderRadius: 3, background: 'rgba(255,255,255,.06)' }}>
+        <div
+          style={{
+            height: '100%',
+            borderRadius: 3,
+            width: `${pct}%`,
+            background: scoreColor(pct),
+            transition: 'width .5s ease',
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
+// ─── Import Dialog ────────────────────────────────────────────────────────────
+
+function ImportDialog({
+  onClose,
+  onImported,
+}: {
+  onClose: () => void;
+  onImported: (opp: Opportunity) => void;
+}) {
+  const [tab, setTab] = useState<'text' | 'url'>('text');
+  const [text, setText] = useState('');
+  const [url, setUrl] = useState('');
+  const [type, setType] = useState<'JOB' | 'FREELANCE' | 'LEAD'>('JOB');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function submit() {
+    if (tab === 'text' && !text.trim()) return;
+    if (tab === 'url' && !url.trim()) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await api.opportunities.create({
+        text: tab === 'text' ? text : undefined,
+        url: tab === 'url' ? url : undefined,
+        type,
+      });
+      onImported(result);
+      onClose();
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Import failed');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 1000,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'rgba(0,0,0,.6)',
+        backdropFilter: 'blur(4px)',
+      }}
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div
+        style={{
+          background: '#0f172a',
+          border: '1px solid rgba(255,255,255,.1)',
+          borderRadius: 16,
+          padding: '32px',
+          width: '100%',
+          maxWidth: 520,
+          boxShadow: '0 25px 50px rgba(0,0,0,.6)',
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+          <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: '#f1f5f9' }}>Import Job</h2>
+          <button
+            onClick={onClose}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#64748b',
+              cursor: 'pointer',
+              fontSize: 20,
+              lineHeight: 1,
+            }}
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Tabs */}
+        <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
+          {(['text', 'url'] as const).map((t) => (
+            <button
+              key={t}
+              onClick={() => setTab(t)}
+              style={{
+                flex: 1,
+                padding: '8px 0',
+                borderRadius: 8,
+                border: 'none',
+                cursor: 'pointer',
+                fontWeight: 600,
+                fontSize: 13,
+                background: tab === t ? 'rgba(99,102,241,.3)' : 'rgba(255,255,255,.04)',
+                color: tab === t ? '#818cf8' : '#64748b',
+                transition: 'all .2s',
+              }}
+            >
+              {t === 'text' ? '📋 Paste Description' : '🔗 Job URL'}
+            </button>
+          ))}
+        </div>
+
+        {/* Type selector */}
+        <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+          {(['JOB', 'FREELANCE', 'LEAD'] as const).map((tp) => (
+            <button
+              key={tp}
+              onClick={() => setType(tp)}
+              style={{
+                flex: 1,
+                padding: '6px 0',
+                borderRadius: 6,
+                border: `1px solid ${type === tp ? '#6366f1' : 'rgba(255,255,255,.08)'}`,
+                cursor: 'pointer',
+                fontSize: 12,
+                fontWeight: 600,
+                background: type === tp ? 'rgba(99,102,241,.15)' : 'transparent',
+                color: type === tp ? '#818cf8' : '#64748b',
+              }}
+            >
+              {tp}
+            </button>
+          ))}
+        </div>
+
+        {/* Input */}
+        {tab === 'text' ? (
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="Paste the full job description here…"
+            rows={10}
+            style={{
+              width: '100%',
+              boxSizing: 'border-box',
+              background: 'rgba(255,255,255,.04)',
+              border: '1px solid rgba(255,255,255,.1)',
+              borderRadius: 10,
+              padding: '12px 14px',
+              color: '#f1f5f9',
+              fontSize: 14,
+              lineHeight: 1.6,
+              resize: 'vertical',
+              outline: 'none',
+              fontFamily: 'inherit',
+            }}
+          />
+        ) : (
+          <input
+            type="url"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            placeholder="https://example.com/jobs/123"
+            style={{
+              width: '100%',
+              boxSizing: 'border-box',
+              background: 'rgba(255,255,255,.04)',
+              border: '1px solid rgba(255,255,255,.1)',
+              borderRadius: 10,
+              padding: '12px 14px',
+              color: '#f1f5f9',
+              fontSize: 14,
+              outline: 'none',
+              fontFamily: 'inherit',
+            }}
+          />
+        )}
+
+        {error && (
+          <p style={{ margin: '12px 0 0', color: '#f87171', fontSize: 13 }}>⚠ {error}</p>
+        )}
+
+        <p style={{ margin: '12px 0 0', color: '#64748b', fontSize: 12 }}>
+          AI will auto-extract job details and score the match against your profile.
+        </p>
+
+        <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
+          <button
+            onClick={onClose}
+            style={{
+              flex: 1,
+              padding: '12px 0',
+              borderRadius: 10,
+              border: '1px solid rgba(255,255,255,.1)',
+              background: 'transparent',
+              color: '#94a3b8',
+              cursor: 'pointer',
+              fontSize: 14,
+              fontWeight: 600,
+            }}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={submit}
+            disabled={loading}
+            style={{
+              flex: 2,
+              padding: '12px 0',
+              borderRadius: 10,
+              border: 'none',
+              background: loading ? '#334155' : 'linear-gradient(135deg,#6366f1,#8b5cf6)',
+              color: loading ? '#64748b' : '#fff',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              fontSize: 14,
+              fontWeight: 700,
+              boxShadow: loading ? 'none' : '0 4px 15px rgba(99,102,241,.4)',
+              transition: 'all .2s',
+            }}
+          >
+            {loading ? '⏳ Processing…' : '🚀 Import & Analyse'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Evidence Drawer ──────────────────────────────────────────────────────────
+
+function EvidenceDrawer({
+  opp,
+  onClose,
+}: {
+  opp: Opportunity;
+  onClose: () => void;
+}) {
+  const req = opp.requirement;
+  const match = opp.match;
+  const fields = req?.fieldsJson as JobRequirementFields | undefined;
+  const evidence = req?.evidenceJson as Record<string, string> | undefined;
+  const breakdown = match?.breakdownJson as ScoreBreakdown | undefined;
+  const gaps = (match?.gapsJson as SkillGap[]) ?? [];
+
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 1000,
+        display: 'flex',
+        justifyContent: 'flex-end',
+        background: 'rgba(0,0,0,.5)',
+        backdropFilter: 'blur(2px)',
+      }}
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div
+        style={{
+          width: '100%',
+          maxWidth: 480,
+          background: '#0f172a',
+          borderLeft: '1px solid rgba(255,255,255,.08)',
+          overflowY: 'auto',
+          padding: '28px 24px',
+          boxSizing: 'border-box',
+        }}
+      >
+        {/* Header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
+          <div>
+            <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: '#f1f5f9' }}>
+              {opp.title ?? 'Untitled'}
+            </h2>
+            <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: 14 }}>
+              {opp.company ?? 'Unknown company'} {opp.country ? `· ${opp.country}` : ''}
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: 20 }}
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Score */}
+        {match && (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 20,
+              background: 'rgba(255,255,255,.04)',
+              borderRadius: 12,
+              padding: '16px 20px',
+              marginBottom: 24,
+              border: '1px solid rgba(255,255,255,.07)',
+            }}
+          >
+            <ScoreRing score={match.score} />
+            <div>
+              <div style={{ fontSize: 22, fontWeight: 800, color: scoreColor(match.score) }}>
+                {match.score}/100
+              </div>
+              <div style={{ fontSize: 13, color: '#94a3b8' }}>{scoreLabel(match.score)}</div>
+            </div>
+          </div>
+        )}
+
+        {/* Breakdown */}
+        {breakdown && (
+          <section style={{ marginBottom: 24 }}>
+            <h3 style={{ margin: '0 0 12px', fontSize: 13, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.05em' }}>
+              Score Breakdown
+            </h3>
+            <BreakdownBar label="Technical Skills" value={breakdown.technical} max={40} />
+            <BreakdownBar label="Experience" value={breakdown.experience} max={20} />
+            <BreakdownBar label="Location / Remote" value={breakdown.location} max={15} />
+            <BreakdownBar label="Seniority" value={breakdown.seniority} max={10} />
+            <BreakdownBar label="Salary" value={breakdown.salary} max={10} />
+            <BreakdownBar label="Visa" value={breakdown.visa} max={5} />
+          </section>
+        )}
+
+        {/* Gaps */}
+        {gaps.length > 0 && (
+          <section style={{ marginBottom: 24 }}>
+            <h3 style={{ margin: '0 0 12px', fontSize: 13, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.05em' }}>
+              Skill Gaps
+            </h3>
+            {gaps.map((g, i) => (
+              <div
+                key={i}
+                style={{
+                  display: 'flex',
+                  gap: 10,
+                  alignItems: 'flex-start',
+                  padding: '10px 12px',
+                  borderRadius: 8,
+                  marginBottom: 6,
+                  background: g.required ? 'rgba(239,68,68,.08)' : 'rgba(245,158,11,.06)',
+                  border: `1px solid ${g.required ? 'rgba(239,68,68,.2)' : 'rgba(245,158,11,.15)'}`,
+                }}
+              >
+                <span style={{ fontSize: 14, marginTop: 1 }}>{g.required ? '🔴' : '🟡'}</span>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#e2e8f0' }}>{g.skill}</div>
+                  <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 2 }}>{g.reason}</div>
+                </div>
+              </div>
+            ))}
+          </section>
+        )}
+
+        {/* Extracted fields */}
+        {fields && (
+          <section style={{ marginBottom: 24 }}>
+            <h3 style={{ margin: '0 0 12px', fontSize: 13, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.05em' }}>
+              Extracted Details
+            </h3>
+            {[
+              { label: 'Seniority', value: fields.seniority },
+              { label: 'Years required', value: fields.yearsExp != null ? `${fields.yearsExp}y` : undefined },
+              { label: 'Remote', value: fields.remote != null ? (fields.remote ? 'Yes' : 'No') : undefined },
+              { label: 'Salary', value: fields.salaryMin || fields.salaryMax ? `${fields.salaryCurrency ?? '$'}${fields.salaryMin?.toLocaleString() ?? '?'} – ${fields.salaryMax?.toLocaleString() ?? '?'} / ${fields.salaryPeriod ?? 'year'}` : undefined },
+              { label: 'Visa sponsorship', value: fields.visaSponsorship != null ? (fields.visaSponsorship ? 'Yes' : 'No') : undefined },
+              { label: 'Industry', value: fields.industry },
+            ]
+              .filter((f) => f.value)
+              .map((f) => (
+                <div key={f.label} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,.05)', fontSize: 13 }}>
+                  <span style={{ color: '#64748b' }}>{f.label}</span>
+                  <span style={{ color: '#e2e8f0', fontWeight: 500 }}>{f.value}</span>
+                </div>
+              ))}
+
+            {/* Required skills */}
+            {(fields.skills ?? []).length > 0 && (
+              <div style={{ marginTop: 14 }}>
+                <div style={{ fontSize: 12, color: '#64748b', marginBottom: 8 }}>Required skills</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                  {fields.skills!.map((s) => (
+                    <span
+                      key={s.name}
+                      style={{
+                        padding: '3px 10px',
+                        borderRadius: 20,
+                        fontSize: 11,
+                        fontWeight: 600,
+                        background: s.required ? 'rgba(99,102,241,.15)' : 'rgba(255,255,255,.05)',
+                        color: s.required ? '#818cf8' : '#94a3b8',
+                        border: `1px solid ${s.required ? 'rgba(99,102,241,.3)' : 'rgba(255,255,255,.07)'}`,
+                      }}
+                    >
+                      {s.name}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* Evidence */}
+        {evidence && Object.keys(evidence).length > 0 && (
+          <section>
+            <h3 style={{ margin: '0 0 12px', fontSize: 13, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.05em' }}>
+              Evidence Quotes
+            </h3>
+            {Object.entries(evidence).map(([field, quote]) => (
+              <div
+                key={field}
+                style={{
+                  marginBottom: 10,
+                  padding: '10px 14px',
+                  borderRadius: 8,
+                  background: 'rgba(255,255,255,.03)',
+                  borderLeft: '3px solid rgba(99,102,241,.5)',
+                }}
+              >
+                <div style={{ fontSize: 11, color: '#6366f1', fontWeight: 700, marginBottom: 4, textTransform: 'uppercase', letterSpacing: '.05em' }}>
+                  {field}
+                </div>
+                <div style={{ fontSize: 13, color: '#cbd5e1', fontStyle: 'italic', lineHeight: 1.5 }}>
+                  &ldquo;{quote}&rdquo;
+                </div>
+              </div>
+            ))}
+          </section>
+        )}
+
+        {/* Raw text */}
+        <details style={{ marginTop: 24 }}>
+          <summary style={{ cursor: 'pointer', fontSize: 12, color: '#64748b', userSelect: 'none' }}>
+            View raw text
+          </summary>
+          <pre
+            style={{
+              marginTop: 10,
+              padding: 12,
+              borderRadius: 8,
+              background: 'rgba(0,0,0,.3)',
+              color: '#94a3b8',
+              fontSize: 11,
+              whiteSpace: 'pre-wrap',
+              wordBreak: 'break-word',
+              lineHeight: 1.6,
+              maxHeight: 300,
+              overflowY: 'auto',
+            }}
+          >
+            {opp.rawText}
+          </pre>
+        </details>
+      </div>
+    </div>
+  );
+}
+
+// ─── Opportunity Card ─────────────────────────────────────────────────────────
+
+function OpportunityCard({
+  opp,
+  onOpen,
+  onDelete,
+  onReprocess,
+  onBuildPack,
+  buildingPack,
+}: {
+  opp: Opportunity;
+  onOpen: () => void;
+  onDelete: () => void;
+  onReprocess: () => void;
+  onBuildPack: () => void;
+  buildingPack: boolean;
+}) {
+  const match = opp.match;
+  const badge = statusBadge(opp.status);
+  const [deleting, setDeleting] = useState(false);
+
+  async function handleDelete(e: React.MouseEvent) {
+    e.stopPropagation();
+    if (!confirm('Delete this opportunity?')) return;
+    setDeleting(true);
+    await onDelete();
+  }
+
+  return (
+    <div
+      onClick={onOpen}
+      style={{
+        cursor: 'pointer',
+        background: 'rgba(255,255,255,.03)',
+        border: '1px solid rgba(255,255,255,.07)',
+        borderRadius: 12,
+        padding: '18px 20px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 16,
+        transition: 'all .2s',
+      }}
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,.06)';
+        (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(99,102,241,.3)';
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,.03)';
+        (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(255,255,255,.07)';
+      }}
+    >
+      {/* Score ring */}
+      <div style={{ flexShrink: 0 }}>
+        {match ? (
+          <ScoreRing score={match.score} />
+        ) : (
+          <div
+            style={{
+              width: 72,
+              height: 72,
+              borderRadius: '50%',
+              background: 'rgba(255,255,255,.04)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 11,
+              color: '#64748b',
+              border: '1px dashed rgba(255,255,255,.1)',
+              textAlign: 'center',
+              lineHeight: 1.3,
+            }}
+          >
+            No<br />score
+          </div>
+        )}
+      </div>
+
+      {/* Main info */}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
+          <h3
+            style={{
+              margin: 0,
+              fontSize: 15,
+              fontWeight: 700,
+              color: '#f1f5f9',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              maxWidth: 260,
+            }}
+          >
+            {opp.title ?? 'Processing…'}
+          </h3>
+          <span
+            style={{
+              padding: '2px 8px',
+              borderRadius: 4,
+              fontSize: 11,
+              fontWeight: 600,
+              color: badge.color,
+              background: badge.bg,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {badge.label}
+          </span>
+        </div>
+        <div style={{ fontSize: 13, color: '#64748b', marginBottom: 6 }}>
+          {opp.company ?? '—'} {opp.country ? `· ${opp.country}` : ''} {opp.city ? `· ${opp.city}` : ''}
+        </div>
+        <div style={{ display: 'flex', gap: 12, fontSize: 11, color: '#475569' }}>
+          <span>
+            {opp.type === 'JOB' ? '💼' : opp.type === 'FREELANCE' ? '🔓' : '🎯'} {opp.type}
+          </span>
+          {opp.requirement?.fieldsJson && (() => {
+            const f = opp.requirement!.fieldsJson as JobRequirementFields;
+            return f.remote ? <span>🌐 Remote</span> : null;
+          })()}
+          <span>📅 {formatDate(opp.createdAt)}</span>
+        </div>
+      </div>
+
+      {/* Action buttons */}
+      <div
+        style={{ display: 'flex', gap: 6, flexShrink: 0 }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {!opp.requirement && (
+          <button
+            onClick={onReprocess}
+            title="Run AI extraction"
+            style={{
+              padding: '6px 10px',
+              borderRadius: 6,
+              border: '1px solid rgba(99,102,241,.3)',
+              background: 'rgba(99,102,241,.1)',
+              color: '#818cf8',
+              cursor: 'pointer',
+              fontSize: 12,
+              fontWeight: 600,
+            }}
+          >
+            ✨ Analyse
+          </button>
+        )}
+        {opp.match && opp.status === 'QUALIFIED' && (
+          <button
+            onClick={(e) => { e.stopPropagation(); onBuildPack(); }}
+            disabled={buildingPack}
+            title="Generate apply pack"
+            style={{
+              padding: '6px 10px',
+              borderRadius: 6,
+              border: '1px solid rgba(34,197,94,.3)',
+              background: buildingPack ? 'rgba(34,197,94,.05)' : 'rgba(34,197,94,.1)',
+              color: buildingPack ? '#64748b' : '#22c55e',
+              cursor: buildingPack ? 'not-allowed' : 'pointer',
+              fontSize: 12,
+              fontWeight: 600,
+            }}
+          >
+            {buildingPack ? '⏳ Building…' : '📦 Pack'}
+          </button>
+        )}
+        <button
+          onClick={handleDelete}
+          disabled={deleting}
+          title="Delete"
+          style={{
+            padding: '6px 10px',
+            borderRadius: 6,
+            border: '1px solid rgba(239,68,68,.2)',
+            background: 'rgba(239,68,68,.07)',
+            color: '#f87171',
+            cursor: deleting ? 'not-allowed' : 'pointer',
+            fontSize: 12,
+            fontWeight: 600,
+          }}
+        >
+          🗑
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Main Dashboard Page ──────────────────────────────────────────────────────
+
+export default function JobsDashboard() {
+  const [opps, setOpps] = useState<Opportunity[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showImport, setShowImport] = useState(false);
+  const [selectedOpp, setSelectedOpp] = useState<Opportunity | null>(null);
+  const [reprocessingId, setReprocessingId] = useState<string | null>(null);
+  const [buildingPackId, setBuildingPackId] = useState<string | null>(null);
+  const [filterStatus, setFilterStatus] = useState<string>('ALL');
+  const [syncing, setSyncing] = useState(false);
+
+  async function handleSyncConnectors() {
+    setSyncing(true);
+    try {
+      const res = await api.connectors.syncAll();
+      alert(`Sync Complete!\nEmail: ${res.email.jobsEnqueued} jobs enqueued\nATS: ${res.ats.jobsEnqueued} jobs enqueued (${res.ats.companiesChecked} companies checked)`);
+      await load();
+    } catch (err: unknown) {
+      alert(`Sync failed: ${String(err)}`);
+    } finally {
+      setSyncing(false);
+    }
+  }
+
+  const load = useCallback(async () => {
+    try {
+      const data = await api.opportunities.list();
+      setOpps(data);
+    } catch {
+      // silent — will show empty state
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  function handleImported(opp: Opportunity) {
+    setOpps((prev) => [opp, ...prev.filter((o) => o.id !== opp.id)]);
+  }
+
+  async function handleDelete(id: string) {
+    await api.opportunities.delete(id);
+    setOpps((prev) => prev.filter((o) => o.id !== id));
+  }
+
+  async function handleReprocess(id: string) {
+    setReprocessingId(id);
+    try {
+      const updated = await api.opportunities.reprocess(id);
+      setOpps((prev) => prev.map((o) => (o.id === id ? updated : o)));
+      if (selectedOpp?.id === id) setSelectedOpp(updated);
+    } finally {
+      setReprocessingId(null);
+    }
+  }
+
+  async function handleBuildPack(id: string) {
+    setBuildingPackId(id);
+    try {
+      await api.opportunities.buildPack(id);
+      // Reload to get updated status
+      const updated = await api.opportunities.get(id);
+      setOpps((prev) => prev.map((o) => (o.id === id ? updated : o)));
+    } catch (e) {
+      alert(e instanceof Error ? e.message : 'Pack generation failed');
+    } finally {
+      setBuildingPackId(null);
+    }
+  }
+
+  const statuses = ['ALL', 'DISCOVERED', 'QUALIFIED', 'DRAFT_READY', 'APPLIED', 'SHORTLISTED', 'REJECTED'];
+  const filtered =
+    filterStatus === 'ALL' ? opps : opps.filter((o) => o.status === filterStatus);
+
+  // Stats
+  const avgScore =
+    opps.filter((o) => o.match).length > 0
+      ? Math.round(opps.filter((o) => o.match).reduce((a, o) => a + (o.match?.score ?? 0), 0) / opps.filter((o) => o.match).length)
+      : null;
+
+  return (
+    <div
+      style={{
+        minHeight: '100vh',
+        background: '#080f1e',
+        color: '#f1f5f9',
+        fontFamily: "'Inter', -apple-system, sans-serif",
+      }}
+    >
+      {/* Header */}
+      <div
+        style={{
+          borderBottom: '1px solid rgba(255,255,255,.06)',
+          background: 'rgba(255,255,255,.02)',
+          backdropFilter: 'blur(12px)',
+          position: 'sticky',
+          top: 0,
+          zIndex: 100,
+        }}
+      >
+        <div style={{ maxWidth: 1100, margin: '0 auto', padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <h1 style={{ margin: 0, fontSize: 22, fontWeight: 800, background: 'linear-gradient(135deg,#818cf8,#c084fc)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              Job Opportunities
+            </h1>
+            <p style={{ margin: '2px 0 0', fontSize: 13, color: '#475569' }}>
+              {opps.length} tracked · {opps.filter((o) => o.match).length} scored
+              {avgScore !== null ? ` · avg ${avgScore}/100` : ''}
+            </p>
+          </div>
+          <div style={{ display: 'flex', gap: 10 }}>
+            <button
+              onClick={handleSyncConnectors}
+              disabled={syncing}
+              style={{
+                padding: '10px 16px',
+                borderRadius: 10,
+                border: '1px solid rgba(255,255,255,.15)',
+                background: syncing ? 'rgba(255,255,255,.05)' : 'rgba(255,255,255,.08)',
+                color: '#e2e8f0',
+                cursor: syncing ? 'not-allowed' : 'pointer',
+                fontSize: 13,
+                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+              }}
+            >
+              <span>{syncing ? '⏳' : '🔄'}</span> {syncing ? 'Syncing...' : 'Sync Connectors'}
+            </button>
+            <button
+              onClick={() => setShowImport(true)}
+              style={{
+                padding: '10px 20px',
+                borderRadius: 10,
+                border: 'none',
+                background: 'linear-gradient(135deg,#6366f1,#8b5cf6)',
+                color: '#fff',
+                cursor: 'pointer',
+                fontSize: 14,
+                fontWeight: 700,
+                boxShadow: '0 4px 15px rgba(99,102,241,.4)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+              }}
+            >
+              <span>＋</span> Import Job
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '24px' }}>
+        {/* Stats row */}
+        {opps.length > 0 && (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))', gap: 12, marginBottom: 24 }}>
+            {[
+              { label: 'Total', value: opps.length, icon: '📋' },
+              { label: 'Qualified', value: opps.filter((o) => o.status === 'QUALIFIED').length, icon: '✅' },
+              { label: 'Applied', value: opps.filter((o) => o.status === 'APPLIED').length, icon: '📨' },
+              { label: 'Avg Score', value: avgScore != null ? `${avgScore}` : '—', icon: '🎯' },
+            ].map((s) => (
+              <div
+                key={s.label}
+                style={{
+                  background: 'rgba(255,255,255,.03)',
+                  border: '1px solid rgba(255,255,255,.07)',
+                  borderRadius: 10,
+                  padding: '14px 18px',
+                }}
+              >
+                <div style={{ fontSize: 20, marginBottom: 4 }}>{s.icon}</div>
+                <div style={{ fontSize: 24, fontWeight: 800, color: '#f1f5f9' }}>{s.value}</div>
+                <div style={{ fontSize: 12, color: '#64748b' }}>{s.label}</div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Filter bar */}
+        {opps.length > 0 && (
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 20 }}>
+            {statuses.map((s) => {
+              const count = s === 'ALL' ? opps.length : opps.filter((o) => o.status === s).length;
+              const active = filterStatus === s;
+              return (
+                <button
+                  key={s}
+                  onClick={() => setFilterStatus(s)}
+                  style={{
+                    padding: '5px 12px',
+                    borderRadius: 20,
+                    border: `1px solid ${active ? 'rgba(99,102,241,.5)' : 'rgba(255,255,255,.07)'}`,
+                    background: active ? 'rgba(99,102,241,.2)' : 'transparent',
+                    color: active ? '#818cf8' : '#64748b',
+                    cursor: 'pointer',
+                    fontSize: 12,
+                    fontWeight: 600,
+                    transition: 'all .2s',
+                  }}
+                >
+                  {s === 'ALL' ? 'All' : statusBadge(s).label} ({count})
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {/* List */}
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '80px 0', color: '#475569' }}>
+            <div style={{ fontSize: 32, marginBottom: 12 }}>⏳</div>
+            <p>Loading opportunities…</p>
+          </div>
+        ) : filtered.length === 0 ? (
+          <div
+            style={{
+              textAlign: 'center',
+              padding: '80px 0',
+              border: '1px dashed rgba(255,255,255,.08)',
+              borderRadius: 16,
+            }}
+          >
+            <div style={{ fontSize: 48, marginBottom: 16 }}>📭</div>
+            <h2 style={{ color: '#475569', margin: '0 0 8px', fontWeight: 600 }}>
+              {filterStatus === 'ALL' ? 'No opportunities yet' : `No ${statusBadge(filterStatus).label} opportunities`}
+            </h2>
+            <p style={{ color: '#334155', margin: '0 0 24px', fontSize: 14 }}>
+              Paste a job description or a URL and the AI will extract & score it for you.
+            </p>
+            {filterStatus === 'ALL' && (
+              <button
+                onClick={() => setShowImport(true)}
+                style={{
+                  padding: '12px 28px',
+                  borderRadius: 10,
+                  border: 'none',
+                  background: 'linear-gradient(135deg,#6366f1,#8b5cf6)',
+                  color: '#fff',
+                  cursor: 'pointer',
+                  fontSize: 14,
+                  fontWeight: 700,
+                  boxShadow: '0 4px 15px rgba(99,102,241,.4)',
+                }}
+              >
+                ＋ Import First Job
+              </button>
+            )}
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {filtered.map((opp) => (
+              <OpportunityCard
+                key={opp.id}
+                opp={reprocessingId === opp.id ? { ...opp, title: '⏳ Re-analysing…' } : opp}
+                onOpen={() => setSelectedOpp(opp)}
+                onDelete={() => handleDelete(opp.id)}
+                onReprocess={() => handleReprocess(opp.id)}
+                onBuildPack={() => handleBuildPack(opp.id)}
+                buildingPack={buildingPackId === opp.id}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Modals */}
+      {showImport && (
+        <ImportDialog onClose={() => setShowImport(false)} onImported={handleImported} />
+      )}
+      {selectedOpp && (
+        <EvidenceDrawer opp={selectedOpp} onClose={() => setSelectedOpp(null)} />
+      )}
+    </div>
+  );
+}

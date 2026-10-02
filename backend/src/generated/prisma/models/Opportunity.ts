@@ -289,6 +289,7 @@ export type OpportunityWhereInput = {
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   requirement?: Prisma.XOR<Prisma.OpportunityRequirementNullableScalarRelationFilter, Prisma.OpportunityRequirementWhereInput> | null
   match?: Prisma.XOR<Prisma.OpportunityMatchNullableScalarRelationFilter, Prisma.OpportunityMatchWhereInput> | null
+  applyPack?: Prisma.XOR<Prisma.ApplyPackNullableScalarRelationFilter, Prisma.ApplyPackWhereInput> | null
 }
 
 export type OpportunityOrderByWithRelationInput = {
@@ -313,6 +314,7 @@ export type OpportunityOrderByWithRelationInput = {
   user?: Prisma.UserOrderByWithRelationInput
   requirement?: Prisma.OpportunityRequirementOrderByWithRelationInput
   match?: Prisma.OpportunityMatchOrderByWithRelationInput
+  applyPack?: Prisma.ApplyPackOrderByWithRelationInput
 }
 
 export type OpportunityWhereUniqueInput = Prisma.AtLeast<{
@@ -341,6 +343,7 @@ export type OpportunityWhereUniqueInput = Prisma.AtLeast<{
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   requirement?: Prisma.XOR<Prisma.OpportunityRequirementNullableScalarRelationFilter, Prisma.OpportunityRequirementWhereInput> | null
   match?: Prisma.XOR<Prisma.OpportunityMatchNullableScalarRelationFilter, Prisma.OpportunityMatchWhereInput> | null
+  applyPack?: Prisma.XOR<Prisma.ApplyPackNullableScalarRelationFilter, Prisma.ApplyPackWhereInput> | null
 }, "id" | "userId_contentHash">
 
 export type OpportunityOrderByWithAggregationInput = {
@@ -412,6 +415,7 @@ export type OpportunityCreateInput = {
   user: Prisma.UserCreateNestedOneWithoutOpportunitiesInput
   requirement?: Prisma.OpportunityRequirementCreateNestedOneWithoutOpportunityInput
   match?: Prisma.OpportunityMatchCreateNestedOneWithoutOpportunityInput
+  applyPack?: Prisma.ApplyPackCreateNestedOneWithoutOpportunityInput
 }
 
 export type OpportunityUncheckedCreateInput = {
@@ -435,6 +439,7 @@ export type OpportunityUncheckedCreateInput = {
   updatedAt?: Date | string
   requirement?: Prisma.OpportunityRequirementUncheckedCreateNestedOneWithoutOpportunityInput
   match?: Prisma.OpportunityMatchUncheckedCreateNestedOneWithoutOpportunityInput
+  applyPack?: Prisma.ApplyPackUncheckedCreateNestedOneWithoutOpportunityInput
 }
 
 export type OpportunityUpdateInput = {
@@ -458,6 +463,7 @@ export type OpportunityUpdateInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutOpportunitiesNestedInput
   requirement?: Prisma.OpportunityRequirementUpdateOneWithoutOpportunityNestedInput
   match?: Prisma.OpportunityMatchUpdateOneWithoutOpportunityNestedInput
+  applyPack?: Prisma.ApplyPackUpdateOneWithoutOpportunityNestedInput
 }
 
 export type OpportunityUncheckedUpdateInput = {
@@ -481,6 +487,7 @@ export type OpportunityUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requirement?: Prisma.OpportunityRequirementUncheckedUpdateOneWithoutOpportunityNestedInput
   match?: Prisma.OpportunityMatchUncheckedUpdateOneWithoutOpportunityNestedInput
+  applyPack?: Prisma.ApplyPackUncheckedUpdateOneWithoutOpportunityNestedInput
 }
 
 export type OpportunityCreateManyInput = {
@@ -706,6 +713,20 @@ export type OpportunityUpdateOneRequiredWithoutMatchNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.OpportunityUpdateToOneWithWhereWithoutMatchInput, Prisma.OpportunityUpdateWithoutMatchInput>, Prisma.OpportunityUncheckedUpdateWithoutMatchInput>
 }
 
+export type OpportunityCreateNestedOneWithoutApplyPackInput = {
+  create?: Prisma.XOR<Prisma.OpportunityCreateWithoutApplyPackInput, Prisma.OpportunityUncheckedCreateWithoutApplyPackInput>
+  connectOrCreate?: Prisma.OpportunityCreateOrConnectWithoutApplyPackInput
+  connect?: Prisma.OpportunityWhereUniqueInput
+}
+
+export type OpportunityUpdateOneRequiredWithoutApplyPackNestedInput = {
+  create?: Prisma.XOR<Prisma.OpportunityCreateWithoutApplyPackInput, Prisma.OpportunityUncheckedCreateWithoutApplyPackInput>
+  connectOrCreate?: Prisma.OpportunityCreateOrConnectWithoutApplyPackInput
+  upsert?: Prisma.OpportunityUpsertWithoutApplyPackInput
+  connect?: Prisma.OpportunityWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OpportunityUpdateToOneWithWhereWithoutApplyPackInput, Prisma.OpportunityUpdateWithoutApplyPackInput>, Prisma.OpportunityUncheckedUpdateWithoutApplyPackInput>
+}
+
 export type OpportunityCreateWithoutUserInput = {
   id?: string
   type?: $Enums.OpportunityType
@@ -726,6 +747,7 @@ export type OpportunityCreateWithoutUserInput = {
   updatedAt?: Date | string
   requirement?: Prisma.OpportunityRequirementCreateNestedOneWithoutOpportunityInput
   match?: Prisma.OpportunityMatchCreateNestedOneWithoutOpportunityInput
+  applyPack?: Prisma.ApplyPackCreateNestedOneWithoutOpportunityInput
 }
 
 export type OpportunityUncheckedCreateWithoutUserInput = {
@@ -748,6 +770,7 @@ export type OpportunityUncheckedCreateWithoutUserInput = {
   updatedAt?: Date | string
   requirement?: Prisma.OpportunityRequirementUncheckedCreateNestedOneWithoutOpportunityInput
   match?: Prisma.OpportunityMatchUncheckedCreateNestedOneWithoutOpportunityInput
+  applyPack?: Prisma.ApplyPackUncheckedCreateNestedOneWithoutOpportunityInput
 }
 
 export type OpportunityCreateOrConnectWithoutUserInput = {
@@ -820,6 +843,7 @@ export type OpportunityCreateWithoutRequirementInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutOpportunitiesInput
   match?: Prisma.OpportunityMatchCreateNestedOneWithoutOpportunityInput
+  applyPack?: Prisma.ApplyPackCreateNestedOneWithoutOpportunityInput
 }
 
 export type OpportunityUncheckedCreateWithoutRequirementInput = {
@@ -842,6 +866,7 @@ export type OpportunityUncheckedCreateWithoutRequirementInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   match?: Prisma.OpportunityMatchUncheckedCreateNestedOneWithoutOpportunityInput
+  applyPack?: Prisma.ApplyPackUncheckedCreateNestedOneWithoutOpportunityInput
 }
 
 export type OpportunityCreateOrConnectWithoutRequirementInput = {
@@ -880,6 +905,7 @@ export type OpportunityUpdateWithoutRequirementInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutOpportunitiesNestedInput
   match?: Prisma.OpportunityMatchUpdateOneWithoutOpportunityNestedInput
+  applyPack?: Prisma.ApplyPackUpdateOneWithoutOpportunityNestedInput
 }
 
 export type OpportunityUncheckedUpdateWithoutRequirementInput = {
@@ -902,6 +928,7 @@ export type OpportunityUncheckedUpdateWithoutRequirementInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   match?: Prisma.OpportunityMatchUncheckedUpdateOneWithoutOpportunityNestedInput
+  applyPack?: Prisma.ApplyPackUncheckedUpdateOneWithoutOpportunityNestedInput
 }
 
 export type OpportunityCreateWithoutMatchInput = {
@@ -924,6 +951,7 @@ export type OpportunityCreateWithoutMatchInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutOpportunitiesInput
   requirement?: Prisma.OpportunityRequirementCreateNestedOneWithoutOpportunityInput
+  applyPack?: Prisma.ApplyPackCreateNestedOneWithoutOpportunityInput
 }
 
 export type OpportunityUncheckedCreateWithoutMatchInput = {
@@ -946,6 +974,7 @@ export type OpportunityUncheckedCreateWithoutMatchInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   requirement?: Prisma.OpportunityRequirementUncheckedCreateNestedOneWithoutOpportunityInput
+  applyPack?: Prisma.ApplyPackUncheckedCreateNestedOneWithoutOpportunityInput
 }
 
 export type OpportunityCreateOrConnectWithoutMatchInput = {
@@ -984,6 +1013,7 @@ export type OpportunityUpdateWithoutMatchInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutOpportunitiesNestedInput
   requirement?: Prisma.OpportunityRequirementUpdateOneWithoutOpportunityNestedInput
+  applyPack?: Prisma.ApplyPackUpdateOneWithoutOpportunityNestedInput
 }
 
 export type OpportunityUncheckedUpdateWithoutMatchInput = {
@@ -1006,6 +1036,115 @@ export type OpportunityUncheckedUpdateWithoutMatchInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requirement?: Prisma.OpportunityRequirementUncheckedUpdateOneWithoutOpportunityNestedInput
+  applyPack?: Prisma.ApplyPackUncheckedUpdateOneWithoutOpportunityNestedInput
+}
+
+export type OpportunityCreateWithoutApplyPackInput = {
+  id?: string
+  type?: $Enums.OpportunityType
+  status?: $Enums.OpportunityStatus
+  contentHash: string
+  fingerprint?: string | null
+  sourceType?: string | null
+  sourceRef?: string | null
+  title?: string | null
+  company?: string | null
+  country?: string | null
+  city?: string | null
+  url?: string | null
+  rawText: string
+  language?: string | null
+  postedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutOpportunitiesInput
+  requirement?: Prisma.OpportunityRequirementCreateNestedOneWithoutOpportunityInput
+  match?: Prisma.OpportunityMatchCreateNestedOneWithoutOpportunityInput
+}
+
+export type OpportunityUncheckedCreateWithoutApplyPackInput = {
+  id?: string
+  userId: string
+  type?: $Enums.OpportunityType
+  status?: $Enums.OpportunityStatus
+  contentHash: string
+  fingerprint?: string | null
+  sourceType?: string | null
+  sourceRef?: string | null
+  title?: string | null
+  company?: string | null
+  country?: string | null
+  city?: string | null
+  url?: string | null
+  rawText: string
+  language?: string | null
+  postedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  requirement?: Prisma.OpportunityRequirementUncheckedCreateNestedOneWithoutOpportunityInput
+  match?: Prisma.OpportunityMatchUncheckedCreateNestedOneWithoutOpportunityInput
+}
+
+export type OpportunityCreateOrConnectWithoutApplyPackInput = {
+  where: Prisma.OpportunityWhereUniqueInput
+  create: Prisma.XOR<Prisma.OpportunityCreateWithoutApplyPackInput, Prisma.OpportunityUncheckedCreateWithoutApplyPackInput>
+}
+
+export type OpportunityUpsertWithoutApplyPackInput = {
+  update: Prisma.XOR<Prisma.OpportunityUpdateWithoutApplyPackInput, Prisma.OpportunityUncheckedUpdateWithoutApplyPackInput>
+  create: Prisma.XOR<Prisma.OpportunityCreateWithoutApplyPackInput, Prisma.OpportunityUncheckedCreateWithoutApplyPackInput>
+  where?: Prisma.OpportunityWhereInput
+}
+
+export type OpportunityUpdateToOneWithWhereWithoutApplyPackInput = {
+  where?: Prisma.OpportunityWhereInput
+  data: Prisma.XOR<Prisma.OpportunityUpdateWithoutApplyPackInput, Prisma.OpportunityUncheckedUpdateWithoutApplyPackInput>
+}
+
+export type OpportunityUpdateWithoutApplyPackInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumOpportunityTypeFieldUpdateOperationsInput | $Enums.OpportunityType
+  status?: Prisma.EnumOpportunityStatusFieldUpdateOperationsInput | $Enums.OpportunityStatus
+  contentHash?: Prisma.StringFieldUpdateOperationsInput | string
+  fingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rawText?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutOpportunitiesNestedInput
+  requirement?: Prisma.OpportunityRequirementUpdateOneWithoutOpportunityNestedInput
+  match?: Prisma.OpportunityMatchUpdateOneWithoutOpportunityNestedInput
+}
+
+export type OpportunityUncheckedUpdateWithoutApplyPackInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumOpportunityTypeFieldUpdateOperationsInput | $Enums.OpportunityType
+  status?: Prisma.EnumOpportunityStatusFieldUpdateOperationsInput | $Enums.OpportunityStatus
+  contentHash?: Prisma.StringFieldUpdateOperationsInput | string
+  fingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rawText?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  requirement?: Prisma.OpportunityRequirementUncheckedUpdateOneWithoutOpportunityNestedInput
+  match?: Prisma.OpportunityMatchUncheckedUpdateOneWithoutOpportunityNestedInput
 }
 
 export type OpportunityCreateManyUserInput = {
@@ -1048,6 +1187,7 @@ export type OpportunityUpdateWithoutUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requirement?: Prisma.OpportunityRequirementUpdateOneWithoutOpportunityNestedInput
   match?: Prisma.OpportunityMatchUpdateOneWithoutOpportunityNestedInput
+  applyPack?: Prisma.ApplyPackUpdateOneWithoutOpportunityNestedInput
 }
 
 export type OpportunityUncheckedUpdateWithoutUserInput = {
@@ -1070,6 +1210,7 @@ export type OpportunityUncheckedUpdateWithoutUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requirement?: Prisma.OpportunityRequirementUncheckedUpdateOneWithoutOpportunityNestedInput
   match?: Prisma.OpportunityMatchUncheckedUpdateOneWithoutOpportunityNestedInput
+  applyPack?: Prisma.ApplyPackUncheckedUpdateOneWithoutOpportunityNestedInput
 }
 
 export type OpportunityUncheckedUpdateManyWithoutUserInput = {
@@ -1116,6 +1257,7 @@ export type OpportunitySelect<ExtArgs extends runtime.Types.Extensions.InternalA
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   requirement?: boolean | Prisma.Opportunity$requirementArgs<ExtArgs>
   match?: boolean | Prisma.Opportunity$matchArgs<ExtArgs>
+  applyPack?: boolean | Prisma.Opportunity$applyPackArgs<ExtArgs>
 }, ExtArgs["result"]["opportunity"]>
 
 export type OpportunitySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1188,6 +1330,7 @@ export type OpportunityInclude<ExtArgs extends runtime.Types.Extensions.Internal
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   requirement?: boolean | Prisma.Opportunity$requirementArgs<ExtArgs>
   match?: boolean | Prisma.Opportunity$matchArgs<ExtArgs>
+  applyPack?: boolean | Prisma.Opportunity$applyPackArgs<ExtArgs>
 }
 export type OpportunityIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1202,6 +1345,7 @@ export type $OpportunityPayload<ExtArgs extends runtime.Types.Extensions.Interna
     user: Prisma.$UserPayload<ExtArgs>
     requirement: Prisma.$OpportunityRequirementPayload<ExtArgs> | null
     match: Prisma.$OpportunityMatchPayload<ExtArgs> | null
+    applyPack: Prisma.$ApplyPackPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1619,6 +1763,7 @@ export interface Prisma__OpportunityClient<T, Null = never, ExtArgs extends runt
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   requirement<T extends Prisma.Opportunity$requirementArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Opportunity$requirementArgs<ExtArgs>>): Prisma.Prisma__OpportunityRequirementClient<runtime.Types.Result.GetResult<Prisma.$OpportunityRequirementPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   match<T extends Prisma.Opportunity$matchArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Opportunity$matchArgs<ExtArgs>>): Prisma.Prisma__OpportunityMatchClient<runtime.Types.Result.GetResult<Prisma.$OpportunityMatchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  applyPack<T extends Prisma.Opportunity$applyPackArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Opportunity$applyPackArgs<ExtArgs>>): Prisma.Prisma__ApplyPackClient<runtime.Types.Result.GetResult<Prisma.$ApplyPackPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2102,6 +2247,25 @@ export type Opportunity$matchArgs<ExtArgs extends runtime.Types.Extensions.Inter
    */
   include?: Prisma.OpportunityMatchInclude<ExtArgs> | null
   where?: Prisma.OpportunityMatchWhereInput
+}
+
+/**
+ * Opportunity.applyPack
+ */
+export type Opportunity$applyPackArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ApplyPack
+   */
+  select?: Prisma.ApplyPackSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ApplyPack
+   */
+  omit?: Prisma.ApplyPackOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ApplyPackInclude<ExtArgs> | null
+  where?: Prisma.ApplyPackWhereInput
 }
 
 /**

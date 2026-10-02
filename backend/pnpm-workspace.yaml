@@ -3,5 +3,6 @@ allowBuilds:
   '@scarf/scarf': true
   argon2: true
   esbuild: true
+  msgpackr-extract: set this to true or false
   prisma: true
   workerd: set this to true or false

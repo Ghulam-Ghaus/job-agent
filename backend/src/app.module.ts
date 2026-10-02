@@ -24,6 +24,9 @@ import { OpportunitiesModule } from './opportunities/opportunities.module.js';
 import { StorageModule } from './storage/storage.module.js';
 import { UploadModule } from './upload/upload.module.js';
 import { LlmModule } from './llm/llm.module.js';
+import { QueuesModule } from './queues/queues.module.js';
+import { ScheduleModule } from '@nestjs/schedule';
+import { ConnectorsModule } from './connectors/connectors.module.js';
 
 @Module({
   imports: [
@@ -92,6 +95,10 @@ import { LlmModule } from './llm/llm.module.js';
     UploadModule,
 
     LlmModule,
+
+    QueuesModule,
+    ScheduleModule.forRoot(),
+    ConnectorsModule,
   ],
   controllers: [HealthController],
 })

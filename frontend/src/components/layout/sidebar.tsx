@@ -20,7 +20,7 @@ import { api } from '@/lib/api-client';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-  { name: 'Opportunities', href: '/opportunities', icon: Briefcase, badge: '12 new' },
+  { name: 'Opportunities', href: '/dashboard', icon: Briefcase },
   { name: 'Approval Queue', href: '/approvals', icon: CheckCircle2, badge: '3 pending' },
   { name: 'Master Profile', href: '/profile', icon: FileText },
   { name: 'Onboarding Setup', href: '/onboarding', icon: Sparkles },

@@ -210,6 +210,8 @@ export type UserWhereInput = {
   opportunities?: Prisma.OpportunityListRelationFilter
   llmCalls?: Prisma.LlmCallListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
+  applyPacks?: Prisma.ApplyPackListRelationFilter
+  approvalRecords?: Prisma.ApprovalRecordListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -232,6 +234,8 @@ export type UserOrderByWithRelationInput = {
   opportunities?: Prisma.OpportunityOrderByRelationAggregateInput
   llmCalls?: Prisma.LlmCallOrderByRelationAggregateInput
   notifications?: Prisma.NotificationOrderByRelationAggregateInput
+  applyPacks?: Prisma.ApplyPackOrderByRelationAggregateInput
+  approvalRecords?: Prisma.ApprovalRecordOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -257,6 +261,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   opportunities?: Prisma.OpportunityListRelationFilter
   llmCalls?: Prisma.LlmCallListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
+  applyPacks?: Prisma.ApplyPackListRelationFilter
+  approvalRecords?: Prisma.ApprovalRecordListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -305,6 +311,8 @@ export type UserCreateInput = {
   opportunities?: Prisma.OpportunityCreateNestedManyWithoutUserInput
   llmCalls?: Prisma.LlmCallCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -327,6 +335,8 @@ export type UserUncheckedCreateInput = {
   opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutUserInput
   llmCalls?: Prisma.LlmCallUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -349,6 +359,8 @@ export type UserUpdateInput = {
   opportunities?: Prisma.OpportunityUpdateManyWithoutUserNestedInput
   llmCalls?: Prisma.LlmCallUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -371,6 +383,8 @@ export type UserUncheckedUpdateInput = {
   opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutUserNestedInput
   llmCalls?: Prisma.LlmCallUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -631,6 +645,34 @@ export type UserUpdateOneRequiredWithoutNotificationsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutNotificationsInput, Prisma.UserUpdateWithoutNotificationsInput>, Prisma.UserUncheckedUpdateWithoutNotificationsInput>
 }
 
+export type UserCreateNestedOneWithoutApplyPacksInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutApplyPacksInput, Prisma.UserUncheckedCreateWithoutApplyPacksInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutApplyPacksInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutApplyPacksNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutApplyPacksInput, Prisma.UserUncheckedCreateWithoutApplyPacksInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutApplyPacksInput
+  upsert?: Prisma.UserUpsertWithoutApplyPacksInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutApplyPacksInput, Prisma.UserUpdateWithoutApplyPacksInput>, Prisma.UserUncheckedUpdateWithoutApplyPacksInput>
+}
+
+export type UserCreateNestedOneWithoutApprovalRecordsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutApprovalRecordsInput, Prisma.UserUncheckedCreateWithoutApprovalRecordsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutApprovalRecordsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutApprovalRecordsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutApprovalRecordsInput, Prisma.UserUncheckedCreateWithoutApprovalRecordsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutApprovalRecordsInput
+  upsert?: Prisma.UserUpsertWithoutApprovalRecordsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutApprovalRecordsInput, Prisma.UserUpdateWithoutApprovalRecordsInput>, Prisma.UserUncheckedUpdateWithoutApprovalRecordsInput>
+}
+
 export type UserCreateWithoutSessionsInput = {
   id?: string
   email: string
@@ -650,6 +692,8 @@ export type UserCreateWithoutSessionsInput = {
   opportunities?: Prisma.OpportunityCreateNestedManyWithoutUserInput
   llmCalls?: Prisma.LlmCallCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -671,6 +715,8 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutUserInput
   llmCalls?: Prisma.LlmCallUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -708,6 +754,8 @@ export type UserUpdateWithoutSessionsInput = {
   opportunities?: Prisma.OpportunityUpdateManyWithoutUserNestedInput
   llmCalls?: Prisma.LlmCallUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -729,6 +777,8 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutUserNestedInput
   llmCalls?: Prisma.LlmCallUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAuditLogsInput = {
@@ -750,6 +800,8 @@ export type UserCreateWithoutAuditLogsInput = {
   opportunities?: Prisma.OpportunityCreateNestedManyWithoutUserInput
   llmCalls?: Prisma.LlmCallCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -771,6 +823,8 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutUserInput
   llmCalls?: Prisma.LlmCallUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -808,6 +862,8 @@ export type UserUpdateWithoutAuditLogsInput = {
   opportunities?: Prisma.OpportunityUpdateManyWithoutUserNestedInput
   llmCalls?: Prisma.LlmCallUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -829,6 +885,8 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutUserNestedInput
   llmCalls?: Prisma.LlmCallUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutProfileInput = {
@@ -850,6 +908,8 @@ export type UserCreateWithoutProfileInput = {
   opportunities?: Prisma.OpportunityCreateNestedManyWithoutUserInput
   llmCalls?: Prisma.LlmCallCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutProfileInput = {
@@ -871,6 +931,8 @@ export type UserUncheckedCreateWithoutProfileInput = {
   opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutUserInput
   llmCalls?: Prisma.LlmCallUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutProfileInput = {
@@ -908,6 +970,8 @@ export type UserUpdateWithoutProfileInput = {
   opportunities?: Prisma.OpportunityUpdateManyWithoutUserNestedInput
   llmCalls?: Prisma.LlmCallUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProfileInput = {
@@ -929,6 +993,8 @@ export type UserUncheckedUpdateWithoutProfileInput = {
   opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutUserNestedInput
   llmCalls?: Prisma.LlmCallUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutExperiencesInput = {
@@ -950,6 +1016,8 @@ export type UserCreateWithoutExperiencesInput = {
   opportunities?: Prisma.OpportunityCreateNestedManyWithoutUserInput
   llmCalls?: Prisma.LlmCallCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutExperiencesInput = {
@@ -971,6 +1039,8 @@ export type UserUncheckedCreateWithoutExperiencesInput = {
   opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutUserInput
   llmCalls?: Prisma.LlmCallUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutExperiencesInput = {
@@ -1008,6 +1078,8 @@ export type UserUpdateWithoutExperiencesInput = {
   opportunities?: Prisma.OpportunityUpdateManyWithoutUserNestedInput
   llmCalls?: Prisma.LlmCallUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutExperiencesInput = {
@@ -1029,6 +1101,8 @@ export type UserUncheckedUpdateWithoutExperiencesInput = {
   opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutUserNestedInput
   llmCalls?: Prisma.LlmCallUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSkillsInput = {
@@ -1050,6 +1124,8 @@ export type UserCreateWithoutSkillsInput = {
   opportunities?: Prisma.OpportunityCreateNestedManyWithoutUserInput
   llmCalls?: Prisma.LlmCallCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSkillsInput = {
@@ -1071,6 +1147,8 @@ export type UserUncheckedCreateWithoutSkillsInput = {
   opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutUserInput
   llmCalls?: Prisma.LlmCallUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSkillsInput = {
@@ -1108,6 +1186,8 @@ export type UserUpdateWithoutSkillsInput = {
   opportunities?: Prisma.OpportunityUpdateManyWithoutUserNestedInput
   llmCalls?: Prisma.LlmCallUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSkillsInput = {
@@ -1129,6 +1209,8 @@ export type UserUncheckedUpdateWithoutSkillsInput = {
   opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutUserNestedInput
   llmCalls?: Prisma.LlmCallUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutProjectsInput = {
@@ -1150,6 +1232,8 @@ export type UserCreateWithoutProjectsInput = {
   opportunities?: Prisma.OpportunityCreateNestedManyWithoutUserInput
   llmCalls?: Prisma.LlmCallCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutProjectsInput = {
@@ -1171,6 +1255,8 @@ export type UserUncheckedCreateWithoutProjectsInput = {
   opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutUserInput
   llmCalls?: Prisma.LlmCallUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutProjectsInput = {
@@ -1208,6 +1294,8 @@ export type UserUpdateWithoutProjectsInput = {
   opportunities?: Prisma.OpportunityUpdateManyWithoutUserNestedInput
   llmCalls?: Prisma.LlmCallUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProjectsInput = {
@@ -1229,6 +1317,8 @@ export type UserUncheckedUpdateWithoutProjectsInput = {
   opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutUserNestedInput
   llmCalls?: Prisma.LlmCallUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCvsInput = {
@@ -1250,6 +1340,8 @@ export type UserCreateWithoutCvsInput = {
   opportunities?: Prisma.OpportunityCreateNestedManyWithoutUserInput
   llmCalls?: Prisma.LlmCallCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCvsInput = {
@@ -1271,6 +1363,8 @@ export type UserUncheckedCreateWithoutCvsInput = {
   opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutUserInput
   llmCalls?: Prisma.LlmCallUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCvsInput = {
@@ -1308,6 +1402,8 @@ export type UserUpdateWithoutCvsInput = {
   opportunities?: Prisma.OpportunityUpdateManyWithoutUserNestedInput
   llmCalls?: Prisma.LlmCallUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCvsInput = {
@@ -1329,6 +1425,8 @@ export type UserUncheckedUpdateWithoutCvsInput = {
   opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutUserNestedInput
   llmCalls?: Prisma.LlmCallUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAnswerBankInput = {
@@ -1350,6 +1448,8 @@ export type UserCreateWithoutAnswerBankInput = {
   opportunities?: Prisma.OpportunityCreateNestedManyWithoutUserInput
   llmCalls?: Prisma.LlmCallCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAnswerBankInput = {
@@ -1371,6 +1471,8 @@ export type UserUncheckedCreateWithoutAnswerBankInput = {
   opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutUserInput
   llmCalls?: Prisma.LlmCallUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAnswerBankInput = {
@@ -1408,6 +1510,8 @@ export type UserUpdateWithoutAnswerBankInput = {
   opportunities?: Prisma.OpportunityUpdateManyWithoutUserNestedInput
   llmCalls?: Prisma.LlmCallUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAnswerBankInput = {
@@ -1429,6 +1533,8 @@ export type UserUncheckedUpdateWithoutAnswerBankInput = {
   opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutUserNestedInput
   llmCalls?: Prisma.LlmCallUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPreferencesInput = {
@@ -1450,6 +1556,8 @@ export type UserCreateWithoutPreferencesInput = {
   opportunities?: Prisma.OpportunityCreateNestedManyWithoutUserInput
   llmCalls?: Prisma.LlmCallCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPreferencesInput = {
@@ -1471,6 +1579,8 @@ export type UserUncheckedCreateWithoutPreferencesInput = {
   opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutUserInput
   llmCalls?: Prisma.LlmCallUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPreferencesInput = {
@@ -1508,6 +1618,8 @@ export type UserUpdateWithoutPreferencesInput = {
   opportunities?: Prisma.OpportunityUpdateManyWithoutUserNestedInput
   llmCalls?: Prisma.LlmCallUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPreferencesInput = {
@@ -1529,6 +1641,8 @@ export type UserUncheckedUpdateWithoutPreferencesInput = {
   opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutUserNestedInput
   llmCalls?: Prisma.LlmCallUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutOpportunitiesInput = {
@@ -1550,6 +1664,8 @@ export type UserCreateWithoutOpportunitiesInput = {
   preferences?: Prisma.JobPreferenceCreateNestedOneWithoutUserInput
   llmCalls?: Prisma.LlmCallCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutOpportunitiesInput = {
@@ -1571,6 +1687,8 @@ export type UserUncheckedCreateWithoutOpportunitiesInput = {
   preferences?: Prisma.JobPreferenceUncheckedCreateNestedOneWithoutUserInput
   llmCalls?: Prisma.LlmCallUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutOpportunitiesInput = {
@@ -1608,6 +1726,8 @@ export type UserUpdateWithoutOpportunitiesInput = {
   preferences?: Prisma.JobPreferenceUpdateOneWithoutUserNestedInput
   llmCalls?: Prisma.LlmCallUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOpportunitiesInput = {
@@ -1629,6 +1749,8 @@ export type UserUncheckedUpdateWithoutOpportunitiesInput = {
   preferences?: Prisma.JobPreferenceUncheckedUpdateOneWithoutUserNestedInput
   llmCalls?: Prisma.LlmCallUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutLlmCallsInput = {
@@ -1650,6 +1772,8 @@ export type UserCreateWithoutLlmCallsInput = {
   preferences?: Prisma.JobPreferenceCreateNestedOneWithoutUserInput
   opportunities?: Prisma.OpportunityCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutLlmCallsInput = {
@@ -1671,6 +1795,8 @@ export type UserUncheckedCreateWithoutLlmCallsInput = {
   preferences?: Prisma.JobPreferenceUncheckedCreateNestedOneWithoutUserInput
   opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutLlmCallsInput = {
@@ -1708,6 +1834,8 @@ export type UserUpdateWithoutLlmCallsInput = {
   preferences?: Prisma.JobPreferenceUpdateOneWithoutUserNestedInput
   opportunities?: Prisma.OpportunityUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLlmCallsInput = {
@@ -1729,6 +1857,8 @@ export type UserUncheckedUpdateWithoutLlmCallsInput = {
   preferences?: Prisma.JobPreferenceUncheckedUpdateOneWithoutUserNestedInput
   opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotificationsInput = {
@@ -1750,6 +1880,8 @@ export type UserCreateWithoutNotificationsInput = {
   preferences?: Prisma.JobPreferenceCreateNestedOneWithoutUserInput
   opportunities?: Prisma.OpportunityCreateNestedManyWithoutUserInput
   llmCalls?: Prisma.LlmCallCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -1771,6 +1903,8 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   preferences?: Prisma.JobPreferenceUncheckedCreateNestedOneWithoutUserInput
   opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutUserInput
   llmCalls?: Prisma.LlmCallUncheckedCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -1808,6 +1942,8 @@ export type UserUpdateWithoutNotificationsInput = {
   preferences?: Prisma.JobPreferenceUpdateOneWithoutUserNestedInput
   opportunities?: Prisma.OpportunityUpdateManyWithoutUserNestedInput
   llmCalls?: Prisma.LlmCallUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -1829,6 +1965,224 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   preferences?: Prisma.JobPreferenceUncheckedUpdateOneWithoutUserNestedInput
   opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutUserNestedInput
   llmCalls?: Prisma.LlmCallUncheckedUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutApplyPacksInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  role?: $Enums.Role
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  profile?: Prisma.ProfileCreateNestedOneWithoutUserInput
+  experiences?: Prisma.ExperienceCreateNestedManyWithoutUserInput
+  skills?: Prisma.SkillCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutUserInput
+  cvs?: Prisma.CvCreateNestedManyWithoutUserInput
+  answerBank?: Prisma.AnswerBankItemCreateNestedManyWithoutUserInput
+  preferences?: Prisma.JobPreferenceCreateNestedOneWithoutUserInput
+  opportunities?: Prisma.OpportunityCreateNestedManyWithoutUserInput
+  llmCalls?: Prisma.LlmCallCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutApplyPacksInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  role?: $Enums.Role
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  profile?: Prisma.ProfileUncheckedCreateNestedOneWithoutUserInput
+  experiences?: Prisma.ExperienceUncheckedCreateNestedManyWithoutUserInput
+  skills?: Prisma.SkillUncheckedCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutUserInput
+  cvs?: Prisma.CvUncheckedCreateNestedManyWithoutUserInput
+  answerBank?: Prisma.AnswerBankItemUncheckedCreateNestedManyWithoutUserInput
+  preferences?: Prisma.JobPreferenceUncheckedCreateNestedOneWithoutUserInput
+  opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutUserInput
+  llmCalls?: Prisma.LlmCallUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutApplyPacksInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutApplyPacksInput, Prisma.UserUncheckedCreateWithoutApplyPacksInput>
+}
+
+export type UserUpsertWithoutApplyPacksInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutApplyPacksInput, Prisma.UserUncheckedUpdateWithoutApplyPacksInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutApplyPacksInput, Prisma.UserUncheckedCreateWithoutApplyPacksInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutApplyPacksInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutApplyPacksInput, Prisma.UserUncheckedUpdateWithoutApplyPacksInput>
+}
+
+export type UserUpdateWithoutApplyPacksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  profile?: Prisma.ProfileUpdateOneWithoutUserNestedInput
+  experiences?: Prisma.ExperienceUpdateManyWithoutUserNestedInput
+  skills?: Prisma.SkillUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutUserNestedInput
+  cvs?: Prisma.CvUpdateManyWithoutUserNestedInput
+  answerBank?: Prisma.AnswerBankItemUpdateManyWithoutUserNestedInput
+  preferences?: Prisma.JobPreferenceUpdateOneWithoutUserNestedInput
+  opportunities?: Prisma.OpportunityUpdateManyWithoutUserNestedInput
+  llmCalls?: Prisma.LlmCallUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutApplyPacksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  profile?: Prisma.ProfileUncheckedUpdateOneWithoutUserNestedInput
+  experiences?: Prisma.ExperienceUncheckedUpdateManyWithoutUserNestedInput
+  skills?: Prisma.SkillUncheckedUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput
+  cvs?: Prisma.CvUncheckedUpdateManyWithoutUserNestedInput
+  answerBank?: Prisma.AnswerBankItemUncheckedUpdateManyWithoutUserNestedInput
+  preferences?: Prisma.JobPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutUserNestedInput
+  llmCalls?: Prisma.LlmCallUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutApprovalRecordsInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  role?: $Enums.Role
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  profile?: Prisma.ProfileCreateNestedOneWithoutUserInput
+  experiences?: Prisma.ExperienceCreateNestedManyWithoutUserInput
+  skills?: Prisma.SkillCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutUserInput
+  cvs?: Prisma.CvCreateNestedManyWithoutUserInput
+  answerBank?: Prisma.AnswerBankItemCreateNestedManyWithoutUserInput
+  preferences?: Prisma.JobPreferenceCreateNestedOneWithoutUserInput
+  opportunities?: Prisma.OpportunityCreateNestedManyWithoutUserInput
+  llmCalls?: Prisma.LlmCallCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutApprovalRecordsInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  role?: $Enums.Role
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  profile?: Prisma.ProfileUncheckedCreateNestedOneWithoutUserInput
+  experiences?: Prisma.ExperienceUncheckedCreateNestedManyWithoutUserInput
+  skills?: Prisma.SkillUncheckedCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutUserInput
+  cvs?: Prisma.CvUncheckedCreateNestedManyWithoutUserInput
+  answerBank?: Prisma.AnswerBankItemUncheckedCreateNestedManyWithoutUserInput
+  preferences?: Prisma.JobPreferenceUncheckedCreateNestedOneWithoutUserInput
+  opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutUserInput
+  llmCalls?: Prisma.LlmCallUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutApprovalRecordsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutApprovalRecordsInput, Prisma.UserUncheckedCreateWithoutApprovalRecordsInput>
+}
+
+export type UserUpsertWithoutApprovalRecordsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutApprovalRecordsInput, Prisma.UserUncheckedUpdateWithoutApprovalRecordsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutApprovalRecordsInput, Prisma.UserUncheckedCreateWithoutApprovalRecordsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutApprovalRecordsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutApprovalRecordsInput, Prisma.UserUncheckedUpdateWithoutApprovalRecordsInput>
+}
+
+export type UserUpdateWithoutApprovalRecordsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  profile?: Prisma.ProfileUpdateOneWithoutUserNestedInput
+  experiences?: Prisma.ExperienceUpdateManyWithoutUserNestedInput
+  skills?: Prisma.SkillUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutUserNestedInput
+  cvs?: Prisma.CvUpdateManyWithoutUserNestedInput
+  answerBank?: Prisma.AnswerBankItemUpdateManyWithoutUserNestedInput
+  preferences?: Prisma.JobPreferenceUpdateOneWithoutUserNestedInput
+  opportunities?: Prisma.OpportunityUpdateManyWithoutUserNestedInput
+  llmCalls?: Prisma.LlmCallUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutApprovalRecordsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  profile?: Prisma.ProfileUncheckedUpdateOneWithoutUserNestedInput
+  experiences?: Prisma.ExperienceUncheckedUpdateManyWithoutUserNestedInput
+  skills?: Prisma.SkillUncheckedUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput
+  cvs?: Prisma.CvUncheckedUpdateManyWithoutUserNestedInput
+  answerBank?: Prisma.AnswerBankItemUncheckedUpdateManyWithoutUserNestedInput
+  preferences?: Prisma.JobPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutUserNestedInput
+  llmCalls?: Prisma.LlmCallUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -1847,6 +2201,8 @@ export type UserCountOutputType = {
   opportunities: number
   llmCalls: number
   notifications: number
+  applyPacks: number
+  approvalRecords: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1860,6 +2216,8 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   opportunities?: boolean | UserCountOutputTypeCountOpportunitiesArgs
   llmCalls?: boolean | UserCountOutputTypeCountLlmCallsArgs
   notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
+  applyPacks?: boolean | UserCountOutputTypeCountApplyPacksArgs
+  approvalRecords?: boolean | UserCountOutputTypeCountApprovalRecordsArgs
 }
 
 /**
@@ -1942,6 +2300,20 @@ export type UserCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.Ty
   where?: Prisma.NotificationWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountApplyPacksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ApplyPackWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountApprovalRecordsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ApprovalRecordWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1963,6 +2335,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   opportunities?: boolean | Prisma.User$opportunitiesArgs<ExtArgs>
   llmCalls?: boolean | Prisma.User$llmCallsArgs<ExtArgs>
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
+  applyPacks?: boolean | Prisma.User$applyPacksArgs<ExtArgs>
+  approvalRecords?: boolean | Prisma.User$approvalRecordsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -2010,6 +2384,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   opportunities?: boolean | Prisma.User$opportunitiesArgs<ExtArgs>
   llmCalls?: boolean | Prisma.User$llmCallsArgs<ExtArgs>
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
+  applyPacks?: boolean | Prisma.User$applyPacksArgs<ExtArgs>
+  approvalRecords?: boolean | Prisma.User$approvalRecordsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -2030,6 +2406,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     opportunities: Prisma.$OpportunityPayload<ExtArgs>[]
     llmCalls: Prisma.$LlmCallPayload<ExtArgs>[]
     notifications: Prisma.$NotificationPayload<ExtArgs>[]
+    applyPacks: Prisma.$ApplyPackPayload<ExtArgs>[]
+    approvalRecords: Prisma.$ApprovalRecordPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2445,6 +2823,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   opportunities<T extends Prisma.User$opportunitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$opportunitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OpportunityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   llmCalls<T extends Prisma.User$llmCallsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$llmCallsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LlmCallPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notifications<T extends Prisma.User$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  applyPacks<T extends Prisma.User$applyPacksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$applyPacksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApplyPackPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  approvalRecords<T extends Prisma.User$approvalRecordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$approvalRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApprovalRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3149,6 +3529,54 @@ export type User$notificationsArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
+}
+
+/**
+ * User.applyPacks
+ */
+export type User$applyPacksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ApplyPack
+   */
+  select?: Prisma.ApplyPackSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ApplyPack
+   */
+  omit?: Prisma.ApplyPackOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ApplyPackInclude<ExtArgs> | null
+  where?: Prisma.ApplyPackWhereInput
+  orderBy?: Prisma.ApplyPackOrderByWithRelationInput | Prisma.ApplyPackOrderByWithRelationInput[]
+  cursor?: Prisma.ApplyPackWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ApplyPackScalarFieldEnum | Prisma.ApplyPackScalarFieldEnum[]
+}
+
+/**
+ * User.approvalRecords
+ */
+export type User$approvalRecordsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ApprovalRecord
+   */
+  select?: Prisma.ApprovalRecordSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ApprovalRecord
+   */
+  omit?: Prisma.ApprovalRecordOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ApprovalRecordInclude<ExtArgs> | null
+  where?: Prisma.ApprovalRecordWhereInput
+  orderBy?: Prisma.ApprovalRecordOrderByWithRelationInput | Prisma.ApprovalRecordOrderByWithRelationInput[]
+  cursor?: Prisma.ApprovalRecordWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ApprovalRecordScalarFieldEnum | Prisma.ApprovalRecordScalarFieldEnum[]
 }
 
 /**
