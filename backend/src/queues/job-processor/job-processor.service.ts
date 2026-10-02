@@ -9,6 +9,7 @@ import {
 } from '../../opportunities/extraction.service.js';
 import { ScoringService } from '../../opportunities/scoring.service.js';
 import { ApplyPackService } from '../../opportunities/apply-pack.service.js';
+import { TelegramService } from '../../telegram/telegram.service.js';
 
 export interface ProcessJobData {
   userId: string;
@@ -27,6 +28,7 @@ export class JobProcessorService extends WorkerHost {
     private readonly extraction: ExtractionService,
     private readonly scoring: ScoringService,
     private readonly applyPack: ApplyPackService,
+    private readonly telegram: TelegramService,
   ) {
     super();
   }
@@ -125,6 +127,13 @@ export class JobProcessorService extends WorkerHost {
           );
           await this.applyPack.buildPack(opp.id, userId);
           applyPackCreated = true;
+
+          // Dispatch Telegram notification card for high match
+          try {
+            await this.telegram.sendOpportunityCard(userId, opp.id);
+          } catch (err: unknown) {
+            this.logger.warn(`Failed to dispatch Telegram card for opp ${opp.id}: ${String(err)}`);
+          }
         } catch (err: unknown) {
           this.logger.error(`Apply pack generation failed for opp ${opp.id}: ${String(err)}`);
         }

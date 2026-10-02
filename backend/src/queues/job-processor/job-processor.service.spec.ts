@@ -4,6 +4,7 @@ import { PrismaService } from '../../prisma/prisma.service.js';
 import { ExtractionService } from '../../opportunities/extraction.service.js';
 import { ScoringService } from '../../opportunities/scoring.service.js';
 import { ApplyPackService } from '../../opportunities/apply-pack.service.js';
+import { TelegramService } from '../../telegram/telegram.service.js';
 
 describe('JobProcessorService', () => {
   let service: JobProcessorService;
@@ -32,6 +33,10 @@ describe('JobProcessorService', () => {
         {
           provide: ApplyPackService,
           useValue: { buildPack: vi.fn() },
+        },
+        {
+          provide: TelegramService,
+          useValue: { sendOpportunityCard: vi.fn().mockResolvedValue(true) },
         },
       ],
     }).compile();

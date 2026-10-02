@@ -27,6 +27,7 @@ import { LlmModule } from './llm/llm.module.js';
 import { QueuesModule } from './queues/queues.module.js';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ConnectorsModule } from './connectors/connectors.module.js';
+import { TelegramModule } from './telegram/telegram.module.js';
 
 @Module({
   imports: [
@@ -99,6 +100,7 @@ import { ConnectorsModule } from './connectors/connectors.module.js';
     QueuesModule,
     ScheduleModule.forRoot(),
     ConnectorsModule,
+    TelegramModule,
   ],
   controllers: [HealthController],
 })

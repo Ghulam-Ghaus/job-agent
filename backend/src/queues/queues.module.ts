@@ -9,6 +9,7 @@ import { PipelineService } from './pipeline/pipeline.service.js';
 import { JobProcessorService } from './job-processor/job-processor.service.js';
 import { OpportunitiesModule } from '../opportunities/opportunities.module.js';
 import { PrismaModule } from '../prisma/prisma.module.js';
+import { TelegramModule } from '../telegram/telegram.module.js';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { PrismaModule } from '../prisma/prisma.module.js';
     }),
     OpportunitiesModule,
     PrismaModule,
+    TelegramModule,
   ],
   providers: [PipelineService, JobProcessorService],
   exports: [PipelineService, BullModule],

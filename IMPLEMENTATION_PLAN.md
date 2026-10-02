@@ -6,83 +6,83 @@ Based on the master specification in [`docs/PLAN.md`](file:///d:/PL/job-agent/do
 
 ## 📊 Phase & Sprint Progress Tracker
 
-### [ ] Sprint 0: Foundation & Core Infrastructure
-- [ ] **0.1 Environment & Containers**
-  - [ ] Create `docker-compose.yml` (`pgvector/pgvector:pg16` + `redis:7-alpine`) with health checks & volumes
-  - [ ] Create `.env.example` with DB, Redis, JWT, and application keys
-- [ ] **0.2 Scaffolding (Official CLIs only)**
-  - [ ] Backend: `pnpm dlx @nestjs/cli new backend --package-manager pnpm --strict`
-  - [ ] Frontend: `pnpm create next-app@latest frontend --typescript --tailwind --eslint --app --src-dir --import-alias "@/*"`
-  - [ ] Frontend UI: Initialize `shadcn/ui`
-- [ ] **0.3 Database & Prisma 7 Layer**
-  - [ ] Install Prisma 7 (`@prisma/client`, `prisma`, `@prisma/adapter-pg`, `pg`)
-  - [ ] Configure `backend/prisma/schema.prisma` (`User`, `Session`, `AuditLog`, `Setting`)
-  - [ ] Run initial migration via CLI: `pnpm prisma migrate dev --name init_foundation`
-- [ ] **0.4 NestJS Enterprise Standards & Middleware**
-  - [ ] Global `ValidationPipe` (`whitelist`, `transform`, `forbidNonWhitelisted`)
-  - [ ] Global Exception Filter (with Prisma error mapping) & Response Interceptor (standard envelope)
-  - [ ] Request-ID middleware & `nestjs-pino` logger (secret redaction)
-  - [ ] Security headers (`helmet`), CORS allow-list, `@nestjs/throttler` rate limiting
-  - [ ] URI versioning (`/api/v1`) & Swagger documentation (`/api/docs`)
-  - [ ] Terminus health check (`/api/v1/health`)
-- [ ] **0.5 Authentication & Super Admin Seed**
-  - [ ] JWT authentication in HTTP-only secure cookies (`POST /auth/login`, `/refresh`, `/logout`)
-  - [ ] Argon2 password hashing; enforce `ALLOW_SIGNUP=false`
-  - [ ] `backend/prisma/seed.ts` to seed initial `SUPER_ADMIN`
-- [ ] **0.6 Frontend Shell & Typed API Client**
-  - [ ] Generate typed API client from Swagger schema (`openapi-typescript`)
-  - [ ] Configure TanStack Query
-  - [ ] Build login page, protected layout, session management, and dashboard shell
-- [ ] **0.7 CI & Verification**
-  - [ ] Configure GitHub Actions workflow (lint + typecheck + test)
-  - [ ] **Done When:** Log in as Super Admin locally and `/api/v1/health` is green
+### [x] Sprint 0: Foundation & Core Infrastructure
+- [x] **0.1 Environment & Containers**
+  - [x] Create `docker-compose.yml` (`pgvector/pgvector:pg16` + `redis:7-alpine`) with health checks & volumes
+  - [x] Create `.env.example` with DB, Redis, JWT, and application keys
+- [x] **0.2 Scaffolding (Official CLIs only)**
+  - [x] Backend: `pnpm dlx @nestjs/cli new backend --package-manager pnpm --strict`
+  - [x] Frontend: `pnpm create next-app@latest frontend --typescript --tailwind --eslint --app --src-dir --import-alias "@/*"`
+  - [x] Frontend UI: Initialize `shadcn/ui`
+- [x] **0.3 Database & Prisma 7 Layer**
+  - [x] Install Prisma 7 (`@prisma/client`, `prisma`, `@prisma/adapter-pg`, `pg`)
+  - [x] Configure `backend/prisma/schema.prisma` (`User`, `Session`, `AuditLog`, `Setting`)
+  - [x] Run initial migration via CLI: `pnpm prisma migrate dev --name init_foundation`
+- [x] **0.4 NestJS Enterprise Standards & Middleware**
+  - [x] Global `ValidationPipe` (`whitelist`, `transform`, `forbidNonWhitelisted`)
+  - [x] Global Exception Filter (with Prisma error mapping) & Response Interceptor (standard envelope)
+  - [x] Request-ID middleware & `nestjs-pino` logger (secret redaction)
+  - [x] Security headers (`helmet`), CORS allow-list, `@nestjs/throttler` rate limiting
+  - [x] URI versioning (`/api/v1`) & Swagger documentation (`/api/docs`)
+  - [x] Terminus health check (`/api/v1/health`)
+- [x] **0.5 Authentication & Super Admin Seed**
+  - [x] JWT authentication in HTTP-only secure cookies (`POST /auth/login`, `/refresh`, `/logout`)
+  - [x] Argon2 password hashing; enforce `ALLOW_SIGNUP=false`
+  - [x] `backend/prisma/seed.ts` to seed initial `SUPER_ADMIN`
+- [x] **0.6 Frontend Shell & Typed API Client**
+  - [x] Generate typed API client from Swagger schema (`openapi-typescript`)
+  - [x] Configure TanStack Query
+  - [x] Build login page, protected layout, session management, and dashboard shell
+- [x] **0.7 CI & Verification**
+  - [x] Configure GitHub Actions workflow (lint + typecheck + test)
+  - [x] **Done When:** Log in as Super Admin locally and `/api/v1/health` is green
 
 ---
 
-### [ ] Sprint 1: Profile, Manual Import & Evidence-Based Scoring ("The Brain")
-- [ ] **1.1 Domain Models & Resources**
-  - [ ] Generate NestJS resources (`nest g resource`) and Prisma models for `Profile`, `Experience`, `Skill`, `Project`, `Cv`, `AnswerBankItem`, `JobPreference`, and `Opportunity`
-  - [ ] Run migration: `pnpm prisma migrate dev --name add_profile_and_opportunities`
-- [ ] **1.2 Onboarding & CV Storage**
-  - [ ] Build frontend profile setup wizard (skills, years, visa, notice period, portfolio links)
-  - [ ] Storage service abstraction (local disk for MVP) for CV file uploads
-- [ ] **1.3 LLM Provider Abstraction**
-  - [ ] Vercel AI SDK integration supporting `LLM_CHAIN=gemini,groq` with HTTP 429 fallback
-  - [ ] BullMQ rate limiter, `LlmCall` audit logging, and SHA-256 content-hash caching
-- [ ] **1.4 Manual Ingestion & Deduplication**
-  - [ ] Manual import endpoint (paste text or URL) with SHA-256 `contentHash` deduplication
-- [ ] **1.5 Evidence-Based AI Extraction**
-  - [ ] Extract requirements, visa conditions, tech stack, and salary into typed Zod schemas
-  - [ ] Rule: Every field requires quoted evidence snippet from job text; otherwise `"Unknown"`
-- [ ] **1.6 Deterministic Code-Based Scoring**
-  - [ ] Scoring engine in pure TypeScript code (Tech 30, Exp 20, Loc 10, Seniority 10, Salary 10, Visa 10, Projects 5, Other 5)
-  - [ ] Identify skill gaps and recommend optimal CV
-- [ ] **1.7 Frontend Job Board**
-  - [ ] Job list sorted by match score, score breakdown drawer, and evidence viewer
-- [ ] **1.8 Golden Set Evaluation**
-  - [ ] Hand-label 30 real job postings and add Jest eval test suite
-  - [ ] **Done When:** 10 pasted real Saudi/UAE jobs yield accurate, evidence-backed scores matching judgment >= 80%
+### [x] Sprint 1: Profile, Manual Import & Evidence-Based Scoring ("The Brain")
+- [x] **1.1 Domain Models & Resources**
+  - [x] Generate NestJS resources (`nest g resource`) and Prisma models for `Profile`, `Experience`, `Skill`, `Project`, `Cv`, `AnswerBankItem`, `JobPreference`, and `Opportunity`
+  - [x] Run migration: `pnpm prisma migrate dev --name add_profile_and_opportunities`
+- [x] **1.2 Onboarding & CV Storage**
+  - [x] Build frontend profile setup wizard (skills, years, visa, notice period, portfolio links)
+  - [x] Storage service abstraction (local disk for MVP) for CV file uploads
+- [x] **1.3 LLM Provider Abstraction**
+  - [x] Vercel AI SDK integration supporting `LLM_CHAIN=gemini,groq` with HTTP 429 fallback
+  - [x] BullMQ rate limiter, `LlmCall` audit logging, and SHA-256 content-hash caching
+- [x] **1.4 Manual Ingestion & Deduplication**
+  - [x] Manual import endpoint (paste text or URL) with SHA-256 `contentHash` deduplication
+- [x] **1.5 Evidence-Based AI Extraction**
+  - [x] Extract requirements, visa conditions, tech stack, and salary into typed Zod schemas
+  - [x] Rule: Every field requires quoted evidence snippet from job text; otherwise `"Unknown"`
+- [x] **1.6 Deterministic Code-Based Scoring**
+  - [x] Scoring engine in pure TypeScript code (Tech 30, Exp 20, Loc 10, Seniority 10, Salary 10, Visa 10, Projects 5, Other 5)
+  - [x] Identify skill gaps and recommend optimal CV
+- [x] **1.7 Frontend Job Board**
+  - [x] Job list sorted by match score, score breakdown drawer, and evidence viewer
+- [x] **1.8 Golden Set Evaluation**
+  - [x] Hand-label 30 real job postings and add Jest eval test suite
+  - [x] **Done When:** 10 pasted real Saudi/UAE jobs yield accurate, evidence-backed scores matching judgment >= 80%
 
 ---
 
-### [ ] Sprint 2: Automated Pipeline, Telegram Bot & Apply Packs
-- [ ] **2.1 Queues & Scheduling**
-  - [ ] `@nestjs/bullmq` with Redis and Bull Board (restricted to Super Admin)
-  - [ ] `@nestjs/schedule` cron triggers (08:00, 14:00, 20:00)
-- [ ] **2.2 Ingestion Connectors**
-  - [ ] Dedicated Gmail IMAP connector (app password) with fail-soft parsers (LinkedIn, Bayt, GulfTalent, Naukrigulf, Indeed, Upwork)
-  - [ ] Public ATS connector for Greenhouse & Lever (1 req/sec rate limit)
-- [ ] **2.3 Processing Pipeline**
-  - [ ] BullMQ flow: `Ingest` -> `Normalize` -> `Dedupe` -> `Rule Filter` -> `LLM Extract` -> `Score`
-- [ ] **2.4 Two-Pass Apply Pack Builder**
-  - [ ] For score >= 80: generate tailored note, select best CV, pre-fill Answer Bank answers
-  - [ ] Pass 2 (Verifier): Block any unverified claims not found in master profile
-- [ ] **2.5 Telegram Bot Control Panel**
-  - [ ] Long-polling bot with inline action buttons (`[Open link]`, `[View pack]`, `[Mark applied]`, `[Reject]`)
-  - [ ] Account linking via `/start <code>` and daily digest at 20:00
-- [ ] **2.6 Application Tracker & Audit**
-  - [ ] Create `ApprovalRecord` on approval; track status (`Discovered` -> `Applied` -> `Interview`, etc.)
-  - [ ] **Done When:** Wake up to Telegram cards with ready Apply Packs; approve and mark applied in under 2 minutes
+### [x] Sprint 2: Automated Pipeline, Telegram Bot & Apply Packs
+- [x] **2.1 Queues & Scheduling**
+  - [x] `@nestjs/bullmq` with Redis and Bull Board (restricted to Super Admin)
+  - [x] `@nestjs/schedule` cron triggers (08:00, 14:00, 20:00)
+- [x] **2.2 Ingestion Connectors**
+  - [x] Dedicated Gmail IMAP connector (app password) with fail-soft parsers (LinkedIn, Bayt, GulfTalent, Naukrigulf, Indeed, Upwork)
+  - [x] Public ATS connector for Greenhouse & Lever (1 req/sec rate limit)
+- [x] **2.3 Processing Pipeline**
+  - [x] BullMQ flow: `Ingest` -> `Normalize` -> `Dedupe` -> `Rule Filter` -> `LLM Extract` -> `Score`
+- [x] **2.4 Two-Pass Apply Pack Builder**
+  - [x] For score >= 80: generate tailored note, select best CV, pre-fill Answer Bank answers
+  - [x] Pass 2 (Verifier): Block any unverified claims not found in master profile
+- [x] **2.5 Telegram Bot Control Panel**
+  - [x] Long-polling bot with inline action buttons (`[Open link]`, `[View pack]`, `[Mark applied]`, `[Reject]`)
+  - [x] Account linking via `/start <code>` and daily digest at 20:00
+- [x] **2.6 Application Tracker & Audit**
+  - [x] Create `ApprovalRecord` on approval; track status (`Discovered` -> `Applied` -> `Interview`, etc.)
+  - [x] **Done When:** Wake up to Telegram cards with ready Apply Packs; approve and mark applied in under 2 minutes
 
 ---
 
