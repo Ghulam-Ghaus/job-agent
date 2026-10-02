@@ -1,6 +1,9 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { Sidebar } from '@/components/layout/sidebar';
+import { Header } from '@/components/layout/header';
+import { Button } from '@/components/ui/button';
 import {
   api,
   type Opportunity,
@@ -834,79 +837,39 @@ export default function JobsDashboard() {
       : null;
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background: '#080f1e',
-        color: '#f1f5f9',
-        fontFamily: "'Inter', -apple-system, sans-serif",
-      }}
-    >
-      {/* Header */}
-      <div
-        style={{
-          borderBottom: '1px solid rgba(255,255,255,.06)',
-          background: 'rgba(255,255,255,.02)',
-          backdropFilter: 'blur(12px)',
-          position: 'sticky',
-          top: 0,
-          zIndex: 100,
-        }}
-      >
-        <div style={{ maxWidth: 1100, margin: '0 auto', padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <h1 style={{ margin: 0, fontSize: 22, fontWeight: 800, background: 'linear-gradient(135deg,#818cf8,#c084fc)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-              Job Opportunities
-            </h1>
-            <p style={{ margin: '2px 0 0', fontSize: 13, color: '#475569' }}>
-              {opps.length} tracked · {opps.filter((o) => o.match).length} scored
-              {avgScore !== null ? ` · avg ${avgScore}/100` : ''}
-            </p>
-          </div>
-          <div style={{ display: 'flex', gap: 10 }}>
-            <button
-              onClick={handleSyncConnectors}
-              disabled={syncing}
-              style={{
-                padding: '10px 16px',
-                borderRadius: 10,
-                border: '1px solid rgba(255,255,255,.15)',
-                background: syncing ? 'rgba(255,255,255,.05)' : 'rgba(255,255,255,.08)',
-                color: '#e2e8f0',
-                cursor: syncing ? 'not-allowed' : 'pointer',
-                fontSize: 13,
-                fontWeight: 600,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-              }}
-            >
-              <span>{syncing ? '⏳' : '🔄'}</span> {syncing ? 'Syncing...' : 'Sync Connectors'}
-            </button>
-            <button
-              onClick={() => setShowImport(true)}
-              style={{
-                padding: '10px 20px',
-                borderRadius: 10,
-                border: 'none',
-                background: 'linear-gradient(135deg,#6366f1,#8b5cf6)',
-                color: '#fff',
-                cursor: 'pointer',
-                fontSize: 14,
-                fontWeight: 700,
-                boxShadow: '0 4px 15px rgba(99,102,241,.4)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-              }}
-            >
-              <span>＋</span> Import Job
-            </button>
-          </div>
-        </div>
-      </div>
+    <div className="flex h-screen bg-background text-foreground overflow-hidden">
+      <Sidebar />
 
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '24px' }}>
+      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
+        <Header
+          title="Job Opportunities"
+          description={`${opps.length} tracked · ${opps.filter((o) => o.match).length} scored${avgScore !== null ? ` · avg ${avgScore}/100` : ''}`}
+          breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Opportunities' }]}
+          backHref="/"
+          backLabel="Dashboard"
+          nextHref="/approvals"
+          nextLabel="Approval Queue"
+          onSync={handleSyncConnectors}
+          syncing={syncing}
+        />
+
+        <main className="p-6 sm:p-8 max-w-6xl mx-auto w-full space-y-6">
+          {/* Action Row */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/40 pb-4">
+            <div>
+              <h2 className="text-base font-semibold text-foreground">Discovered Pipeline</h2>
+              <p className="text-xs text-muted-foreground">Scored against your Master Profile ATS criteria.</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <Button
+                onClick={() => setShowImport(true)}
+                size="sm"
+                className="gap-2 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-medium shadow-md shadow-indigo-500/20 text-xs"
+              >
+                <span>＋</span> Import Job (URL or Text)
+              </Button>
+            </div>
+          </div>
         {/* Stats row */}
         {opps.length > 0 && (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))', gap: 12, marginBottom: 24 }}>
@@ -1018,6 +981,7 @@ export default function JobsDashboard() {
             ))}
           </div>
         )}
+        </main>
       </div>
 
       {/* Modals */}

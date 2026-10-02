@@ -29,7 +29,9 @@ async function bootstrap(): Promise<void> {
   app.useStaticAssets(join(process.cwd(), 'uploads'), { prefix: '/uploads' });
 
   // ── Versioning ───────────────────────────────────────────────────────────
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix('api', {
+    exclude: ['admin/queues', 'admin/queues/(.*)'],
+  });
   app.enableVersioning({
     type: VersioningType.URI,
     defaultVersion: '1',

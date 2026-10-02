@@ -85,6 +85,9 @@ export default function DashboardPage() {
         <Header
           title="Autopilot Overview"
           description="Autonomous monitoring, evaluation, and application pipeline with strict human-in-the-loop safeguards."
+          breadcrumbs={[{ label: 'Home' }]}
+          nextHref="/dashboard"
+          nextLabel="Opportunities"
         />
 
         <main className="flex-1 p-8 space-y-8 overflow-y-auto">

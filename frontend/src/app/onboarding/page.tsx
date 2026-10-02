@@ -921,7 +921,7 @@ export default function OnboardingPage() {
           preferredIndustries: splitCsv(state.preferredIndustries),
         });
         await api.profile.upsert({ onboardingDone: true });
-        router.push('/');
+        router.push('/profile');
       }
     } catch (e) {
       if (e instanceof ApiClientError && e.statusCode === 401) {

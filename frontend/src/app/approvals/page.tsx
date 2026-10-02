@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { Sidebar } from '@/components/layout/sidebar';
+import { Header } from '@/components/layout/header';
 import {
   api,
   type ApplyPack,
@@ -387,95 +389,85 @@ export default function ApprovalQueuePage() {
   }
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background: '#080f1e',
-        color: '#f1f5f9',
-        fontFamily: "'Inter', -apple-system, sans-serif",
-      }}
-    >
-      {/* Header */}
-      <div
-        style={{
-          borderBottom: '1px solid rgba(255,255,255,.06)',
-          background: 'rgba(255,255,255,.02)',
-          backdropFilter: 'blur(12px)',
-          position: 'sticky',
-          top: 0,
-          zIndex: 100,
-        }}
-      >
-        <div style={{ maxWidth: 900, margin: '0 auto', padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <h1 style={{ margin: 0, fontSize: 22, fontWeight: 800, background: 'linear-gradient(135deg,#22c55e,#16a34a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-              Approval Queue
-            </h1>
-            <p style={{ margin: '2px 0 0', fontSize: 13, color: '#475569' }}>
-              {packs.length} pack{packs.length !== 1 ? 's' : ''} awaiting your review
-            </p>
+    <div className="flex h-screen bg-background text-foreground overflow-hidden">
+      <Sidebar />
+
+      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
+        <Header
+          title="Approval Queue"
+          description={`${packs.length} pack${packs.length !== 1 ? 's' : ''} awaiting your review`}
+          breadcrumbs={[
+            { label: 'Home', href: '/' },
+            { label: 'Opportunities', href: '/dashboard' },
+            { label: 'Approval Queue' },
+          ]}
+          backHref="/dashboard"
+          backLabel="Opportunities"
+        />
+
+        <main className="p-6 sm:p-8 max-w-5xl mx-auto w-full space-y-6">
+          {/* Subheader / Tabs row */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/40 pb-4">
+            <div>
+              <h2 className="text-base font-semibold text-foreground">Pending Review & Verifier Check</h2>
+              <p className="text-xs text-muted-foreground">Every claim is fact-checked against your master profile. Nothing is dispatched without human approval.</p>
+            </div>
+
+            {/* Tabs */}
+            <div className="flex gap-1 bg-muted/40 border border-border/40 rounded-lg p-1">
+              {(['pending', 'decided'] as const).map((t) => (
+                <button
+                  key={t}
+                  onClick={() => setTab(t)}
+                  className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
+                    tab === t
+                      ? 'bg-background text-foreground shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {t === 'pending' ? '📋 Pending' : '📁 History'}
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* Tabs */}
-          <div style={{ display: 'flex', gap: 4, background: 'rgba(255,255,255,.04)', borderRadius: 8, padding: 3 }}>
-            {(['pending', 'decided'] as const).map((t) => (
-              <button
-                key={t}
-                onClick={() => setTab(t)}
+          <div>
+            {loading ? (
+              <div style={{ textAlign: 'center', padding: '80px 0', color: '#475569' }}>
+                <div style={{ fontSize: 32, marginBottom: 12 }}>⏳</div>
+                <p>Loading approval queue…</p>
+              </div>
+            ) : tab === 'pending' && packs.length === 0 ? (
+              <div
                 style={{
-                  padding: '6px 14px',
-                  borderRadius: 6,
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: 12,
-                  fontWeight: 600,
-                  background: tab === t ? 'rgba(255,255,255,.1)' : 'transparent',
-                  color: tab === t ? '#f1f5f9' : '#64748b',
-                  transition: 'all .2s',
+                  textAlign: 'center',
+                  padding: '80px 0',
+                  border: '1px dashed rgba(255,255,255,.08)',
+                  borderRadius: 16,
                 }}
               >
-                {t === 'pending' ? '📋 Pending' : '📁 History'}
-              </button>
-            ))}
+                <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
+                <h2 style={{ color: '#475569', margin: '0 0 8px', fontWeight: 600 }}>
+                  All caught up!
+                </h2>
+                <p style={{ color: '#334155', margin: 0, fontSize: 14 }}>
+                  No apply packs awaiting review. Import jobs and generate packs to see them here.
+                </p>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {packs.map((pack) => (
+                  <PackReviewCard
+                    key={pack.id}
+                    pack={pack}
+                    onApprove={() => handleApprove(pack.id)}
+                    onReject={() => handleReject(pack.id)}
+                  />
+                ))}
+              </div>
+            )}
           </div>
-        </div>
-      </div>
-
-      <div style={{ maxWidth: 900, margin: '0 auto', padding: '24px' }}>
-        {loading ? (
-          <div style={{ textAlign: 'center', padding: '80px 0', color: '#475569' }}>
-            <div style={{ fontSize: 32, marginBottom: 12 }}>⏳</div>
-            <p>Loading approval queue…</p>
-          </div>
-        ) : tab === 'pending' && packs.length === 0 ? (
-          <div
-            style={{
-              textAlign: 'center',
-              padding: '80px 0',
-              border: '1px dashed rgba(255,255,255,.08)',
-              borderRadius: 16,
-            }}
-          >
-            <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
-            <h2 style={{ color: '#475569', margin: '0 0 8px', fontWeight: 600 }}>
-              All caught up!
-            </h2>
-            <p style={{ color: '#334155', margin: 0, fontSize: 14 }}>
-              No apply packs awaiting review. Import jobs and generate packs to see them here.
-            </p>
-          </div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {packs.map((pack) => (
-              <PackReviewCard
-                key={pack.id}
-                pack={pack}
-                onApprove={() => handleApprove(pack.id)}
-                onReject={() => handleReject(pack.id)}
-              />
-            ))}
-          </div>
-        )}
+        </main>
       </div>
     </div>
   );
