@@ -339,6 +339,56 @@ function PackReviewCard({
 
           {/* Action Buttons */}
           <div style={{ display: 'flex', gap: 10, marginTop: 24, flexWrap: 'wrap' }}>
+            {opp && (
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    const cv = await api.tailoredCv.generate({ opportunityId: opp.id });
+                    window.open(api.tailoredCv.downloadUrl(cv.id), '_blank');
+                  } catch {
+                    alert('Failed to generate tailored CV');
+                  }
+                }}
+                style={{
+                  padding: '12px 18px',
+                  borderRadius: 10,
+                  border: '1px solid rgba(99,102,241,.4)',
+                  background: 'rgba(99,102,241,.15)',
+                  color: '#c7d2fe',
+                  cursor: 'pointer',
+                  fontSize: 13,
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                }}
+              >
+                📄 Download Tailored CV (PDF)
+              </button>
+            )}
+
+            {opp && (
+              <a
+                href={`/interview-prep?opportunityId=${opp.id}&role=${encodeURIComponent(opp.title || '')}`}
+                style={{
+                  padding: '12px 18px',
+                  borderRadius: 10,
+                  border: '1px solid rgba(34,197,94,.4)',
+                  background: 'rgba(34,197,94,.12)',
+                  color: '#86efac',
+                  fontSize: 13,
+                  fontWeight: 700,
+                  textDecoration: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                }}
+              >
+                🎯 Role Interview Prep
+              </a>
+            )}
+
             {isFreelance && opp?.url && (
               <a
                 href={opp.url}

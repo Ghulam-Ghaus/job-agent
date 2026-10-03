@@ -127,3 +127,23 @@ export type OutreachMessage = Prisma.OutreachMessageModel
  * 
  */
 export type SuppressionEntry = Prisma.SuppressionEntryModel
+/**
+ * Model Product
+ * 
+ */
+export type Product = Prisma.ProductModel
+/**
+ * Model TailoredCv
+ * 
+ */
+export type TailoredCv = Prisma.TailoredCvModel
+/**
+ * Model CoverLetter
+ * 
+ */
+export type CoverLetter = Prisma.CoverLetterModel
+/**
+ * Model InterviewPrep
+ * 
+ */
+export type InterviewPrep = Prisma.InterviewPrepModel

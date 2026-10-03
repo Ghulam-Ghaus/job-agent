@@ -64,13 +64,16 @@ enum LlmProvider {
 // ─── Sprint 0: Foundation ────────────────────────────────────────────────────
 
 model User {
-  id           String    @id @default(cuid())
-  email        String    @unique
-  passwordHash String
-  role         Role      @default(USER)
-  isActive     Boolean   @default(true)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  id                String    @id @default(cuid())
+  email             String    @unique
+  passwordHash      String
+  role              Role      @default(USER)
+  isActive          Boolean   @default(true)
+  slug              String?   @unique
+  twoFactorSecret   String?
+  twoFactorEnabled  Boolean   @default(false)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
   sessions      Session[]
   auditLogs     AuditLog[]
@@ -91,6 +94,12 @@ model User {
   companies        Company[]
   outreachMessages OutreachMessage[]
   suppressions     SuppressionEntry[]
+  products         Product[]
+
+  // Sprint 6 relations
+  tailoredCvs      TailoredCv[]
+  coverLetters     CoverLetter[]
+  interviewPreps   InterviewPrep[]
 
   @@map("users")
 }
@@ -214,6 +223,8 @@ model Project {
   repoUrl     String?
   highlights  Json      @default("[]") // string[]
   tags        Json      @default("[]") // string[]
+  isPublic    Boolean   @default(true)
+  featured    Boolean   @default(false)
   startDate   DateTime?
   endDate     DateTime?
   createdAt   DateTime  @default(now())
@@ -305,6 +316,11 @@ model Opportunity {
   requirement OpportunityRequirement?
   match       OpportunityMatch?
   applyPack   ApplyPack?
+
+  // Sprint 6
+  tailoredCvs    TailoredCv[]
+  coverLetters   CoverLetter[]
+  interviewPreps InterviewPrep[]
 
   @@unique([userId, contentHash])
   @@index([userId])
@@ -536,4 +552,94 @@ model SuppressionEntry {
   @@map("suppression_entries")
 }
 
+// ─── Sprint 5: Productized Offerings & Showcase ───────────────────────────────
 
+model Product {
+  id          String   @id @default(cuid())
+  userId      String
+  slug        String   @unique
+  title       String
+  tagline     String?
+  description String
+  category    String   @default("AI_AUTOMATION") // AI_AUTOMATION | FULLSTACK_APP | AGENT_PIPELINE
+  features    Json     @default("[]") // string[]
+  priceUsd    Int?
+  priceModel  String   @default("FIXED") // FIXED | HOURLY | MONTHLY_RETAINER
+  demoUrl     String?
+  badge       String?  // e.g. "POPULAR", "NEW", "FEATURED"
+  isPublic    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([category])
+  @@map("products")
+}
+
+// ─── Sprint 6: Career Assets ─────────────────────────────────────────────────
+
+model TailoredCv {
+  id             String   @id @default(cuid())
+  userId         String
+  opportunityId  String?
+  targetRole     String
+  inputHash      String   // sha256 of (profile snapshot + JD) — cache key
+  contentJson    Json     // { headline, summary, skills[], experiences[{title,company,period,bullets[]}], projects[] }
+  verifierStatus String   @default("pending") // pending | passed | flagged
+  verifierIssues Json     @default("[]") // [{ claim, reason }]
+  promptVersion  String   @default("v1")
+  createdAt      DateTime @default(now())
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  opportunity Opportunity? @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, opportunityId])
+  @@index([inputHash])
+  @@map("tailored_cvs")
+}
+
+model CoverLetter {
+  id             String   @id @default(cuid())
+  userId         String
+  opportunityId  String
+  inputHash      String
+  body           String
+  bodyEdited     String?
+  verifierStatus String   @default("pending")
+  verifierIssues Json     @default("[]")
+  promptVersion  String   @default("v1")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  opportunity Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, opportunityId])
+  @@index([inputHash])
+  @@map("cover_letters")
+}
+
+model InterviewPrep {
+  id            String   @id @default(cuid())
+  userId        String
+  opportunityId String?
+  targetRole    String
+  inputHash     String
+  planJson      Json     // { overview, topics[], questions[], gapBridges[], questionsToAsk[] }
+  tasksJson     Json     @default("[]") // [{ id, title, description, topic, difficulty, done }]
+  promptVersion String   @default("v1")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  opportunity Opportunity? @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, opportunityId])
+  @@index([inputHash])
+  @@map("interview_preps")
+}

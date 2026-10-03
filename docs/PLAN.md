@@ -287,8 +287,13 @@ Do Sprint 4 only. Places API (New) connector with field mask, quota guard and co
 Do Sprint 5 only. Public pages (/, /u/[slug], /products) fed by a whitelist-only public DTO with ISR; Super Admin area (users/roles, sources, LLM usage, queues, audit logs); TOTP 2FA; backups script; browser clipper extension; optional Resend digest email.
 ```
 
+### Sprint 6 — Career assets (tailored CV, cover letter, interview prep)
+```text
+Do Sprint 6 only. Per-opportunity actions: (1) Tailored CV — reorder/emphasize/rephrase ONLY verified profile data for the JD, verifier pass, ATS-friendly single-template PDF download (PDFKit); skill gaps get an explicit "I have this skill → add to profile" confirm (never auto-added). (2) Cover letter — JD-matched, profile-only facts, verifier pass, edit/copy/regenerate/PDF. (3) Interview prep — role-based (JD optional): topics, hands-on tasks with done-tracking, practice Q&A grounded in profile, honest gap bridges; also a standalone /interview-prep page for any role. All LLM output Zod-validated, logged to LlmCall, cached by input hash; all queries scoped by userId.
+```
+
 ### Later (only if the loop is proven)
-Embeddings (pgvector), tailored CV generation from verified data, interview prep, Google Calendar, Fiverr inbox drafts, organizations/CASL/plans for the GG IT SOLUTIONS product, optional Ollama pre-filter.
+Embeddings (pgvector), Google Calendar, Fiverr inbox drafts, organizations/CASL/plans for the GG IT SOLUTIONS product, optional Ollama pre-filter.
 
 ---
 

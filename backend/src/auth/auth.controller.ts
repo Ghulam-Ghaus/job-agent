@@ -127,5 +127,40 @@ export class AuthController {
     const user = await this.authService.getCurrentUser(userId);
     return { user };
   }
+
+  // ─── 2FA Endpoints ──────────────────────────────────────────────────────────
+
+  @UseGuards(JwtAuthGuard)
+  @Post('2fa/generate')
+  @ApiCookieAuth('accessToken')
+  @ApiOperation({ summary: 'Generate 2FA secret and QR code for authenticator apps' })
+  @ApiResponse({ status: 200, description: '2FA secret and QR code generated' })
+  async generate2Fa(@CurrentUser('id') userId: string) {
+    return this.authService.generate2FaSecret(userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('2fa/enable')
+  @ApiCookieAuth('accessToken')
+  @ApiOperation({ summary: 'Verify code and enable 2FA for account' })
+  @ApiResponse({ status: 200, description: '2FA enabled' })
+  async enable2Fa(
+    @CurrentUser('id') userId: string,
+    @Body('code') code: string,
+  ) {
+    return this.authService.enable2Fa(userId, code);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('2fa/disable')
+  @ApiCookieAuth('accessToken')
+  @ApiOperation({ summary: 'Disable 2FA with current authenticator code' })
+  @ApiResponse({ status: 200, description: '2FA disabled' })
+  async disable2Fa(
+    @CurrentUser('id') userId: string,
+    @Body('code') code: string,
+  ) {
+    return this.authService.disable2Fa(userId, code);
+  }
 }
 

@@ -30,6 +30,9 @@ export type UserMinAggregateOutputType = {
   passwordHash: string | null
   role: $Enums.Role | null
   isActive: boolean | null
+  slug: string | null
+  twoFactorSecret: string | null
+  twoFactorEnabled: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -40,6 +43,9 @@ export type UserMaxAggregateOutputType = {
   passwordHash: string | null
   role: $Enums.Role | null
   isActive: boolean | null
+  slug: string | null
+  twoFactorSecret: string | null
+  twoFactorEnabled: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -50,6 +56,9 @@ export type UserCountAggregateOutputType = {
   passwordHash: number
   role: number
   isActive: number
+  slug: number
+  twoFactorSecret: number
+  twoFactorEnabled: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -62,6 +71,9 @@ export type UserMinAggregateInputType = {
   passwordHash?: true
   role?: true
   isActive?: true
+  slug?: true
+  twoFactorSecret?: true
+  twoFactorEnabled?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -72,6 +84,9 @@ export type UserMaxAggregateInputType = {
   passwordHash?: true
   role?: true
   isActive?: true
+  slug?: true
+  twoFactorSecret?: true
+  twoFactorEnabled?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -82,6 +97,9 @@ export type UserCountAggregateInputType = {
   passwordHash?: true
   role?: true
   isActive?: true
+  slug?: true
+  twoFactorSecret?: true
+  twoFactorEnabled?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -165,6 +183,9 @@ export type UserGroupByOutputType = {
   passwordHash: string
   role: $Enums.Role
   isActive: boolean
+  slug: string | null
+  twoFactorSecret: string | null
+  twoFactorEnabled: boolean
   createdAt: Date
   updatedAt: Date
   _count: UserCountAggregateOutputType | null
@@ -196,6 +217,9 @@ export type UserWhereInput = {
   passwordHash?: Prisma.StringFilter<"User"> | string
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
   isActive?: Prisma.BoolFilter<"User"> | boolean
+  slug?: Prisma.StringNullableFilter<"User"> | string | null
+  twoFactorSecret?: Prisma.StringNullableFilter<"User"> | string | null
+  twoFactorEnabled?: Prisma.BoolFilter<"User"> | boolean
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   sessions?: Prisma.SessionListRelationFilter
@@ -215,6 +239,10 @@ export type UserWhereInput = {
   companies?: Prisma.CompanyListRelationFilter
   outreachMessages?: Prisma.OutreachMessageListRelationFilter
   suppressions?: Prisma.SuppressionEntryListRelationFilter
+  products?: Prisma.ProductListRelationFilter
+  tailoredCvs?: Prisma.TailoredCvListRelationFilter
+  coverLetters?: Prisma.CoverLetterListRelationFilter
+  interviewPreps?: Prisma.InterviewPrepListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -223,6 +251,9 @@ export type UserOrderByWithRelationInput = {
   passwordHash?: Prisma.SortOrder
   role?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  slug?: Prisma.SortOrderInput | Prisma.SortOrder
+  twoFactorSecret?: Prisma.SortOrderInput | Prisma.SortOrder
+  twoFactorEnabled?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   sessions?: Prisma.SessionOrderByRelationAggregateInput
@@ -242,17 +273,24 @@ export type UserOrderByWithRelationInput = {
   companies?: Prisma.CompanyOrderByRelationAggregateInput
   outreachMessages?: Prisma.OutreachMessageOrderByRelationAggregateInput
   suppressions?: Prisma.SuppressionEntryOrderByRelationAggregateInput
+  products?: Prisma.ProductOrderByRelationAggregateInput
+  tailoredCvs?: Prisma.TailoredCvOrderByRelationAggregateInput
+  coverLetters?: Prisma.CoverLetterOrderByRelationAggregateInput
+  interviewPreps?: Prisma.InterviewPrepOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   email?: string
+  slug?: string
   AND?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   passwordHash?: Prisma.StringFilter<"User"> | string
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
   isActive?: Prisma.BoolFilter<"User"> | boolean
+  twoFactorSecret?: Prisma.StringNullableFilter<"User"> | string | null
+  twoFactorEnabled?: Prisma.BoolFilter<"User"> | boolean
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   sessions?: Prisma.SessionListRelationFilter
@@ -272,7 +310,11 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   companies?: Prisma.CompanyListRelationFilter
   outreachMessages?: Prisma.OutreachMessageListRelationFilter
   suppressions?: Prisma.SuppressionEntryListRelationFilter
-}, "id" | "email">
+  products?: Prisma.ProductListRelationFilter
+  tailoredCvs?: Prisma.TailoredCvListRelationFilter
+  coverLetters?: Prisma.CoverLetterListRelationFilter
+  interviewPreps?: Prisma.InterviewPrepListRelationFilter
+}, "id" | "email" | "slug">
 
 export type UserOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -280,6 +322,9 @@ export type UserOrderByWithAggregationInput = {
   passwordHash?: Prisma.SortOrder
   role?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  slug?: Prisma.SortOrderInput | Prisma.SortOrder
+  twoFactorSecret?: Prisma.SortOrderInput | Prisma.SortOrder
+  twoFactorEnabled?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
@@ -296,6 +341,9 @@ export type UserScalarWhereWithAggregatesInput = {
   passwordHash?: Prisma.StringWithAggregatesFilter<"User"> | string
   role?: Prisma.EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
   isActive?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
+  slug?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  twoFactorSecret?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  twoFactorEnabled?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
@@ -306,6 +354,9 @@ export type UserCreateInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -325,6 +376,10 @@ export type UserCreateInput = {
   companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -333,6 +388,9 @@ export type UserUncheckedCreateInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -352,6 +410,10 @@ export type UserUncheckedCreateInput = {
   companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -360,6 +422,9 @@ export type UserUpdateInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -379,6 +444,10 @@ export type UserUpdateInput = {
   companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -387,6 +456,9 @@ export type UserUncheckedUpdateInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -406,6 +478,10 @@ export type UserUncheckedUpdateInput = {
   companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -414,6 +490,9 @@ export type UserCreateManyInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -424,6 +503,9 @@ export type UserUpdateManyMutationInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -434,6 +516,9 @@ export type UserUncheckedUpdateManyInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -444,6 +529,9 @@ export type UserCountOrderByAggregateInput = {
   passwordHash?: Prisma.SortOrder
   role?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
+  twoFactorSecret?: Prisma.SortOrder
+  twoFactorEnabled?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -454,6 +542,9 @@ export type UserMaxOrderByAggregateInput = {
   passwordHash?: Prisma.SortOrder
   role?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
+  twoFactorSecret?: Prisma.SortOrder
+  twoFactorEnabled?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -464,6 +555,9 @@ export type UserMinOrderByAggregateInput = {
   passwordHash?: Prisma.SortOrder
   role?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
+  twoFactorSecret?: Prisma.SortOrder
+  twoFactorEnabled?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -488,6 +582,10 @@ export type EnumRoleFieldUpdateOperationsInput = {
 
 export type BoolFieldUpdateOperationsInput = {
   set?: boolean
+}
+
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
 }
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -736,12 +834,71 @@ export type UserUpdateOneRequiredWithoutSuppressionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSuppressionsInput, Prisma.UserUpdateWithoutSuppressionsInput>, Prisma.UserUncheckedUpdateWithoutSuppressionsInput>
 }
 
+export type UserCreateNestedOneWithoutProductsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutProductsInput, Prisma.UserUncheckedCreateWithoutProductsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutProductsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutProductsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutProductsInput, Prisma.UserUncheckedCreateWithoutProductsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutProductsInput
+  upsert?: Prisma.UserUpsertWithoutProductsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutProductsInput, Prisma.UserUpdateWithoutProductsInput>, Prisma.UserUncheckedUpdateWithoutProductsInput>
+}
+
+export type UserCreateNestedOneWithoutTailoredCvsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTailoredCvsInput, Prisma.UserUncheckedCreateWithoutTailoredCvsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTailoredCvsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutTailoredCvsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTailoredCvsInput, Prisma.UserUncheckedCreateWithoutTailoredCvsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTailoredCvsInput
+  upsert?: Prisma.UserUpsertWithoutTailoredCvsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTailoredCvsInput, Prisma.UserUpdateWithoutTailoredCvsInput>, Prisma.UserUncheckedUpdateWithoutTailoredCvsInput>
+}
+
+export type UserCreateNestedOneWithoutCoverLettersInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCoverLettersInput, Prisma.UserUncheckedCreateWithoutCoverLettersInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCoverLettersInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutCoverLettersNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCoverLettersInput, Prisma.UserUncheckedCreateWithoutCoverLettersInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCoverLettersInput
+  upsert?: Prisma.UserUpsertWithoutCoverLettersInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCoverLettersInput, Prisma.UserUpdateWithoutCoverLettersInput>, Prisma.UserUncheckedUpdateWithoutCoverLettersInput>
+}
+
+export type UserCreateNestedOneWithoutInterviewPrepsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutInterviewPrepsInput, Prisma.UserUncheckedCreateWithoutInterviewPrepsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutInterviewPrepsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutInterviewPrepsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutInterviewPrepsInput, Prisma.UserUncheckedCreateWithoutInterviewPrepsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutInterviewPrepsInput
+  upsert?: Prisma.UserUpsertWithoutInterviewPrepsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutInterviewPrepsInput, Prisma.UserUpdateWithoutInterviewPrepsInput>, Prisma.UserUncheckedUpdateWithoutInterviewPrepsInput>
+}
+
 export type UserCreateWithoutSessionsInput = {
   id?: string
   email: string
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
@@ -760,6 +917,10 @@ export type UserCreateWithoutSessionsInput = {
   companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -768,6 +929,9 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
@@ -786,6 +950,10 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -810,6 +978,9 @@ export type UserUpdateWithoutSessionsInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
@@ -828,6 +999,10 @@ export type UserUpdateWithoutSessionsInput = {
   companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -836,6 +1011,9 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
@@ -854,6 +1032,10 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAuditLogsInput = {
@@ -862,6 +1044,9 @@ export type UserCreateWithoutAuditLogsInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -880,6 +1065,10 @@ export type UserCreateWithoutAuditLogsInput = {
   companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -888,6 +1077,9 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -906,6 +1098,10 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -930,6 +1126,9 @@ export type UserUpdateWithoutAuditLogsInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -948,6 +1147,10 @@ export type UserUpdateWithoutAuditLogsInput = {
   companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -956,6 +1159,9 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -974,6 +1180,10 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutProfileInput = {
@@ -982,6 +1192,9 @@ export type UserCreateWithoutProfileInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -1000,6 +1213,10 @@ export type UserCreateWithoutProfileInput = {
   companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutProfileInput = {
@@ -1008,6 +1225,9 @@ export type UserUncheckedCreateWithoutProfileInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -1026,6 +1246,10 @@ export type UserUncheckedCreateWithoutProfileInput = {
   companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutProfileInput = {
@@ -1050,6 +1274,9 @@ export type UserUpdateWithoutProfileInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -1068,6 +1295,10 @@ export type UserUpdateWithoutProfileInput = {
   companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProfileInput = {
@@ -1076,6 +1307,9 @@ export type UserUncheckedUpdateWithoutProfileInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -1094,6 +1328,10 @@ export type UserUncheckedUpdateWithoutProfileInput = {
   companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutExperiencesInput = {
@@ -1102,6 +1340,9 @@ export type UserCreateWithoutExperiencesInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -1120,6 +1361,10 @@ export type UserCreateWithoutExperiencesInput = {
   companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutExperiencesInput = {
@@ -1128,6 +1373,9 @@ export type UserUncheckedCreateWithoutExperiencesInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -1146,6 +1394,10 @@ export type UserUncheckedCreateWithoutExperiencesInput = {
   companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutExperiencesInput = {
@@ -1170,6 +1422,9 @@ export type UserUpdateWithoutExperiencesInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -1188,6 +1443,10 @@ export type UserUpdateWithoutExperiencesInput = {
   companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutExperiencesInput = {
@@ -1196,6 +1455,9 @@ export type UserUncheckedUpdateWithoutExperiencesInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -1214,6 +1476,10 @@ export type UserUncheckedUpdateWithoutExperiencesInput = {
   companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSkillsInput = {
@@ -1222,6 +1488,9 @@ export type UserCreateWithoutSkillsInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -1240,6 +1509,10 @@ export type UserCreateWithoutSkillsInput = {
   companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSkillsInput = {
@@ -1248,6 +1521,9 @@ export type UserUncheckedCreateWithoutSkillsInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -1266,6 +1542,10 @@ export type UserUncheckedCreateWithoutSkillsInput = {
   companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSkillsInput = {
@@ -1290,6 +1570,9 @@ export type UserUpdateWithoutSkillsInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -1308,6 +1591,10 @@ export type UserUpdateWithoutSkillsInput = {
   companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSkillsInput = {
@@ -1316,6 +1603,9 @@ export type UserUncheckedUpdateWithoutSkillsInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -1334,6 +1624,10 @@ export type UserUncheckedUpdateWithoutSkillsInput = {
   companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutProjectsInput = {
@@ -1342,6 +1636,9 @@ export type UserCreateWithoutProjectsInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -1360,6 +1657,10 @@ export type UserCreateWithoutProjectsInput = {
   companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutProjectsInput = {
@@ -1368,6 +1669,9 @@ export type UserUncheckedCreateWithoutProjectsInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -1386,6 +1690,10 @@ export type UserUncheckedCreateWithoutProjectsInput = {
   companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutProjectsInput = {
@@ -1410,6 +1718,9 @@ export type UserUpdateWithoutProjectsInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -1428,6 +1739,10 @@ export type UserUpdateWithoutProjectsInput = {
   companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProjectsInput = {
@@ -1436,6 +1751,9 @@ export type UserUncheckedUpdateWithoutProjectsInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -1454,6 +1772,10 @@ export type UserUncheckedUpdateWithoutProjectsInput = {
   companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCvsInput = {
@@ -1462,6 +1784,9 @@ export type UserCreateWithoutCvsInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -1480,6 +1805,10 @@ export type UserCreateWithoutCvsInput = {
   companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCvsInput = {
@@ -1488,6 +1817,9 @@ export type UserUncheckedCreateWithoutCvsInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -1506,6 +1838,10 @@ export type UserUncheckedCreateWithoutCvsInput = {
   companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCvsInput = {
@@ -1530,6 +1866,9 @@ export type UserUpdateWithoutCvsInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -1548,6 +1887,10 @@ export type UserUpdateWithoutCvsInput = {
   companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCvsInput = {
@@ -1556,6 +1899,9 @@ export type UserUncheckedUpdateWithoutCvsInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -1574,6 +1920,10 @@ export type UserUncheckedUpdateWithoutCvsInput = {
   companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAnswerBankInput = {
@@ -1582,6 +1932,9 @@ export type UserCreateWithoutAnswerBankInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -1600,6 +1953,10 @@ export type UserCreateWithoutAnswerBankInput = {
   companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAnswerBankInput = {
@@ -1608,6 +1965,9 @@ export type UserUncheckedCreateWithoutAnswerBankInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -1626,6 +1986,10 @@ export type UserUncheckedCreateWithoutAnswerBankInput = {
   companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAnswerBankInput = {
@@ -1650,6 +2014,9 @@ export type UserUpdateWithoutAnswerBankInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -1668,6 +2035,10 @@ export type UserUpdateWithoutAnswerBankInput = {
   companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAnswerBankInput = {
@@ -1676,6 +2047,9 @@ export type UserUncheckedUpdateWithoutAnswerBankInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -1694,6 +2068,10 @@ export type UserUncheckedUpdateWithoutAnswerBankInput = {
   companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPreferencesInput = {
@@ -1702,6 +2080,9 @@ export type UserCreateWithoutPreferencesInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -1720,6 +2101,10 @@ export type UserCreateWithoutPreferencesInput = {
   companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPreferencesInput = {
@@ -1728,6 +2113,9 @@ export type UserUncheckedCreateWithoutPreferencesInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -1746,6 +2134,10 @@ export type UserUncheckedCreateWithoutPreferencesInput = {
   companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPreferencesInput = {
@@ -1770,6 +2162,9 @@ export type UserUpdateWithoutPreferencesInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -1788,6 +2183,10 @@ export type UserUpdateWithoutPreferencesInput = {
   companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPreferencesInput = {
@@ -1796,6 +2195,9 @@ export type UserUncheckedUpdateWithoutPreferencesInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -1814,6 +2216,10 @@ export type UserUncheckedUpdateWithoutPreferencesInput = {
   companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutOpportunitiesInput = {
@@ -1822,6 +2228,9 @@ export type UserCreateWithoutOpportunitiesInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -1840,6 +2249,10 @@ export type UserCreateWithoutOpportunitiesInput = {
   companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutOpportunitiesInput = {
@@ -1848,6 +2261,9 @@ export type UserUncheckedCreateWithoutOpportunitiesInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -1866,6 +2282,10 @@ export type UserUncheckedCreateWithoutOpportunitiesInput = {
   companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutOpportunitiesInput = {
@@ -1890,6 +2310,9 @@ export type UserUpdateWithoutOpportunitiesInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -1908,6 +2331,10 @@ export type UserUpdateWithoutOpportunitiesInput = {
   companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOpportunitiesInput = {
@@ -1916,6 +2343,9 @@ export type UserUncheckedUpdateWithoutOpportunitiesInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -1934,6 +2364,10 @@ export type UserUncheckedUpdateWithoutOpportunitiesInput = {
   companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutLlmCallsInput = {
@@ -1942,6 +2376,9 @@ export type UserCreateWithoutLlmCallsInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -1960,6 +2397,10 @@ export type UserCreateWithoutLlmCallsInput = {
   companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutLlmCallsInput = {
@@ -1968,6 +2409,9 @@ export type UserUncheckedCreateWithoutLlmCallsInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -1986,6 +2430,10 @@ export type UserUncheckedCreateWithoutLlmCallsInput = {
   companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutLlmCallsInput = {
@@ -2010,6 +2458,9 @@ export type UserUpdateWithoutLlmCallsInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -2028,6 +2479,10 @@ export type UserUpdateWithoutLlmCallsInput = {
   companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLlmCallsInput = {
@@ -2036,6 +2491,9 @@ export type UserUncheckedUpdateWithoutLlmCallsInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -2054,6 +2512,10 @@ export type UserUncheckedUpdateWithoutLlmCallsInput = {
   companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotificationsInput = {
@@ -2062,6 +2524,9 @@ export type UserCreateWithoutNotificationsInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -2080,6 +2545,10 @@ export type UserCreateWithoutNotificationsInput = {
   companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -2088,6 +2557,9 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -2106,6 +2578,10 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -2130,6 +2606,9 @@ export type UserUpdateWithoutNotificationsInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -2148,6 +2627,10 @@ export type UserUpdateWithoutNotificationsInput = {
   companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -2156,6 +2639,9 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -2174,6 +2660,10 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutApplyPacksInput = {
@@ -2182,6 +2672,9 @@ export type UserCreateWithoutApplyPacksInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -2200,6 +2693,10 @@ export type UserCreateWithoutApplyPacksInput = {
   companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutApplyPacksInput = {
@@ -2208,6 +2705,9 @@ export type UserUncheckedCreateWithoutApplyPacksInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -2226,6 +2726,10 @@ export type UserUncheckedCreateWithoutApplyPacksInput = {
   companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutApplyPacksInput = {
@@ -2250,6 +2754,9 @@ export type UserUpdateWithoutApplyPacksInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -2268,6 +2775,10 @@ export type UserUpdateWithoutApplyPacksInput = {
   companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutApplyPacksInput = {
@@ -2276,6 +2787,9 @@ export type UserUncheckedUpdateWithoutApplyPacksInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -2294,6 +2808,10 @@ export type UserUncheckedUpdateWithoutApplyPacksInput = {
   companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutApprovalRecordsInput = {
@@ -2302,6 +2820,9 @@ export type UserCreateWithoutApprovalRecordsInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -2320,6 +2841,10 @@ export type UserCreateWithoutApprovalRecordsInput = {
   companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutApprovalRecordsInput = {
@@ -2328,6 +2853,9 @@ export type UserUncheckedCreateWithoutApprovalRecordsInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -2346,6 +2874,10 @@ export type UserUncheckedCreateWithoutApprovalRecordsInput = {
   companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutApprovalRecordsInput = {
@@ -2370,6 +2902,9 @@ export type UserUpdateWithoutApprovalRecordsInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -2388,6 +2923,10 @@ export type UserUpdateWithoutApprovalRecordsInput = {
   companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutApprovalRecordsInput = {
@@ -2396,6 +2935,9 @@ export type UserUncheckedUpdateWithoutApprovalRecordsInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -2414,6 +2956,10 @@ export type UserUncheckedUpdateWithoutApprovalRecordsInput = {
   companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCompaniesInput = {
@@ -2422,6 +2968,9 @@ export type UserCreateWithoutCompaniesInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -2440,6 +2989,10 @@ export type UserCreateWithoutCompaniesInput = {
   approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCompaniesInput = {
@@ -2448,6 +3001,9 @@ export type UserUncheckedCreateWithoutCompaniesInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -2466,6 +3022,10 @@ export type UserUncheckedCreateWithoutCompaniesInput = {
   approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCompaniesInput = {
@@ -2490,6 +3050,9 @@ export type UserUpdateWithoutCompaniesInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -2508,6 +3071,10 @@ export type UserUpdateWithoutCompaniesInput = {
   approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCompaniesInput = {
@@ -2516,6 +3083,9 @@ export type UserUncheckedUpdateWithoutCompaniesInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -2534,6 +3104,10 @@ export type UserUncheckedUpdateWithoutCompaniesInput = {
   approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutOutreachMessagesInput = {
@@ -2542,6 +3116,9 @@ export type UserCreateWithoutOutreachMessagesInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -2560,6 +3137,10 @@ export type UserCreateWithoutOutreachMessagesInput = {
   approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
   companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutOutreachMessagesInput = {
@@ -2568,6 +3149,9 @@ export type UserUncheckedCreateWithoutOutreachMessagesInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -2586,6 +3170,10 @@ export type UserUncheckedCreateWithoutOutreachMessagesInput = {
   approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
   companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
   suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutOutreachMessagesInput = {
@@ -2610,6 +3198,9 @@ export type UserUpdateWithoutOutreachMessagesInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -2628,6 +3219,10 @@ export type UserUpdateWithoutOutreachMessagesInput = {
   approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
   companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOutreachMessagesInput = {
@@ -2636,6 +3231,9 @@ export type UserUncheckedUpdateWithoutOutreachMessagesInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -2654,6 +3252,10 @@ export type UserUncheckedUpdateWithoutOutreachMessagesInput = {
   approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
   companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
   suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSuppressionsInput = {
@@ -2662,6 +3264,9 @@ export type UserCreateWithoutSuppressionsInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
@@ -2680,6 +3285,10 @@ export type UserCreateWithoutSuppressionsInput = {
   approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
   companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSuppressionsInput = {
@@ -2688,6 +3297,9 @@ export type UserUncheckedCreateWithoutSuppressionsInput = {
   passwordHash: string
   role?: $Enums.Role
   isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
@@ -2706,6 +3318,10 @@ export type UserUncheckedCreateWithoutSuppressionsInput = {
   approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
   companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
   outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSuppressionsInput = {
@@ -2730,6 +3346,9 @@ export type UserUpdateWithoutSuppressionsInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
@@ -2748,6 +3367,10 @@ export type UserUpdateWithoutSuppressionsInput = {
   approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
   companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSuppressionsInput = {
@@ -2756,6 +3379,9 @@ export type UserUncheckedUpdateWithoutSuppressionsInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
@@ -2774,6 +3400,602 @@ export type UserUncheckedUpdateWithoutSuppressionsInput = {
   approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
   companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
   outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutProductsInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  role?: $Enums.Role
+  isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  profile?: Prisma.ProfileCreateNestedOneWithoutUserInput
+  experiences?: Prisma.ExperienceCreateNestedManyWithoutUserInput
+  skills?: Prisma.SkillCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutUserInput
+  cvs?: Prisma.CvCreateNestedManyWithoutUserInput
+  answerBank?: Prisma.AnswerBankItemCreateNestedManyWithoutUserInput
+  preferences?: Prisma.JobPreferenceCreateNestedOneWithoutUserInput
+  opportunities?: Prisma.OpportunityCreateNestedManyWithoutUserInput
+  llmCalls?: Prisma.LlmCallCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutProductsInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  role?: $Enums.Role
+  isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  profile?: Prisma.ProfileUncheckedCreateNestedOneWithoutUserInput
+  experiences?: Prisma.ExperienceUncheckedCreateNestedManyWithoutUserInput
+  skills?: Prisma.SkillUncheckedCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutUserInput
+  cvs?: Prisma.CvUncheckedCreateNestedManyWithoutUserInput
+  answerBank?: Prisma.AnswerBankItemUncheckedCreateNestedManyWithoutUserInput
+  preferences?: Prisma.JobPreferenceUncheckedCreateNestedOneWithoutUserInput
+  opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutUserInput
+  llmCalls?: Prisma.LlmCallUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutProductsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutProductsInput, Prisma.UserUncheckedCreateWithoutProductsInput>
+}
+
+export type UserUpsertWithoutProductsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutProductsInput, Prisma.UserUncheckedUpdateWithoutProductsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutProductsInput, Prisma.UserUncheckedCreateWithoutProductsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutProductsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutProductsInput, Prisma.UserUncheckedUpdateWithoutProductsInput>
+}
+
+export type UserUpdateWithoutProductsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  profile?: Prisma.ProfileUpdateOneWithoutUserNestedInput
+  experiences?: Prisma.ExperienceUpdateManyWithoutUserNestedInput
+  skills?: Prisma.SkillUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutUserNestedInput
+  cvs?: Prisma.CvUpdateManyWithoutUserNestedInput
+  answerBank?: Prisma.AnswerBankItemUpdateManyWithoutUserNestedInput
+  preferences?: Prisma.JobPreferenceUpdateOneWithoutUserNestedInput
+  opportunities?: Prisma.OpportunityUpdateManyWithoutUserNestedInput
+  llmCalls?: Prisma.LlmCallUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutProductsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  profile?: Prisma.ProfileUncheckedUpdateOneWithoutUserNestedInput
+  experiences?: Prisma.ExperienceUncheckedUpdateManyWithoutUserNestedInput
+  skills?: Prisma.SkillUncheckedUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput
+  cvs?: Prisma.CvUncheckedUpdateManyWithoutUserNestedInput
+  answerBank?: Prisma.AnswerBankItemUncheckedUpdateManyWithoutUserNestedInput
+  preferences?: Prisma.JobPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutUserNestedInput
+  llmCalls?: Prisma.LlmCallUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutTailoredCvsInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  role?: $Enums.Role
+  isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  profile?: Prisma.ProfileCreateNestedOneWithoutUserInput
+  experiences?: Prisma.ExperienceCreateNestedManyWithoutUserInput
+  skills?: Prisma.SkillCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutUserInput
+  cvs?: Prisma.CvCreateNestedManyWithoutUserInput
+  answerBank?: Prisma.AnswerBankItemCreateNestedManyWithoutUserInput
+  preferences?: Prisma.JobPreferenceCreateNestedOneWithoutUserInput
+  opportunities?: Prisma.OpportunityCreateNestedManyWithoutUserInput
+  llmCalls?: Prisma.LlmCallCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutTailoredCvsInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  role?: $Enums.Role
+  isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  profile?: Prisma.ProfileUncheckedCreateNestedOneWithoutUserInput
+  experiences?: Prisma.ExperienceUncheckedCreateNestedManyWithoutUserInput
+  skills?: Prisma.SkillUncheckedCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutUserInput
+  cvs?: Prisma.CvUncheckedCreateNestedManyWithoutUserInput
+  answerBank?: Prisma.AnswerBankItemUncheckedCreateNestedManyWithoutUserInput
+  preferences?: Prisma.JobPreferenceUncheckedCreateNestedOneWithoutUserInput
+  opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutUserInput
+  llmCalls?: Prisma.LlmCallUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutTailoredCvsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutTailoredCvsInput, Prisma.UserUncheckedCreateWithoutTailoredCvsInput>
+}
+
+export type UserUpsertWithoutTailoredCvsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutTailoredCvsInput, Prisma.UserUncheckedUpdateWithoutTailoredCvsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutTailoredCvsInput, Prisma.UserUncheckedCreateWithoutTailoredCvsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutTailoredCvsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutTailoredCvsInput, Prisma.UserUncheckedUpdateWithoutTailoredCvsInput>
+}
+
+export type UserUpdateWithoutTailoredCvsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  profile?: Prisma.ProfileUpdateOneWithoutUserNestedInput
+  experiences?: Prisma.ExperienceUpdateManyWithoutUserNestedInput
+  skills?: Prisma.SkillUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutUserNestedInput
+  cvs?: Prisma.CvUpdateManyWithoutUserNestedInput
+  answerBank?: Prisma.AnswerBankItemUpdateManyWithoutUserNestedInput
+  preferences?: Prisma.JobPreferenceUpdateOneWithoutUserNestedInput
+  opportunities?: Prisma.OpportunityUpdateManyWithoutUserNestedInput
+  llmCalls?: Prisma.LlmCallUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutTailoredCvsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  profile?: Prisma.ProfileUncheckedUpdateOneWithoutUserNestedInput
+  experiences?: Prisma.ExperienceUncheckedUpdateManyWithoutUserNestedInput
+  skills?: Prisma.SkillUncheckedUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput
+  cvs?: Prisma.CvUncheckedUpdateManyWithoutUserNestedInput
+  answerBank?: Prisma.AnswerBankItemUncheckedUpdateManyWithoutUserNestedInput
+  preferences?: Prisma.JobPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutUserNestedInput
+  llmCalls?: Prisma.LlmCallUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutCoverLettersInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  role?: $Enums.Role
+  isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  profile?: Prisma.ProfileCreateNestedOneWithoutUserInput
+  experiences?: Prisma.ExperienceCreateNestedManyWithoutUserInput
+  skills?: Prisma.SkillCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutUserInput
+  cvs?: Prisma.CvCreateNestedManyWithoutUserInput
+  answerBank?: Prisma.AnswerBankItemCreateNestedManyWithoutUserInput
+  preferences?: Prisma.JobPreferenceCreateNestedOneWithoutUserInput
+  opportunities?: Prisma.OpportunityCreateNestedManyWithoutUserInput
+  llmCalls?: Prisma.LlmCallCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutCoverLettersInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  role?: $Enums.Role
+  isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  profile?: Prisma.ProfileUncheckedCreateNestedOneWithoutUserInput
+  experiences?: Prisma.ExperienceUncheckedCreateNestedManyWithoutUserInput
+  skills?: Prisma.SkillUncheckedCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutUserInput
+  cvs?: Prisma.CvUncheckedCreateNestedManyWithoutUserInput
+  answerBank?: Prisma.AnswerBankItemUncheckedCreateNestedManyWithoutUserInput
+  preferences?: Prisma.JobPreferenceUncheckedCreateNestedOneWithoutUserInput
+  opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutUserInput
+  llmCalls?: Prisma.LlmCallUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedCreateNestedManyWithoutUserInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutCoverLettersInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCoverLettersInput, Prisma.UserUncheckedCreateWithoutCoverLettersInput>
+}
+
+export type UserUpsertWithoutCoverLettersInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCoverLettersInput, Prisma.UserUncheckedUpdateWithoutCoverLettersInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCoverLettersInput, Prisma.UserUncheckedCreateWithoutCoverLettersInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCoverLettersInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCoverLettersInput, Prisma.UserUncheckedUpdateWithoutCoverLettersInput>
+}
+
+export type UserUpdateWithoutCoverLettersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  profile?: Prisma.ProfileUpdateOneWithoutUserNestedInput
+  experiences?: Prisma.ExperienceUpdateManyWithoutUserNestedInput
+  skills?: Prisma.SkillUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutUserNestedInput
+  cvs?: Prisma.CvUpdateManyWithoutUserNestedInput
+  answerBank?: Prisma.AnswerBankItemUpdateManyWithoutUserNestedInput
+  preferences?: Prisma.JobPreferenceUpdateOneWithoutUserNestedInput
+  opportunities?: Prisma.OpportunityUpdateManyWithoutUserNestedInput
+  llmCalls?: Prisma.LlmCallUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCoverLettersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  profile?: Prisma.ProfileUncheckedUpdateOneWithoutUserNestedInput
+  experiences?: Prisma.ExperienceUncheckedUpdateManyWithoutUserNestedInput
+  skills?: Prisma.SkillUncheckedUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput
+  cvs?: Prisma.CvUncheckedUpdateManyWithoutUserNestedInput
+  answerBank?: Prisma.AnswerBankItemUncheckedUpdateManyWithoutUserNestedInput
+  preferences?: Prisma.JobPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutUserNestedInput
+  llmCalls?: Prisma.LlmCallUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedUpdateManyWithoutUserNestedInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutInterviewPrepsInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  role?: $Enums.Role
+  isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  profile?: Prisma.ProfileCreateNestedOneWithoutUserInput
+  experiences?: Prisma.ExperienceCreateNestedManyWithoutUserInput
+  skills?: Prisma.SkillCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutUserInput
+  cvs?: Prisma.CvCreateNestedManyWithoutUserInput
+  answerBank?: Prisma.AnswerBankItemCreateNestedManyWithoutUserInput
+  preferences?: Prisma.JobPreferenceCreateNestedOneWithoutUserInput
+  opportunities?: Prisma.OpportunityCreateNestedManyWithoutUserInput
+  llmCalls?: Prisma.LlmCallCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutInterviewPrepsInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  role?: $Enums.Role
+  isActive?: boolean
+  slug?: string | null
+  twoFactorSecret?: string | null
+  twoFactorEnabled?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  profile?: Prisma.ProfileUncheckedCreateNestedOneWithoutUserInput
+  experiences?: Prisma.ExperienceUncheckedCreateNestedManyWithoutUserInput
+  skills?: Prisma.SkillUncheckedCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutUserInput
+  cvs?: Prisma.CvUncheckedCreateNestedManyWithoutUserInput
+  answerBank?: Prisma.AnswerBankItemUncheckedCreateNestedManyWithoutUserInput
+  preferences?: Prisma.JobPreferenceUncheckedCreateNestedOneWithoutUserInput
+  opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutUserInput
+  llmCalls?: Prisma.LlmCallUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutUserInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutInterviewPrepsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutInterviewPrepsInput, Prisma.UserUncheckedCreateWithoutInterviewPrepsInput>
+}
+
+export type UserUpsertWithoutInterviewPrepsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutInterviewPrepsInput, Prisma.UserUncheckedUpdateWithoutInterviewPrepsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutInterviewPrepsInput, Prisma.UserUncheckedCreateWithoutInterviewPrepsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutInterviewPrepsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutInterviewPrepsInput, Prisma.UserUncheckedUpdateWithoutInterviewPrepsInput>
+}
+
+export type UserUpdateWithoutInterviewPrepsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  profile?: Prisma.ProfileUpdateOneWithoutUserNestedInput
+  experiences?: Prisma.ExperienceUpdateManyWithoutUserNestedInput
+  skills?: Prisma.SkillUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutUserNestedInput
+  cvs?: Prisma.CvUpdateManyWithoutUserNestedInput
+  answerBank?: Prisma.AnswerBankItemUpdateManyWithoutUserNestedInput
+  preferences?: Prisma.JobPreferenceUpdateOneWithoutUserNestedInput
+  opportunities?: Prisma.OpportunityUpdateManyWithoutUserNestedInput
+  llmCalls?: Prisma.LlmCallUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutInterviewPrepsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  profile?: Prisma.ProfileUncheckedUpdateOneWithoutUserNestedInput
+  experiences?: Prisma.ExperienceUncheckedUpdateManyWithoutUserNestedInput
+  skills?: Prisma.SkillUncheckedUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput
+  cvs?: Prisma.CvUncheckedUpdateManyWithoutUserNestedInput
+  answerBank?: Prisma.AnswerBankItemUncheckedUpdateManyWithoutUserNestedInput
+  preferences?: Prisma.JobPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutUserNestedInput
+  llmCalls?: Prisma.LlmCallUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutUserNestedInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -2797,6 +4019,10 @@ export type UserCountOutputType = {
   companies: number
   outreachMessages: number
   suppressions: number
+  products: number
+  tailoredCvs: number
+  coverLetters: number
+  interviewPreps: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2815,6 +4041,10 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   companies?: boolean | UserCountOutputTypeCountCompaniesArgs
   outreachMessages?: boolean | UserCountOutputTypeCountOutreachMessagesArgs
   suppressions?: boolean | UserCountOutputTypeCountSuppressionsArgs
+  products?: boolean | UserCountOutputTypeCountProductsArgs
+  tailoredCvs?: boolean | UserCountOutputTypeCountTailoredCvsArgs
+  coverLetters?: boolean | UserCountOutputTypeCountCoverLettersArgs
+  interviewPreps?: boolean | UserCountOutputTypeCountInterviewPrepsArgs
 }
 
 /**
@@ -2932,6 +4162,34 @@ export type UserCountOutputTypeCountSuppressionsArgs<ExtArgs extends runtime.Typ
   where?: Prisma.SuppressionEntryWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountProductsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProductWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountTailoredCvsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TailoredCvWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCoverLettersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CoverLetterWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountInterviewPrepsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.InterviewPrepWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2939,6 +4197,9 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   passwordHash?: boolean
   role?: boolean
   isActive?: boolean
+  slug?: boolean
+  twoFactorSecret?: boolean
+  twoFactorEnabled?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
@@ -2958,6 +4219,10 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   companies?: boolean | Prisma.User$companiesArgs<ExtArgs>
   outreachMessages?: boolean | Prisma.User$outreachMessagesArgs<ExtArgs>
   suppressions?: boolean | Prisma.User$suppressionsArgs<ExtArgs>
+  products?: boolean | Prisma.User$productsArgs<ExtArgs>
+  tailoredCvs?: boolean | Prisma.User$tailoredCvsArgs<ExtArgs>
+  coverLetters?: boolean | Prisma.User$coverLettersArgs<ExtArgs>
+  interviewPreps?: boolean | Prisma.User$interviewPrepsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -2967,6 +4232,9 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   passwordHash?: boolean
   role?: boolean
   isActive?: boolean
+  slug?: boolean
+  twoFactorSecret?: boolean
+  twoFactorEnabled?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -2977,6 +4245,9 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   passwordHash?: boolean
   role?: boolean
   isActive?: boolean
+  slug?: boolean
+  twoFactorSecret?: boolean
+  twoFactorEnabled?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -2987,11 +4258,14 @@ export type UserSelectScalar = {
   passwordHash?: boolean
   role?: boolean
   isActive?: boolean
+  slug?: boolean
+  twoFactorSecret?: boolean
+  twoFactorEnabled?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passwordHash" | "role" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passwordHash" | "role" | "isActive" | "slug" | "twoFactorSecret" | "twoFactorEnabled" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   auditLogs?: boolean | Prisma.User$auditLogsArgs<ExtArgs>
@@ -3010,6 +4284,10 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   companies?: boolean | Prisma.User$companiesArgs<ExtArgs>
   outreachMessages?: boolean | Prisma.User$outreachMessagesArgs<ExtArgs>
   suppressions?: boolean | Prisma.User$suppressionsArgs<ExtArgs>
+  products?: boolean | Prisma.User$productsArgs<ExtArgs>
+  tailoredCvs?: boolean | Prisma.User$tailoredCvsArgs<ExtArgs>
+  coverLetters?: boolean | Prisma.User$coverLettersArgs<ExtArgs>
+  interviewPreps?: boolean | Prisma.User$interviewPrepsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -3035,6 +4313,10 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     companies: Prisma.$CompanyPayload<ExtArgs>[]
     outreachMessages: Prisma.$OutreachMessagePayload<ExtArgs>[]
     suppressions: Prisma.$SuppressionEntryPayload<ExtArgs>[]
+    products: Prisma.$ProductPayload<ExtArgs>[]
+    tailoredCvs: Prisma.$TailoredCvPayload<ExtArgs>[]
+    coverLetters: Prisma.$CoverLetterPayload<ExtArgs>[]
+    interviewPreps: Prisma.$InterviewPrepPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -3042,6 +4324,9 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     passwordHash: string
     role: $Enums.Role
     isActive: boolean
+    slug: string | null
+    twoFactorSecret: string | null
+    twoFactorEnabled: boolean
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["user"]>
@@ -3455,6 +4740,10 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   companies<T extends Prisma.User$companiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$companiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   outreachMessages<T extends Prisma.User$outreachMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$outreachMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OutreachMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   suppressions<T extends Prisma.User$suppressionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$suppressionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SuppressionEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  products<T extends Prisma.User$productsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$productsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  tailoredCvs<T extends Prisma.User$tailoredCvsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$tailoredCvsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TailoredCvPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  coverLetters<T extends Prisma.User$coverLettersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$coverLettersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CoverLetterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  interviewPreps<T extends Prisma.User$interviewPrepsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$interviewPrepsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InterviewPrepPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3489,6 +4778,9 @@ export interface UserFieldRefs {
   readonly passwordHash: Prisma.FieldRef<"User", 'String'>
   readonly role: Prisma.FieldRef<"User", 'Role'>
   readonly isActive: Prisma.FieldRef<"User", 'Boolean'>
+  readonly slug: Prisma.FieldRef<"User", 'String'>
+  readonly twoFactorSecret: Prisma.FieldRef<"User", 'String'>
+  readonly twoFactorEnabled: Prisma.FieldRef<"User", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
 }
@@ -4279,6 +5571,102 @@ export type User$suppressionsArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.SuppressionEntryScalarFieldEnum | Prisma.SuppressionEntryScalarFieldEnum[]
+}
+
+/**
+ * User.products
+ */
+export type User$productsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Product
+   */
+  select?: Prisma.ProductSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Product
+   */
+  omit?: Prisma.ProductOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProductInclude<ExtArgs> | null
+  where?: Prisma.ProductWhereInput
+  orderBy?: Prisma.ProductOrderByWithRelationInput | Prisma.ProductOrderByWithRelationInput[]
+  cursor?: Prisma.ProductWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProductScalarFieldEnum | Prisma.ProductScalarFieldEnum[]
+}
+
+/**
+ * User.tailoredCvs
+ */
+export type User$tailoredCvsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TailoredCv
+   */
+  select?: Prisma.TailoredCvSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TailoredCv
+   */
+  omit?: Prisma.TailoredCvOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TailoredCvInclude<ExtArgs> | null
+  where?: Prisma.TailoredCvWhereInput
+  orderBy?: Prisma.TailoredCvOrderByWithRelationInput | Prisma.TailoredCvOrderByWithRelationInput[]
+  cursor?: Prisma.TailoredCvWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TailoredCvScalarFieldEnum | Prisma.TailoredCvScalarFieldEnum[]
+}
+
+/**
+ * User.coverLetters
+ */
+export type User$coverLettersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CoverLetter
+   */
+  select?: Prisma.CoverLetterSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CoverLetter
+   */
+  omit?: Prisma.CoverLetterOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CoverLetterInclude<ExtArgs> | null
+  where?: Prisma.CoverLetterWhereInput
+  orderBy?: Prisma.CoverLetterOrderByWithRelationInput | Prisma.CoverLetterOrderByWithRelationInput[]
+  cursor?: Prisma.CoverLetterWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CoverLetterScalarFieldEnum | Prisma.CoverLetterScalarFieldEnum[]
+}
+
+/**
+ * User.interviewPreps
+ */
+export type User$interviewPrepsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the InterviewPrep
+   */
+  select?: Prisma.InterviewPrepSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the InterviewPrep
+   */
+  omit?: Prisma.InterviewPrepOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.InterviewPrepInclude<ExtArgs> | null
+  where?: Prisma.InterviewPrepWhereInput
+  orderBy?: Prisma.InterviewPrepOrderByWithRelationInput | Prisma.InterviewPrepOrderByWithRelationInput[]
+  cursor?: Prisma.InterviewPrepWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.InterviewPrepScalarFieldEnum | Prisma.InterviewPrepScalarFieldEnum[]
 }
 
 /**

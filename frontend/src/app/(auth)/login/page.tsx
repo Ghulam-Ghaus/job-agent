@@ -1,17 +1,23 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Bot, Lock, Mail, ArrowRight, ShieldCheck, AlertCircle } from 'lucide-react';
+import React, { useState, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Bot, Lock, Mail, ArrowRight, ShieldCheck, AlertCircle, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { api, ApiClientError } from '@/lib/api-client';
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isExpired = searchParams.get('expired') === '1' || searchParams.get('expired') === 'true';
+  const redirectTarget = searchParams.get('redirect') || '/dashboard';
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [twoFactorCode, setTwoFactorCode] = useState('');
+  const [requires2Fa, setRequires2Fa] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -21,11 +27,20 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      await api.auth.login({ email, password });
-      router.push('/');
+      await api.auth.login({
+        email,
+        password,
+        twoFactorCode: requires2Fa && twoFactorCode ? twoFactorCode.trim() : undefined,
+      });
+      router.push(redirectTarget);
     } catch (err: unknown) {
       if (err instanceof ApiClientError) {
-        setError(err.message);
+        if (err.message.includes('2FA code is required') || err.message.includes('2FA_REQUIRED')) {
+          setRequires2Fa(true);
+          setError('Please enter the 6-digit code from your authenticator app.');
+        } else {
+          setError(err.message);
+        }
       } else {
         setError('Failed to authenticate. Please check if the backend is running.');
       }
@@ -37,6 +52,8 @@ export default function LoginPage() {
   const handleQuickFillAdmin = () => {
     setEmail('admin@jobagent.local');
     setPassword('Admin@123456');
+    setRequires2Fa(false);
+    setTwoFactorCode('');
   };
 
   return (
@@ -59,6 +76,13 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
+            {isExpired && !error && (
+              <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs flex items-center gap-2">
+                <Info className="h-4 w-4 shrink-0 text-amber-400" />
+                <span>Your session has expired or you were signed out. Please sign in to continue.</span>
+              </div>
+            )}
+
             {error && (
               <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-xs flex items-center gap-2">
                 <AlertCircle className="h-4 w-4 shrink-0" />
@@ -95,6 +119,24 @@ export default function LoginPage() {
                 className="bg-background/50 text-xs"
               />
             </div>
+
+            {requires2Fa && (
+              <div className="space-y-1.5 p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
+                <label className="text-xs font-medium text-indigo-300 flex items-center gap-1.5">
+                  <ShieldCheck className="h-3.5 w-3.5 text-indigo-400" />
+                  <span>Two-Factor Authenticator Code</span>
+                </label>
+                <Input
+                  type="text"
+                  maxLength={6}
+                  placeholder="123456"
+                  value={twoFactorCode}
+                  onChange={(e) => setTwoFactorCode(e.target.value)}
+                  autoFocus
+                  className="bg-background font-mono text-center tracking-widest text-sm"
+                />
+              </div>
+            )}
           </CardContent>
 
           <CardFooter className="flex flex-col gap-3 pt-2">
@@ -119,5 +161,19 @@ export default function LoginPage() {
         </form>
       </Card>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center p-4 bg-background text-xs text-muted-foreground">
+          Loading authentication...
+        </div>
+      }
+    >
+      <LoginForm />
+    </Suspense>
   );
 }

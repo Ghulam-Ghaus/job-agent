@@ -72,7 +72,11 @@ export const ModelName = {
   Company: 'Company',
   Contact: 'Contact',
   OutreachMessage: 'OutreachMessage',
-  SuppressionEntry: 'SuppressionEntry'
+  SuppressionEntry: 'SuppressionEntry',
+  Product: 'Product',
+  TailoredCv: 'TailoredCv',
+  CoverLetter: 'CoverLetter',
+  InterviewPrep: 'InterviewPrep'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -97,6 +101,9 @@ export const UserScalarFieldEnum = {
   passwordHash: 'passwordHash',
   role: 'role',
   isActive: 'isActive',
+  slug: 'slug',
+  twoFactorSecret: 'twoFactorSecret',
+  twoFactorEnabled: 'twoFactorEnabled',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -211,6 +218,8 @@ export const ProjectScalarFieldEnum = {
   repoUrl: 'repoUrl',
   highlights: 'highlights',
   tags: 'tags',
+  isPublic: 'isPublic',
+  featured: 'featured',
   startDate: 'startDate',
   endDate: 'endDate',
   createdAt: 'createdAt',
@@ -452,6 +461,76 @@ export const SuppressionEntryScalarFieldEnum = {
 } as const
 
 export type SuppressionEntryScalarFieldEnum = (typeof SuppressionEntryScalarFieldEnum)[keyof typeof SuppressionEntryScalarFieldEnum]
+
+
+export const ProductScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  slug: 'slug',
+  title: 'title',
+  tagline: 'tagline',
+  description: 'description',
+  category: 'category',
+  features: 'features',
+  priceUsd: 'priceUsd',
+  priceModel: 'priceModel',
+  demoUrl: 'demoUrl',
+  badge: 'badge',
+  isPublic: 'isPublic',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
+
+
+export const TailoredCvScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  opportunityId: 'opportunityId',
+  targetRole: 'targetRole',
+  inputHash: 'inputHash',
+  contentJson: 'contentJson',
+  verifierStatus: 'verifierStatus',
+  verifierIssues: 'verifierIssues',
+  promptVersion: 'promptVersion',
+  createdAt: 'createdAt'
+} as const
+
+export type TailoredCvScalarFieldEnum = (typeof TailoredCvScalarFieldEnum)[keyof typeof TailoredCvScalarFieldEnum]
+
+
+export const CoverLetterScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  opportunityId: 'opportunityId',
+  inputHash: 'inputHash',
+  body: 'body',
+  bodyEdited: 'bodyEdited',
+  verifierStatus: 'verifierStatus',
+  verifierIssues: 'verifierIssues',
+  promptVersion: 'promptVersion',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CoverLetterScalarFieldEnum = (typeof CoverLetterScalarFieldEnum)[keyof typeof CoverLetterScalarFieldEnum]
+
+
+export const InterviewPrepScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  opportunityId: 'opportunityId',
+  targetRole: 'targetRole',
+  inputHash: 'inputHash',
+  planJson: 'planJson',
+  tasksJson: 'tasksJson',
+  promptVersion: 'promptVersion',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type InterviewPrepScalarFieldEnum = (typeof InterviewPrepScalarFieldEnum)[keyof typeof InterviewPrepScalarFieldEnum]
 
 
 export const SortOrder = {

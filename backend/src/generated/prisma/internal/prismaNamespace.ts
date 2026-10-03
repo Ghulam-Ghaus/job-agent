@@ -418,7 +418,11 @@ export const ModelName = {
   Company: 'Company',
   Contact: 'Contact',
   OutreachMessage: 'OutreachMessage',
-  SuppressionEntry: 'SuppressionEntry'
+  SuppressionEntry: 'SuppressionEntry',
+  Product: 'Product',
+  TailoredCv: 'TailoredCv',
+  CoverLetter: 'CoverLetter',
+  InterviewPrep: 'InterviewPrep'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -434,7 +438,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "session" | "auditLog" | "setting" | "profile" | "experience" | "skill" | "project" | "cv" | "answerBankItem" | "jobPreference" | "opportunity" | "opportunityRequirement" | "opportunityMatch" | "llmCall" | "notification" | "applyPack" | "approvalRecord" | "company" | "contact" | "outreachMessage" | "suppressionEntry"
+    modelProps: "user" | "session" | "auditLog" | "setting" | "profile" | "experience" | "skill" | "project" | "cv" | "answerBankItem" | "jobPreference" | "opportunity" | "opportunityRequirement" | "opportunityMatch" | "llmCall" | "notification" | "applyPack" | "approvalRecord" | "company" | "contact" | "outreachMessage" | "suppressionEntry" | "product" | "tailoredCv" | "coverLetter" | "interviewPrep"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2066,6 +2070,302 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Product: {
+      payload: Prisma.$ProductPayload<ExtArgs>
+      fields: Prisma.ProductFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ProductFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ProductFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductPayload>
+        }
+        findFirst: {
+          args: Prisma.ProductFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ProductFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductPayload>
+        }
+        findMany: {
+          args: Prisma.ProductFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductPayload>[]
+        }
+        create: {
+          args: Prisma.ProductCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductPayload>
+        }
+        createMany: {
+          args: Prisma.ProductCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ProductCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductPayload>[]
+        }
+        delete: {
+          args: Prisma.ProductDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductPayload>
+        }
+        update: {
+          args: Prisma.ProductUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductPayload>
+        }
+        deleteMany: {
+          args: Prisma.ProductDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ProductUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ProductUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductPayload>[]
+        }
+        upsert: {
+          args: Prisma.ProductUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductPayload>
+        }
+        aggregate: {
+          args: Prisma.ProductAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateProduct>
+        }
+        groupBy: {
+          args: Prisma.ProductGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProductGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ProductCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProductCountAggregateOutputType> | number
+        }
+      }
+    }
+    TailoredCv: {
+      payload: Prisma.$TailoredCvPayload<ExtArgs>
+      fields: Prisma.TailoredCvFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.TailoredCvFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TailoredCvPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.TailoredCvFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TailoredCvPayload>
+        }
+        findFirst: {
+          args: Prisma.TailoredCvFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TailoredCvPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.TailoredCvFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TailoredCvPayload>
+        }
+        findMany: {
+          args: Prisma.TailoredCvFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TailoredCvPayload>[]
+        }
+        create: {
+          args: Prisma.TailoredCvCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TailoredCvPayload>
+        }
+        createMany: {
+          args: Prisma.TailoredCvCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.TailoredCvCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TailoredCvPayload>[]
+        }
+        delete: {
+          args: Prisma.TailoredCvDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TailoredCvPayload>
+        }
+        update: {
+          args: Prisma.TailoredCvUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TailoredCvPayload>
+        }
+        deleteMany: {
+          args: Prisma.TailoredCvDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.TailoredCvUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.TailoredCvUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TailoredCvPayload>[]
+        }
+        upsert: {
+          args: Prisma.TailoredCvUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TailoredCvPayload>
+        }
+        aggregate: {
+          args: Prisma.TailoredCvAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTailoredCv>
+        }
+        groupBy: {
+          args: Prisma.TailoredCvGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TailoredCvGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.TailoredCvCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TailoredCvCountAggregateOutputType> | number
+        }
+      }
+    }
+    CoverLetter: {
+      payload: Prisma.$CoverLetterPayload<ExtArgs>
+      fields: Prisma.CoverLetterFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CoverLetterFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoverLetterPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CoverLetterFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoverLetterPayload>
+        }
+        findFirst: {
+          args: Prisma.CoverLetterFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoverLetterPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CoverLetterFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoverLetterPayload>
+        }
+        findMany: {
+          args: Prisma.CoverLetterFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoverLetterPayload>[]
+        }
+        create: {
+          args: Prisma.CoverLetterCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoverLetterPayload>
+        }
+        createMany: {
+          args: Prisma.CoverLetterCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CoverLetterCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoverLetterPayload>[]
+        }
+        delete: {
+          args: Prisma.CoverLetterDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoverLetterPayload>
+        }
+        update: {
+          args: Prisma.CoverLetterUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoverLetterPayload>
+        }
+        deleteMany: {
+          args: Prisma.CoverLetterDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CoverLetterUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CoverLetterUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoverLetterPayload>[]
+        }
+        upsert: {
+          args: Prisma.CoverLetterUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoverLetterPayload>
+        }
+        aggregate: {
+          args: Prisma.CoverLetterAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCoverLetter>
+        }
+        groupBy: {
+          args: Prisma.CoverLetterGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CoverLetterGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CoverLetterCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CoverLetterCountAggregateOutputType> | number
+        }
+      }
+    }
+    InterviewPrep: {
+      payload: Prisma.$InterviewPrepPayload<ExtArgs>
+      fields: Prisma.InterviewPrepFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.InterviewPrepFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterviewPrepPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.InterviewPrepFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterviewPrepPayload>
+        }
+        findFirst: {
+          args: Prisma.InterviewPrepFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterviewPrepPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.InterviewPrepFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterviewPrepPayload>
+        }
+        findMany: {
+          args: Prisma.InterviewPrepFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterviewPrepPayload>[]
+        }
+        create: {
+          args: Prisma.InterviewPrepCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterviewPrepPayload>
+        }
+        createMany: {
+          args: Prisma.InterviewPrepCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.InterviewPrepCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterviewPrepPayload>[]
+        }
+        delete: {
+          args: Prisma.InterviewPrepDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterviewPrepPayload>
+        }
+        update: {
+          args: Prisma.InterviewPrepUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterviewPrepPayload>
+        }
+        deleteMany: {
+          args: Prisma.InterviewPrepDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.InterviewPrepUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.InterviewPrepUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterviewPrepPayload>[]
+        }
+        upsert: {
+          args: Prisma.InterviewPrepUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InterviewPrepPayload>
+        }
+        aggregate: {
+          args: Prisma.InterviewPrepAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateInterviewPrep>
+        }
+        groupBy: {
+          args: Prisma.InterviewPrepGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InterviewPrepGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.InterviewPrepCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InterviewPrepCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -2111,6 +2411,9 @@ export const UserScalarFieldEnum = {
   passwordHash: 'passwordHash',
   role: 'role',
   isActive: 'isActive',
+  slug: 'slug',
+  twoFactorSecret: 'twoFactorSecret',
+  twoFactorEnabled: 'twoFactorEnabled',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -2225,6 +2528,8 @@ export const ProjectScalarFieldEnum = {
   repoUrl: 'repoUrl',
   highlights: 'highlights',
   tags: 'tags',
+  isPublic: 'isPublic',
+  featured: 'featured',
   startDate: 'startDate',
   endDate: 'endDate',
   createdAt: 'createdAt',
@@ -2466,6 +2771,76 @@ export const SuppressionEntryScalarFieldEnum = {
 } as const
 
 export type SuppressionEntryScalarFieldEnum = (typeof SuppressionEntryScalarFieldEnum)[keyof typeof SuppressionEntryScalarFieldEnum]
+
+
+export const ProductScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  slug: 'slug',
+  title: 'title',
+  tagline: 'tagline',
+  description: 'description',
+  category: 'category',
+  features: 'features',
+  priceUsd: 'priceUsd',
+  priceModel: 'priceModel',
+  demoUrl: 'demoUrl',
+  badge: 'badge',
+  isPublic: 'isPublic',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
+
+
+export const TailoredCvScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  opportunityId: 'opportunityId',
+  targetRole: 'targetRole',
+  inputHash: 'inputHash',
+  contentJson: 'contentJson',
+  verifierStatus: 'verifierStatus',
+  verifierIssues: 'verifierIssues',
+  promptVersion: 'promptVersion',
+  createdAt: 'createdAt'
+} as const
+
+export type TailoredCvScalarFieldEnum = (typeof TailoredCvScalarFieldEnum)[keyof typeof TailoredCvScalarFieldEnum]
+
+
+export const CoverLetterScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  opportunityId: 'opportunityId',
+  inputHash: 'inputHash',
+  body: 'body',
+  bodyEdited: 'bodyEdited',
+  verifierStatus: 'verifierStatus',
+  verifierIssues: 'verifierIssues',
+  promptVersion: 'promptVersion',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CoverLetterScalarFieldEnum = (typeof CoverLetterScalarFieldEnum)[keyof typeof CoverLetterScalarFieldEnum]
+
+
+export const InterviewPrepScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  opportunityId: 'opportunityId',
+  targetRole: 'targetRole',
+  inputHash: 'inputHash',
+  planJson: 'planJson',
+  tasksJson: 'tasksJson',
+  promptVersion: 'promptVersion',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type InterviewPrepScalarFieldEnum = (typeof InterviewPrepScalarFieldEnum)[keyof typeof InterviewPrepScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -2883,6 +3258,10 @@ export type GlobalOmitConfig = {
   contact?: Prisma.ContactOmit
   outreachMessage?: Prisma.OutreachMessageOmit
   suppressionEntry?: Prisma.SuppressionEntryOmit
+  product?: Prisma.ProductOmit
+  tailoredCv?: Prisma.TailoredCvOmit
+  coverLetter?: Prisma.CoverLetterOmit
+  interviewPrep?: Prisma.InterviewPrepOmit
 }
 
 /* Types for Logging */

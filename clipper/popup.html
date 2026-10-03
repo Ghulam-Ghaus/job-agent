@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JobAgent AI Clipper</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { width: 340px; background: #0b0f19; color: #f1f5f9; padding: 14px; font-size: 12px; }
+    .header { display: flex; items-center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 10px; margin-bottom: 12px; }
+    .title { font-size: 13px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 6px; }
+    .badge { font-size: 9px; background: rgba(99, 102, 241, 0.2); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3); padding: 1px 6px; border-radius: 999px; }
+    .field { margin-bottom: 10px; }
+    label { display: block; font-size: 10px; color: #94a3b8; margin-bottom: 3px; font-weight: 500; text-transform: uppercase; }
+    input, select, textarea { width: 100%; padding: 6px 8px; background: #151c2d; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-size: 11px; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: #6366f1; }
+    textarea { resize: vertical; min-height: 80px; line-height: 1.4; }
+    .btn { width: 100%; padding: 8px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; border-radius: 8px; color: #fff; font-weight: 600; font-size: 12px; cursor: pointer; transition: opacity .2s; }
+    .btn:hover { opacity: 0.9; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .status { margin-top: 8px; padding: 6px 8px; border-radius: 6px; font-size: 11px; display: none; text-align: center; }
+    .status.success { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+    .status.error { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="title">
+      <span>JobAgent AI</span>
+      <span class="badge">Clipper</span>
+    </div>
+    <span style="font-size: 10px; color: #64748b;">v1.0</span>
+  </div>
+
+  <div class="field">
+    <label for="type">Opportunity Type</label>
+    <select id="type">
+      <option value="JOB">Job Opening (Salaried / Full-time)</option>
+      <option value="FREELANCE">Freelance Project (Fixed / Hourly)</option>
+      <option value="LEAD">Direct Client Lead</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="url">Source URL</label>
+    <input type="text" id="url" placeholder="https://..." readonly />
+  </div>
+
+  <div class="field">
+    <label for="text">Captured Content / Selection</label>
+    <textarea id="text" placeholder="Selected text from active page..."></textarea>
+  </div>
+
+  <button id="sendBtn" class="btn">Send to JobAgent AI</button>
+
+  <div id="status" class="status"></div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

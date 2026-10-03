@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { Sidebar } from '@/components/layout/sidebar';
 import { Header } from '@/components/layout/header';
 import { Button } from '@/components/ui/button';
@@ -10,6 +11,8 @@ import {
   type SkillGap,
   type ScoreBreakdown,
   type JobRequirementFields,
+  type TailoredCv,
+  type CoverLetter,
 } from '@/lib/api-client';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -338,16 +341,114 @@ function ImportDialog({
 function EvidenceDrawer({
   opp,
   onClose,
+  onUpdated,
 }: {
   opp: Opportunity;
   onClose: () => void;
+  onUpdated?: (updated: Opportunity) => void;
 }) {
-  const req = opp.requirement;
-  const match = opp.match;
+  const router = useRouter();
+  const [currentOpp, setCurrentOpp] = useState<Opportunity>(opp);
+  const [addingSkill, setAddingSkill] = useState<string | null>(null);
+  const [addingAll, setAddingAll] = useState(false);
+  const [actionMsg, setActionMsg] = useState<string | null>(null);
+
+  // Modals state
+  const [generatingCv, setGeneratingCv] = useState(false);
+  const [tailoredCv, setTailoredCv] = useState<TailoredCv | null>(null);
+  const [showCvModal, setShowCvModal] = useState(false);
+
+  const [generatingLetter, setGeneratingLetter] = useState(false);
+  const [coverLetter, setCoverLetter] = useState<CoverLetter | null>(null);
+  const [showLetterModal, setShowLetterModal] = useState(false);
+  const [copiedLetter, setCopiedLetter] = useState(false);
+
+  const req = currentOpp.requirement;
+  const match = currentOpp.match;
   const fields = req?.fieldsJson as JobRequirementFields | undefined;
   const evidence = req?.evidenceJson as Record<string, string> | undefined;
   const breakdown = match?.breakdownJson as ScoreBreakdown | undefined;
   const gaps = (match?.gapsJson as SkillGap[]) ?? [];
+
+  // Add 1 skill from gap
+  const handleAddSkill = async (skillName: string) => {
+    try {
+      setAddingSkill(skillName);
+      const res = await api.tailoredCv.addSkillFromGap({
+        name: skillName,
+        category: 'Backend',
+        opportunityId: currentOpp.id,
+      });
+      if (res.rescoredOpportunity) {
+        setCurrentOpp(res.rescoredOpportunity);
+        onUpdated?.(res.rescoredOpportunity);
+      }
+      setActionMsg(`Added "${skillName}" to Master Profile & re-scored!`);
+      setTimeout(() => setActionMsg(null), 3500);
+    } catch {
+      setActionMsg('Failed to add skill');
+    } finally {
+      setAddingSkill(null);
+    }
+  };
+
+  // Add all skills from gaps
+  const handleAddAllSkills = async () => {
+    if (gaps.length === 0) return;
+    try {
+      setAddingAll(true);
+      for (const g of gaps) {
+        await api.tailoredCv.addSkillFromGap({
+          name: g.skill,
+          category: 'Backend',
+        });
+      }
+      // Re-score once at end
+      const rescored = await api.opportunities.reprocess(currentOpp.id);
+      setCurrentOpp(rescored);
+      onUpdated?.(rescored);
+      setActionMsg(`Added all ${gaps.length} skills to profile & re-scored to ${rescored.match?.score ?? 0}/100!`);
+      setTimeout(() => setActionMsg(null), 4000);
+    } catch {
+      setActionMsg('Failed to add all skills');
+    } finally {
+      setAddingAll(false);
+    }
+  };
+
+  // Generate Tailored CV
+  const handleGenerateCv = async () => {
+    try {
+      setGeneratingCv(true);
+      const cv = await api.tailoredCv.generate({
+        opportunityId: currentOpp.id,
+        forceRegenerate: true,
+      });
+      setTailoredCv(cv);
+      setShowCvModal(true);
+    } catch {
+      setActionMsg('Failed to generate tailored CV');
+    } finally {
+      setGeneratingCv(false);
+    }
+  };
+
+  // Generate Cover Letter
+  const handleGenerateCoverLetter = async () => {
+    try {
+      setGeneratingLetter(true);
+      const letter = await api.tailoredCv.generateCoverLetter({
+        opportunityId: currentOpp.id,
+        forceRegenerate: true,
+      });
+      setCoverLetter(letter);
+      setShowLetterModal(true);
+    } catch {
+      setActionMsg('Failed to generate cover letter');
+    } finally {
+      setGeneratingLetter(false);
+    }
+  };
 
   return (
     <div
@@ -365,7 +466,7 @@ function EvidenceDrawer({
       <div
         style={{
           width: '100%',
-          maxWidth: 480,
+          maxWidth: 520,
           background: '#0f172a',
           borderLeft: '1px solid rgba(255,255,255,.08)',
           overflowY: 'auto',
@@ -374,13 +475,13 @@ function EvidenceDrawer({
         }}
       >
         {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
           <div>
             <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: '#f1f5f9' }}>
-              {opp.title ?? 'Untitled'}
+              {currentOpp.title ?? 'Untitled'}
             </h2>
             <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: 14 }}>
-              {opp.company ?? 'Unknown company'} {opp.country ? `· ${opp.country}` : ''}
+              {currentOpp.company ?? 'Unknown company'} {currentOpp.country ? `· ${currentOpp.country}` : ''}
             </p>
           </div>
           <button
@@ -391,37 +492,129 @@ function EvidenceDrawer({
           </button>
         </div>
 
-        {/* Score */}
+        {/* Action feedback */}
+        {actionMsg && (
+          <div
+            style={{
+              padding: '10px 14px',
+              borderRadius: 8,
+              background: 'rgba(99,102,241,.15)',
+              border: '1px solid rgba(99,102,241,.3)',
+              color: '#818cf8',
+              fontSize: 12,
+              marginBottom: 16,
+              fontWeight: 600,
+            }}
+          >
+            ✓ {actionMsg}
+          </div>
+        )}
+
+        {/* Score Card */}
         {match && (
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: 20,
+              justifyContent: 'space-between',
               background: 'rgba(255,255,255,.04)',
               borderRadius: 12,
               padding: '16px 20px',
-              marginBottom: 24,
+              marginBottom: 16,
               border: '1px solid rgba(255,255,255,.07)',
             }}
           >
-            <ScoreRing score={match.score} />
-            <div>
-              <div style={{ fontSize: 22, fontWeight: 800, color: scoreColor(match.score) }}>
-                {match.score}/100
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              <ScoreRing score={match.score} />
+              <div>
+                <div style={{ fontSize: 22, fontWeight: 800, color: scoreColor(match.score) }}>
+                  {match.score}/100
+                </div>
+                <div style={{ fontSize: 13, color: '#94a3b8' }}>{scoreLabel(match.score)}</div>
               </div>
-              <div style={{ fontSize: 13, color: '#94a3b8' }}>{scoreLabel(match.score)}</div>
+            </div>
+
+            <div style={{ textAlign: 'right', fontSize: 11, color: '#64748b' }}>
+              Tech: <span style={{ color: '#e2e8f0', fontWeight: 700 }}>{breakdown?.technical ?? 0}/40</span>
             </div>
           </div>
         )}
+
+        {/* 3 Main Action Buttons */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 24 }}>
+          <button
+            onClick={handleGenerateCv}
+            disabled={generatingCv}
+            style={{
+              padding: '10px 8px',
+              borderRadius: 10,
+              border: '1px solid rgba(99,102,241,.4)',
+              background: 'rgba(99,102,241,.12)',
+              color: '#c7d2fe',
+              fontSize: 11,
+              fontWeight: 600,
+              cursor: generatingCv ? 'not-allowed' : 'pointer',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 4,
+            }}
+          >
+            <span style={{ fontSize: 16 }}>📄</span>
+            <span>{generatingCv ? 'Tailoring…' : 'Tailored CV'}</span>
+          </button>
+
+          <button
+            onClick={handleGenerateCoverLetter}
+            disabled={generatingLetter}
+            style={{
+              padding: '10px 8px',
+              borderRadius: 10,
+              border: '1px solid rgba(168,85,247,.4)',
+              background: 'rgba(168,85,247,.12)',
+              color: '#e9d5ff',
+              fontSize: 11,
+              fontWeight: 600,
+              cursor: generatingLetter ? 'not-allowed' : 'pointer',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 4,
+            }}
+          >
+            <span style={{ fontSize: 16 }}>✉️</span>
+            <span>{generatingLetter ? 'Writing…' : 'Cover Letter'}</span>
+          </button>
+
+          <button
+            onClick={() => router.push(`/interview-prep?opportunityId=${currentOpp.id}&role=${encodeURIComponent(currentOpp.title || '')}`)}
+            style={{
+              padding: '10px 8px',
+              borderRadius: 10,
+              border: '1px solid rgba(34,197,94,.4)',
+              background: 'rgba(34,197,94,.12)',
+              color: '#bbf7d0',
+              fontSize: 11,
+              fontWeight: 600,
+              cursor: 'pointer',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 4,
+            }}
+          >
+            <span style={{ fontSize: 16 }}>🎯</span>
+            <span>Interview Prep</span>
+          </button>
+        </div>
 
         {/* Breakdown */}
         {breakdown && (
           <section style={{ marginBottom: 24 }}>
             <h3 style={{ margin: '0 0 12px', fontSize: 13, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.05em' }}>
-              Score Breakdown {opp.type === 'FREELANCE' ? '(Freelance Model)' : '(Full-Time Model)'}
+              Score Breakdown {currentOpp.type === 'FREELANCE' ? '(Freelance Model)' : '(Full-Time Model)'}
             </h3>
-            {opp.type === 'FREELANCE' ? (
+            {currentOpp.type === 'FREELANCE' ? (
               <>
                 <BreakdownBar label="Technical Fit" value={breakdown.technical} max={25} />
                 <BreakdownBar label="Budget Fit" value={breakdown.budgetFit ?? breakdown.salary} max={20} />
@@ -443,19 +636,38 @@ function EvidenceDrawer({
           </section>
         )}
 
-        {/* Gaps */}
+        {/* Skill Gaps with 1-Click Profile Adoption */}
         {gaps.length > 0 && (
           <section style={{ marginBottom: 24 }}>
-            <h3 style={{ margin: '0 0 12px', fontSize: 13, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.05em' }}>
-              Skill Gaps
-            </h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <h3 style={{ margin: 0, fontSize: 13, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.05em' }}>
+                Skill Gaps ({gaps.length})
+              </h3>
+              <button
+                onClick={handleAddAllSkills}
+                disabled={addingAll}
+                style={{
+                  background: 'rgba(99,102,241,.15)',
+                  border: '1px solid rgba(99,102,241,.4)',
+                  color: '#818cf8',
+                  borderRadius: 6,
+                  padding: '3px 8px',
+                  fontSize: 10,
+                  fontWeight: 700,
+                  cursor: addingAll ? 'not-allowed' : 'pointer',
+                }}
+              >
+                {addingAll ? '⚡ Adding All…' : '⚡ Add All & Rescore'}
+              </button>
+            </div>
+
             {gaps.map((g, i) => (
               <div
                 key={i}
                 style={{
                   display: 'flex',
-                  gap: 10,
-                  alignItems: 'flex-start',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
                   padding: '10px 12px',
                   borderRadius: 8,
                   marginBottom: 6,
@@ -463,11 +675,33 @@ function EvidenceDrawer({
                   border: `1px solid ${g.required ? 'rgba(239,68,68,.2)' : 'rgba(245,158,11,.15)'}`,
                 }}
               >
-                <span style={{ fontSize: 14, marginTop: 1 }}>{g.required ? '🔴' : '🟡'}</span>
-                <div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: '#e2e8f0' }}>{g.skill}</div>
-                  <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 2 }}>{g.reason}</div>
+                <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', minWidth: 0 }}>
+                  <span style={{ fontSize: 14, marginTop: 1 }}>{g.required ? '🔴' : '🟡'}</span>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: '#e2e8f0', wordBreak: 'break-word' }}>{g.skill}</div>
+                    <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>{g.reason}</div>
+                  </div>
                 </div>
+
+                <button
+                  onClick={() => handleAddSkill(g.skill)}
+                  disabled={addingSkill === g.skill}
+                  style={{
+                    marginLeft: 12,
+                    padding: '4px 10px',
+                    borderRadius: 6,
+                    background: 'rgba(255,255,255,.08)',
+                    border: '1px solid rgba(255,255,255,.2)',
+                    color: '#f8fafc',
+                    fontSize: 11,
+                    fontWeight: 600,
+                    cursor: addingSkill === g.skill ? 'not-allowed' : 'pointer',
+                    whiteSpace: 'nowrap',
+                    flexShrink: 0,
+                  }}
+                >
+                  {addingSkill === g.skill ? 'Adding…' : '+ Add to Profile'}
+                </button>
               </div>
             ))}
           </section>
@@ -570,10 +804,276 @@ function EvidenceDrawer({
               overflowY: 'auto',
             }}
           >
-            {opp.rawText}
+            {currentOpp.rawText}
           </pre>
         </details>
       </div>
+
+      {/* Tailored CV Modal with ATS PDF Download */}
+      {showCvModal && tailoredCv && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 1100,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'rgba(0,0,0,.7)',
+            backdropFilter: 'blur(4px)',
+            padding: 20,
+          }}
+          onClick={(e) => e.target === e.currentTarget && setShowCvModal(false)}
+        >
+          <div
+            style={{
+              background: '#0f172a',
+              border: '1px solid rgba(255,255,255,.15)',
+              borderRadius: 16,
+              padding: '24px 28px',
+              maxWidth: 640,
+              width: '100%',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              boxShadow: '0 25px 50px rgba(0,0,0,.8)',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ fontSize: 18 }}>📄</span>
+                  <h3 style={{ margin: 0, fontSize: 17, fontWeight: 700, color: '#f8fafc' }}>
+                    Tailored CV Generated
+                  </h3>
+                  <span
+                    style={{
+                      fontSize: 11,
+                      padding: '2px 8px',
+                      borderRadius: 12,
+                      fontWeight: 600,
+                      background: tailoredCv.verifierStatus === 'passed' ? 'rgba(34,197,94,.15)' : 'rgba(245,158,11,.15)',
+                      color: tailoredCv.verifierStatus === 'passed' ? '#4ade80' : '#fbbf24',
+                      border: `1px solid ${tailoredCv.verifierStatus === 'passed' ? 'rgba(34,197,94,.3)' : 'rgba(245,158,11,.3)'}`,
+                    }}
+                  >
+                    {tailoredCv.verifierStatus === 'passed' ? '✓ Fact-Checked' : '⚠ Flagged'}
+                  </span>
+                </div>
+                <p style={{ margin: '4px 0 0', fontSize: 12, color: '#94a3b8' }}>
+                  ATS-optimized for &ldquo;{tailoredCv.targetRole}&rdquo;
+                </p>
+              </div>
+              <button
+                onClick={() => setShowCvModal(false)}
+                style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: 20 }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Content summary */}
+            <div style={{ background: 'rgba(255,255,255,.03)', padding: 16, borderRadius: 12, marginBottom: 16, border: '1px solid rgba(255,255,255,.06)' }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: '#818cf8', marginBottom: 4 }}>
+                {tailoredCv.contentJson.headline}
+              </div>
+              <p style={{ fontSize: 12, color: '#cbd5e1', lineHeight: 1.5, margin: '0 0 12px' }}>
+                {tailoredCv.contentJson.summary}
+              </p>
+
+              <div style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', marginBottom: 6 }}>
+                Emphasized Skill Pillars:
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {tailoredCv.contentJson.skills?.flatMap((s) => s.items).slice(0, 10).map((skillName, idx) => (
+                  <span
+                    key={idx}
+                    style={{
+                      padding: '2px 8px',
+                      borderRadius: 6,
+                      background: 'rgba(99,102,241,.15)',
+                      color: '#a5b4fc',
+                      fontSize: 11,
+                      fontWeight: 600,
+                    }}
+                  >
+                    {skillName}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+              <button
+                onClick={() => setShowCvModal(false)}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: 8,
+                  border: '1px solid rgba(255,255,255,.15)',
+                  background: 'transparent',
+                  color: '#94a3b8',
+                  fontSize: 12,
+                  cursor: 'pointer',
+                }}
+              >
+                Close
+              </button>
+              <a
+                href={api.tailoredCv.downloadUrl(tailoredCv.id)}
+                download
+                target="_blank"
+                rel="noreferrer"
+                style={{
+                  padding: '8px 20px',
+                  borderRadius: 8,
+                  border: 'none',
+                  background: 'linear-gradient(135deg,#6366f1,#8b5cf6)',
+                  color: '#fff',
+                  fontSize: 12,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  textDecoration: 'none',
+                  boxShadow: '0 4px 15px rgba(99,102,241,.4)',
+                }}
+              >
+                <span>⬇️ Download ATS PDF</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cover Letter Modal with PDF Download */}
+      {showLetterModal && coverLetter && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 1100,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'rgba(0,0,0,.7)',
+            backdropFilter: 'blur(4px)',
+            padding: 20,
+          }}
+          onClick={(e) => e.target === e.currentTarget && setShowLetterModal(false)}
+        >
+          <div
+            style={{
+              background: '#0f172a',
+              border: '1px solid rgba(255,255,255,.15)',
+              borderRadius: 16,
+              padding: '24px 28px',
+              maxWidth: 640,
+              width: '100%',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              boxShadow: '0 25px 50px rgba(0,0,0,.8)',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+              <div>
+                <h3 style={{ margin: 0, fontSize: 17, fontWeight: 700, color: '#f8fafc' }}>
+                  Tailored Cover Letter
+                </h3>
+                <p style={{ margin: '4px 0 0', fontSize: 12, color: '#94a3b8' }}>
+                  Matched directly to {currentOpp.company || 'Hiring Team'} requirements
+                </p>
+              </div>
+              <button
+                onClick={() => setShowLetterModal(false)}
+                style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: 20 }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <textarea
+              defaultValue={coverLetter.bodyEdited || coverLetter.body}
+              rows={12}
+              style={{
+                width: '100%',
+                boxSizing: 'border-box',
+                background: 'rgba(0,0,0,.3)',
+                border: '1px solid rgba(255,255,255,.1)',
+                borderRadius: 10,
+                padding: '14px',
+                color: '#f1f5f9',
+                fontSize: 12,
+                lineHeight: 1.6,
+                resize: 'vertical',
+                outline: 'none',
+                fontFamily: 'inherit',
+                marginBottom: 16,
+              }}
+            />
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(coverLetter.bodyEdited || coverLetter.body);
+                  setCopiedLetter(true);
+                  setTimeout(() => setCopiedLetter(false), 2500);
+                }}
+                style={{
+                  padding: '8px 14px',
+                  borderRadius: 8,
+                  border: '1px solid rgba(255,255,255,.15)',
+                  background: 'rgba(255,255,255,.05)',
+                  color: '#e2e8f0',
+                  fontSize: 12,
+                  cursor: 'pointer',
+                }}
+              >
+                {copiedLetter ? '✓ Copied!' : '📋 Copy to Clipboard'}
+              </button>
+
+              <div style={{ display: 'flex', gap: 10 }}>
+                <button
+                  onClick={() => setShowLetterModal(false)}
+                  style={{
+                    padding: '8px 14px',
+                    borderRadius: 8,
+                    border: '1px solid rgba(255,255,255,.15)',
+                    background: 'transparent',
+                    color: '#94a3b8',
+                    fontSize: 12,
+                    cursor: 'pointer',
+                  }}
+                >
+                  Close
+                </button>
+                <a
+                  href={api.tailoredCv.coverLetterDownloadUrl(coverLetter.id)}
+                  download
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{
+                    padding: '8px 18px',
+                    borderRadius: 8,
+                    border: 'none',
+                    background: 'linear-gradient(135deg,#a855f7,#6366f1)',
+                    color: '#fff',
+                    fontSize: 12,
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    textDecoration: 'none',
+                  }}
+                >
+                  <span>⬇️ Download PDF</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -1054,7 +1554,14 @@ export default function JobsDashboard() {
         <ImportDialog onClose={() => setShowImport(false)} onImported={handleImported} />
       )}
       {selectedOpp && (
-        <EvidenceDrawer opp={selectedOpp} onClose={() => setSelectedOpp(null)} />
+        <EvidenceDrawer
+          opp={selectedOpp}
+          onClose={() => setSelectedOpp(null)}
+          onUpdated={(updated) => {
+            setOpps((prev) => prev.map((o) => (o.id === updated.id ? updated : o)));
+            setSelectedOpp(updated);
+          }}
+        />
       )}
     </div>
   );

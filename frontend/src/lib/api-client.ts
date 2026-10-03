@@ -320,6 +320,220 @@ export interface SuppressionEntry {
   createdAt: string;
 }
 
+// ─── Sprint 5: Public Showcase & Admin Types ──────────────────────────────────
+
+export interface PublicSkill {
+  name: string;
+  level: string;
+  category?: string | null;
+  yearsOfExp?: number | null;
+}
+
+export interface PublicProject {
+  id: string;
+  title: string;
+  description: string | null;
+  techStack: string[];
+  url: string | null;
+  repoUrl: string | null;
+  highlights: string[];
+  featured: boolean;
+}
+
+export interface PublicProfile {
+  name: string;
+  headline: string;
+  summary: string;
+  location: string;
+  country: string | null;
+  slug: string;
+  skills: PublicSkill[];
+  projects: PublicProject[];
+  githubUrl: string | null;
+  linkedinUrl: string | null;
+  portfolioUrl: string | null;
+}
+
+export interface PublicProduct {
+  id: string;
+  slug: string;
+  title: string;
+  tagline: string | null;
+  description: string;
+  category: string;
+  features: string[];
+  priceUsd: number | null;
+  priceModel: string;
+  demoUrl: string | null;
+  badge: string | null;
+}
+
+export interface AdminUser {
+  id: string;
+  email: string;
+  role: 'SUPER_ADMIN' | 'USER';
+  isActive: boolean;
+  slug: string | null;
+  twoFactorEnabled: boolean;
+  fullName: string | null;
+  headline: string | null;
+  createdAt: string;
+  stats: {
+    opportunities: number;
+    applyPacks: number;
+    leads: number;
+  };
+}
+
+export interface LlmMetricsSummary {
+  totalCalls: number;
+  totalTokensIn: number;
+  totalTokensOut: number;
+  totalCostUsd: number;
+  avgLatencyMs: number;
+  cacheHitRate: number;
+  errorCalls: number;
+}
+
+export interface LlmMetrics {
+  summary: LlmMetricsSummary;
+  providers: Array<{ provider: string; count: number }>;
+  models: Array<{ model: string; count: number }>;
+  recentCalls: Array<{
+    id: string;
+    provider: string;
+    model: string;
+    purpose?: string | null;
+    tokensIn?: number | null;
+    tokensOut?: number | null;
+    costUsd?: number | null;
+    durationMs?: number | null;
+    cached: boolean;
+    status: string;
+    createdAt: string;
+  }>;
+}
+
+export interface AuditLogEntry {
+  id: string;
+  userId: string | null;
+  action: string;
+  entity: string | null;
+  entityId: string | null;
+  meta: unknown;
+  requestId: string | null;
+  ipAddress: string | null;
+  createdAt: string;
+  user?: { email: string; role: string } | null;
+}
+
+export interface IngestionSource {
+  id: string;
+  name: string;
+  type: string;
+  status: string;
+  metrics: Record<string, number>;
+  details: string;
+}
+
+export interface SourcesStatus {
+  sources: IngestionSource[];
+}
+
+export interface TailoredCvContent {
+  headline: string;
+  summary: string;
+  skills: Array<{ category: string; items: string[] }>;
+  experiences: Array<{
+    title: string;
+    company: string;
+    location?: string;
+    period: string;
+    bullets: string[];
+    techStack: string[];
+  }>;
+  projects: Array<{
+    title: string;
+    description: string;
+    highlights: string[];
+    techStack: string[];
+  }>;
+}
+
+export interface TailoredCv {
+  id: string;
+  userId: string;
+  opportunityId?: string | null;
+  targetRole: string;
+  contentJson: TailoredCvContent;
+  verifierStatus: 'passed' | 'flagged' | 'pending';
+  verifierIssues: Array<{ claim: string; reason: string }>;
+  createdAt: string;
+  opportunity?: { id: string; title: string; company: string } | null;
+}
+
+export interface CoverLetter {
+  id: string;
+  userId: string;
+  opportunityId: string;
+  body: string;
+  bodyEdited?: string | null;
+  verifierStatus: string;
+  verifierIssues: Array<{ claim: string; reason: string }>;
+  createdAt: string;
+}
+
+export interface PrepTask {
+  id: string;
+  title: string;
+  description: string;
+  topic: string;
+  difficulty: 'EASY' | 'MEDIUM' | 'HARD';
+  done: boolean;
+}
+
+export interface InterviewPrepPlan {
+  overview: string;
+  topics: Array<{
+    name: string;
+    description: string;
+    keyConcepts: string[];
+  }>;
+  tasks: Array<{
+    id?: string;
+    title: string;
+    description: string;
+    topic: string;
+    difficulty: 'EASY' | 'MEDIUM' | 'HARD';
+  }>;
+  questions: Array<{
+    question: string;
+    category: string;
+    expectedAnswer: string;
+    talkingPoints: string[];
+  }>;
+  gapBridges: Array<{
+    technology: string;
+    challenge: string;
+    bridgingAnswer: string;
+  }>;
+  questionsToAsk: Array<{
+    question: string;
+    strategicPurpose: string;
+  }>;
+}
+
+export interface InterviewPrep {
+  id: string;
+  userId: string;
+  opportunityId?: string | null;
+  targetRole: string;
+  planJson: InterviewPrepPlan;
+  tasksJson: PrepTask[];
+  createdAt: string;
+  opportunity?: { id: string; title: string; company: string } | null;
+}
+
 export class ApiClientError extends Error {
   constructor(
     public statusCode: number,
@@ -334,9 +548,49 @@ export class ApiClientError extends Error {
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api/v1';
 
+let refreshPromise: Promise<boolean> | null = null;
+
+async function attemptTokenRefresh(): Promise<boolean> {
+  if (!refreshPromise) {
+    refreshPromise = (async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/auth/refresh`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+        });
+        return res.ok;
+      } catch {
+        return false;
+      } finally {
+        refreshPromise = null;
+      }
+    })();
+  }
+  return refreshPromise;
+}
+
+function handleSessionExpired(): void {
+  if (typeof window !== 'undefined') {
+    const path = window.location.pathname;
+    const isPublic =
+      path === '/login' ||
+      path === '/' ||
+      path.startsWith('/products') ||
+      path.startsWith('/u/');
+    if (!isPublic) {
+      window.location.href = `/login?expired=1&redirect=${encodeURIComponent(path)}`;
+    }
+  }
+}
+
 async function request<T>(
   endpoint: string,
   options: RequestInit = {},
+  isRetry = false,
 ): Promise<T> {
   const url = `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
 
@@ -354,6 +608,19 @@ async function request<T>(
     },
   });
 
+  if (response.status === 401) {
+    const isAuthRoute =
+      endpoint.includes('/auth/login') || endpoint.includes('/auth/refresh');
+
+    if (!isAuthRoute && !isRetry) {
+      const refreshed = await attemptTokenRefresh();
+      if (refreshed) {
+        return request<T>(endpoint, options, true);
+      }
+      handleSessionExpired();
+    }
+  }
+
   const json = await response.json().catch(() => null);
 
   if (!response.ok) {
@@ -369,13 +636,26 @@ async function request<T>(
 }
 
 /** Upload a file via multipart/form-data — do NOT set Content-Type manually */
-async function uploadFile<T>(endpoint: string, formData: FormData): Promise<T> {
+async function uploadFile<T>(
+  endpoint: string,
+  formData: FormData,
+  isRetry = false,
+): Promise<T> {
   const url = `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
   const response = await fetch(url, {
     method: 'POST',
     credentials: 'include',
     body: formData,
   });
+
+  if (response.status === 401 && !isRetry) {
+    const refreshed = await attemptTokenRefresh();
+    if (refreshed) {
+      return uploadFile<T>(endpoint, formData, true);
+    }
+    handleSessionExpired();
+  }
+
   const json = await response.json().catch(() => null);
   if (!response.ok) {
     const errorMsg =
@@ -460,11 +740,17 @@ export const api = {
     request<T>(endpoint, { ...options, method: 'DELETE' }),
 
   auth: {
-    login: (credentials: LoginPayload) =>
-      api.post<{ user: User }>('/auth/login', credentials),
+    login: (credentials: LoginPayload & { twoFactorCode?: string }) =>
+      api.post<{ user: User; requires2Fa?: boolean }>('/auth/login', credentials),
     refresh: () => api.post<{ user: User }>('/auth/refresh'),
     logout: () => api.post<{ message: string }>('/auth/logout'),
-    me: () => api.get<{ user: User }>('/auth/me'),
+    me: () => api.get<{ user: User & { twoFactorEnabled?: boolean; slug?: string } }>('/auth/me'),
+    generate2Fa: () =>
+      api.post<{ secret: string; otpAuthUrl: string; qrCodeDataUrl: string }>('/auth/2fa/generate'),
+    enable2Fa: (code: string) =>
+      api.post<{ success: boolean; message: string }>('/auth/2fa/enable', { code }),
+    disable2Fa: (code: string) =>
+      api.post<{ success: boolean; message: string }>('/auth/2fa/disable', { code }),
   },
 
   profile: {
@@ -578,6 +864,94 @@ export const api = {
       api.post<SuppressionEntry>('/leads/suppressions', data),
     removeSuppression: (id: string) =>
       api.delete<void>(`/leads/suppressions/${id}`),
+  },
+
+  public: {
+    getProfile: (slug?: string) =>
+      api.get<PublicProfile>(slug ? `/public/profile/${slug}` : '/public/profile'),
+    getProducts: () =>
+      api.get<PublicProduct[]>('/public/products'),
+    submitInquiry: (data: {
+      name: string;
+      email: string;
+      company?: string;
+      message: string;
+      productSlug?: string;
+    }) => api.post<{ success: boolean; message: string }>('/public/inquiry', data),
+  },
+
+  admin: {
+    getUsers: () => api.get<AdminUser[]>('/admin/users'),
+    updateUser: (
+      id: string,
+      data: { role?: 'SUPER_ADMIN' | 'USER'; isActive?: boolean; slug?: string },
+    ) => api.patch<AdminUser>(`/admin/users/${id}`, data),
+    getLlmMetrics: () => api.get<LlmMetrics>('/admin/llm-usage'),
+    getAuditLogs: (action?: string, limit?: number) => {
+      const q = new URLSearchParams();
+      if (action) q.append('action', action);
+      if (limit) q.append('limit', String(limit));
+      const qs = q.toString() ? `?${q.toString()}` : '';
+      return api.get<AuditLogEntry[]>(`/admin/audit-logs${qs}`);
+    },
+    getSources: () => api.get<SourcesStatus>('/admin/sources'),
+  },
+
+  tailoredCv: {
+    generate: (data: {
+      opportunityId?: string;
+      targetRole?: string;
+      jobDescription?: string;
+      emphasizedSkills?: string[];
+      forceRegenerate?: boolean;
+    }) => api.post<TailoredCv>('/tailored-cv/generate', data),
+    list: (opportunityId?: string) => {
+      const qs = opportunityId ? `?opportunityId=${encodeURIComponent(opportunityId)}` : '';
+      return api.get<TailoredCv[]>(`/tailored-cv${qs}`);
+    },
+    get: (id: string) => api.get<TailoredCv>(`/tailored-cv/${id}`),
+    downloadUrl: (id: string) => `${API_BASE_URL}/tailored-cv/${id}/download`,
+    addSkillFromGap: (data: {
+      name: string;
+      category?: string;
+      level?: 'BEGINNER' | 'INTERMEDIATE' | 'EXPERT';
+      opportunityId?: string;
+    }) =>
+      api.post<{
+        success: boolean;
+        skill: Skill;
+        rescoredOpportunity: Opportunity | null;
+        message: string;
+      }>('/tailored-cv/add-skill-from-gap', data),
+    generateCoverLetter: (data: { opportunityId: string; forceRegenerate?: boolean }) =>
+      api.post<CoverLetter>('/tailored-cv/cover-letter', data),
+    coverLetterDownloadUrl: (id: string) => `${API_BASE_URL}/tailored-cv/cover-letter/${id}/download`,
+  },
+
+  interviewPrep: {
+    generate: (data: {
+      opportunityId?: string;
+      targetRole?: string;
+      jobDescription?: string;
+      focusAreas?: string[];
+      forceRegenerate?: boolean;
+    }) => api.post<InterviewPrep>('/interview-prep/generate', data),
+    list: (opportunityId?: string) => {
+      const qs = opportunityId ? `?opportunityId=${encodeURIComponent(opportunityId)}` : '';
+      return api.get<InterviewPrep[]>(`/interview-prep${qs}`);
+    },
+    get: (id: string) => api.get<InterviewPrep>(`/interview-prep/${id}`),
+    toggleTask: (prepId: string, taskId: string, done?: boolean) =>
+      api.patch<{
+        success: boolean;
+        taskId: string;
+        done: boolean;
+        completedCount: number;
+        totalCount: number;
+        progressPercent: number;
+        prep: InterviewPrep;
+      }>(`/interview-prep/${prepId}/tasks/${taskId}/toggle`, { done }),
+    delete: (id: string) => api.delete<void>(`/interview-prep/${id}`),
   },
 
   health: {

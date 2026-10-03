@@ -290,6 +290,9 @@ export type OpportunityWhereInput = {
   requirement?: Prisma.XOR<Prisma.OpportunityRequirementNullableScalarRelationFilter, Prisma.OpportunityRequirementWhereInput> | null
   match?: Prisma.XOR<Prisma.OpportunityMatchNullableScalarRelationFilter, Prisma.OpportunityMatchWhereInput> | null
   applyPack?: Prisma.XOR<Prisma.ApplyPackNullableScalarRelationFilter, Prisma.ApplyPackWhereInput> | null
+  tailoredCvs?: Prisma.TailoredCvListRelationFilter
+  coverLetters?: Prisma.CoverLetterListRelationFilter
+  interviewPreps?: Prisma.InterviewPrepListRelationFilter
 }
 
 export type OpportunityOrderByWithRelationInput = {
@@ -315,6 +318,9 @@ export type OpportunityOrderByWithRelationInput = {
   requirement?: Prisma.OpportunityRequirementOrderByWithRelationInput
   match?: Prisma.OpportunityMatchOrderByWithRelationInput
   applyPack?: Prisma.ApplyPackOrderByWithRelationInput
+  tailoredCvs?: Prisma.TailoredCvOrderByRelationAggregateInput
+  coverLetters?: Prisma.CoverLetterOrderByRelationAggregateInput
+  interviewPreps?: Prisma.InterviewPrepOrderByRelationAggregateInput
 }
 
 export type OpportunityWhereUniqueInput = Prisma.AtLeast<{
@@ -344,6 +350,9 @@ export type OpportunityWhereUniqueInput = Prisma.AtLeast<{
   requirement?: Prisma.XOR<Prisma.OpportunityRequirementNullableScalarRelationFilter, Prisma.OpportunityRequirementWhereInput> | null
   match?: Prisma.XOR<Prisma.OpportunityMatchNullableScalarRelationFilter, Prisma.OpportunityMatchWhereInput> | null
   applyPack?: Prisma.XOR<Prisma.ApplyPackNullableScalarRelationFilter, Prisma.ApplyPackWhereInput> | null
+  tailoredCvs?: Prisma.TailoredCvListRelationFilter
+  coverLetters?: Prisma.CoverLetterListRelationFilter
+  interviewPreps?: Prisma.InterviewPrepListRelationFilter
 }, "id" | "userId_contentHash">
 
 export type OpportunityOrderByWithAggregationInput = {
@@ -416,6 +425,9 @@ export type OpportunityCreateInput = {
   requirement?: Prisma.OpportunityRequirementCreateNestedOneWithoutOpportunityInput
   match?: Prisma.OpportunityMatchCreateNestedOneWithoutOpportunityInput
   applyPack?: Prisma.ApplyPackCreateNestedOneWithoutOpportunityInput
+  tailoredCvs?: Prisma.TailoredCvCreateNestedManyWithoutOpportunityInput
+  coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutOpportunityInput
+  interviewPreps?: Prisma.InterviewPrepCreateNestedManyWithoutOpportunityInput
 }
 
 export type OpportunityUncheckedCreateInput = {
@@ -440,6 +452,9 @@ export type OpportunityUncheckedCreateInput = {
   requirement?: Prisma.OpportunityRequirementUncheckedCreateNestedOneWithoutOpportunityInput
   match?: Prisma.OpportunityMatchUncheckedCreateNestedOneWithoutOpportunityInput
   applyPack?: Prisma.ApplyPackUncheckedCreateNestedOneWithoutOpportunityInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedCreateNestedManyWithoutOpportunityInput
+  coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutOpportunityInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedCreateNestedManyWithoutOpportunityInput
 }
 
 export type OpportunityUpdateInput = {
@@ -464,6 +479,9 @@ export type OpportunityUpdateInput = {
   requirement?: Prisma.OpportunityRequirementUpdateOneWithoutOpportunityNestedInput
   match?: Prisma.OpportunityMatchUpdateOneWithoutOpportunityNestedInput
   applyPack?: Prisma.ApplyPackUpdateOneWithoutOpportunityNestedInput
+  tailoredCvs?: Prisma.TailoredCvUpdateManyWithoutOpportunityNestedInput
+  coverLetters?: Prisma.CoverLetterUpdateManyWithoutOpportunityNestedInput
+  interviewPreps?: Prisma.InterviewPrepUpdateManyWithoutOpportunityNestedInput
 }
 
 export type OpportunityUncheckedUpdateInput = {
@@ -488,6 +506,9 @@ export type OpportunityUncheckedUpdateInput = {
   requirement?: Prisma.OpportunityRequirementUncheckedUpdateOneWithoutOpportunityNestedInput
   match?: Prisma.OpportunityMatchUncheckedUpdateOneWithoutOpportunityNestedInput
   applyPack?: Prisma.ApplyPackUncheckedUpdateOneWithoutOpportunityNestedInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedUpdateManyWithoutOpportunityNestedInput
+  coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutOpportunityNestedInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedUpdateManyWithoutOpportunityNestedInput
 }
 
 export type OpportunityCreateManyInput = {
@@ -635,6 +656,11 @@ export type OpportunityScalarRelationFilter = {
   isNot?: Prisma.OpportunityWhereInput
 }
 
+export type OpportunityNullableScalarRelationFilter = {
+  is?: Prisma.OpportunityWhereInput | null
+  isNot?: Prisma.OpportunityWhereInput | null
+}
+
 export type OpportunityCreateNestedManyWithoutUserInput = {
   create?: Prisma.XOR<Prisma.OpportunityCreateWithoutUserInput, Prisma.OpportunityUncheckedCreateWithoutUserInput> | Prisma.OpportunityCreateWithoutUserInput[] | Prisma.OpportunityUncheckedCreateWithoutUserInput[]
   connectOrCreate?: Prisma.OpportunityCreateOrConnectWithoutUserInput | Prisma.OpportunityCreateOrConnectWithoutUserInput[]
@@ -727,6 +753,52 @@ export type OpportunityUpdateOneRequiredWithoutApplyPackNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.OpportunityUpdateToOneWithWhereWithoutApplyPackInput, Prisma.OpportunityUpdateWithoutApplyPackInput>, Prisma.OpportunityUncheckedUpdateWithoutApplyPackInput>
 }
 
+export type OpportunityCreateNestedOneWithoutTailoredCvsInput = {
+  create?: Prisma.XOR<Prisma.OpportunityCreateWithoutTailoredCvsInput, Prisma.OpportunityUncheckedCreateWithoutTailoredCvsInput>
+  connectOrCreate?: Prisma.OpportunityCreateOrConnectWithoutTailoredCvsInput
+  connect?: Prisma.OpportunityWhereUniqueInput
+}
+
+export type OpportunityUpdateOneWithoutTailoredCvsNestedInput = {
+  create?: Prisma.XOR<Prisma.OpportunityCreateWithoutTailoredCvsInput, Prisma.OpportunityUncheckedCreateWithoutTailoredCvsInput>
+  connectOrCreate?: Prisma.OpportunityCreateOrConnectWithoutTailoredCvsInput
+  upsert?: Prisma.OpportunityUpsertWithoutTailoredCvsInput
+  disconnect?: Prisma.OpportunityWhereInput | boolean
+  delete?: Prisma.OpportunityWhereInput | boolean
+  connect?: Prisma.OpportunityWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OpportunityUpdateToOneWithWhereWithoutTailoredCvsInput, Prisma.OpportunityUpdateWithoutTailoredCvsInput>, Prisma.OpportunityUncheckedUpdateWithoutTailoredCvsInput>
+}
+
+export type OpportunityCreateNestedOneWithoutCoverLettersInput = {
+  create?: Prisma.XOR<Prisma.OpportunityCreateWithoutCoverLettersInput, Prisma.OpportunityUncheckedCreateWithoutCoverLettersInput>
+  connectOrCreate?: Prisma.OpportunityCreateOrConnectWithoutCoverLettersInput
+  connect?: Prisma.OpportunityWhereUniqueInput
+}
+
+export type OpportunityUpdateOneRequiredWithoutCoverLettersNestedInput = {
+  create?: Prisma.XOR<Prisma.OpportunityCreateWithoutCoverLettersInput, Prisma.OpportunityUncheckedCreateWithoutCoverLettersInput>
+  connectOrCreate?: Prisma.OpportunityCreateOrConnectWithoutCoverLettersInput
+  upsert?: Prisma.OpportunityUpsertWithoutCoverLettersInput
+  connect?: Prisma.OpportunityWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OpportunityUpdateToOneWithWhereWithoutCoverLettersInput, Prisma.OpportunityUpdateWithoutCoverLettersInput>, Prisma.OpportunityUncheckedUpdateWithoutCoverLettersInput>
+}
+
+export type OpportunityCreateNestedOneWithoutInterviewPrepsInput = {
+  create?: Prisma.XOR<Prisma.OpportunityCreateWithoutInterviewPrepsInput, Prisma.OpportunityUncheckedCreateWithoutInterviewPrepsInput>
+  connectOrCreate?: Prisma.OpportunityCreateOrConnectWithoutInterviewPrepsInput
+  connect?: Prisma.OpportunityWhereUniqueInput
+}
+
+export type OpportunityUpdateOneWithoutInterviewPrepsNestedInput = {
+  create?: Prisma.XOR<Prisma.OpportunityCreateWithoutInterviewPrepsInput, Prisma.OpportunityUncheckedCreateWithoutInterviewPrepsInput>
+  connectOrCreate?: Prisma.OpportunityCreateOrConnectWithoutInterviewPrepsInput
+  upsert?: Prisma.OpportunityUpsertWithoutInterviewPrepsInput
+  disconnect?: Prisma.OpportunityWhereInput | boolean
+  delete?: Prisma.OpportunityWhereInput | boolean
+  connect?: Prisma.OpportunityWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OpportunityUpdateToOneWithWhereWithoutInterviewPrepsInput, Prisma.OpportunityUpdateWithoutInterviewPrepsInput>, Prisma.OpportunityUncheckedUpdateWithoutInterviewPrepsInput>
+}
+
 export type OpportunityCreateWithoutUserInput = {
   id?: string
   type?: $Enums.OpportunityType
@@ -748,6 +820,9 @@ export type OpportunityCreateWithoutUserInput = {
   requirement?: Prisma.OpportunityRequirementCreateNestedOneWithoutOpportunityInput
   match?: Prisma.OpportunityMatchCreateNestedOneWithoutOpportunityInput
   applyPack?: Prisma.ApplyPackCreateNestedOneWithoutOpportunityInput
+  tailoredCvs?: Prisma.TailoredCvCreateNestedManyWithoutOpportunityInput
+  coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutOpportunityInput
+  interviewPreps?: Prisma.InterviewPrepCreateNestedManyWithoutOpportunityInput
 }
 
 export type OpportunityUncheckedCreateWithoutUserInput = {
@@ -771,6 +846,9 @@ export type OpportunityUncheckedCreateWithoutUserInput = {
   requirement?: Prisma.OpportunityRequirementUncheckedCreateNestedOneWithoutOpportunityInput
   match?: Prisma.OpportunityMatchUncheckedCreateNestedOneWithoutOpportunityInput
   applyPack?: Prisma.ApplyPackUncheckedCreateNestedOneWithoutOpportunityInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedCreateNestedManyWithoutOpportunityInput
+  coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutOpportunityInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedCreateNestedManyWithoutOpportunityInput
 }
 
 export type OpportunityCreateOrConnectWithoutUserInput = {
@@ -844,6 +922,9 @@ export type OpportunityCreateWithoutRequirementInput = {
   user: Prisma.UserCreateNestedOneWithoutOpportunitiesInput
   match?: Prisma.OpportunityMatchCreateNestedOneWithoutOpportunityInput
   applyPack?: Prisma.ApplyPackCreateNestedOneWithoutOpportunityInput
+  tailoredCvs?: Prisma.TailoredCvCreateNestedManyWithoutOpportunityInput
+  coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutOpportunityInput
+  interviewPreps?: Prisma.InterviewPrepCreateNestedManyWithoutOpportunityInput
 }
 
 export type OpportunityUncheckedCreateWithoutRequirementInput = {
@@ -867,6 +948,9 @@ export type OpportunityUncheckedCreateWithoutRequirementInput = {
   updatedAt?: Date | string
   match?: Prisma.OpportunityMatchUncheckedCreateNestedOneWithoutOpportunityInput
   applyPack?: Prisma.ApplyPackUncheckedCreateNestedOneWithoutOpportunityInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedCreateNestedManyWithoutOpportunityInput
+  coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutOpportunityInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedCreateNestedManyWithoutOpportunityInput
 }
 
 export type OpportunityCreateOrConnectWithoutRequirementInput = {
@@ -906,6 +990,9 @@ export type OpportunityUpdateWithoutRequirementInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutOpportunitiesNestedInput
   match?: Prisma.OpportunityMatchUpdateOneWithoutOpportunityNestedInput
   applyPack?: Prisma.ApplyPackUpdateOneWithoutOpportunityNestedInput
+  tailoredCvs?: Prisma.TailoredCvUpdateManyWithoutOpportunityNestedInput
+  coverLetters?: Prisma.CoverLetterUpdateManyWithoutOpportunityNestedInput
+  interviewPreps?: Prisma.InterviewPrepUpdateManyWithoutOpportunityNestedInput
 }
 
 export type OpportunityUncheckedUpdateWithoutRequirementInput = {
@@ -929,6 +1016,9 @@ export type OpportunityUncheckedUpdateWithoutRequirementInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   match?: Prisma.OpportunityMatchUncheckedUpdateOneWithoutOpportunityNestedInput
   applyPack?: Prisma.ApplyPackUncheckedUpdateOneWithoutOpportunityNestedInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedUpdateManyWithoutOpportunityNestedInput
+  coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutOpportunityNestedInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedUpdateManyWithoutOpportunityNestedInput
 }
 
 export type OpportunityCreateWithoutMatchInput = {
@@ -952,6 +1042,9 @@ export type OpportunityCreateWithoutMatchInput = {
   user: Prisma.UserCreateNestedOneWithoutOpportunitiesInput
   requirement?: Prisma.OpportunityRequirementCreateNestedOneWithoutOpportunityInput
   applyPack?: Prisma.ApplyPackCreateNestedOneWithoutOpportunityInput
+  tailoredCvs?: Prisma.TailoredCvCreateNestedManyWithoutOpportunityInput
+  coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutOpportunityInput
+  interviewPreps?: Prisma.InterviewPrepCreateNestedManyWithoutOpportunityInput
 }
 
 export type OpportunityUncheckedCreateWithoutMatchInput = {
@@ -975,6 +1068,9 @@ export type OpportunityUncheckedCreateWithoutMatchInput = {
   updatedAt?: Date | string
   requirement?: Prisma.OpportunityRequirementUncheckedCreateNestedOneWithoutOpportunityInput
   applyPack?: Prisma.ApplyPackUncheckedCreateNestedOneWithoutOpportunityInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedCreateNestedManyWithoutOpportunityInput
+  coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutOpportunityInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedCreateNestedManyWithoutOpportunityInput
 }
 
 export type OpportunityCreateOrConnectWithoutMatchInput = {
@@ -1014,6 +1110,9 @@ export type OpportunityUpdateWithoutMatchInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutOpportunitiesNestedInput
   requirement?: Prisma.OpportunityRequirementUpdateOneWithoutOpportunityNestedInput
   applyPack?: Prisma.ApplyPackUpdateOneWithoutOpportunityNestedInput
+  tailoredCvs?: Prisma.TailoredCvUpdateManyWithoutOpportunityNestedInput
+  coverLetters?: Prisma.CoverLetterUpdateManyWithoutOpportunityNestedInput
+  interviewPreps?: Prisma.InterviewPrepUpdateManyWithoutOpportunityNestedInput
 }
 
 export type OpportunityUncheckedUpdateWithoutMatchInput = {
@@ -1037,6 +1136,9 @@ export type OpportunityUncheckedUpdateWithoutMatchInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requirement?: Prisma.OpportunityRequirementUncheckedUpdateOneWithoutOpportunityNestedInput
   applyPack?: Prisma.ApplyPackUncheckedUpdateOneWithoutOpportunityNestedInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedUpdateManyWithoutOpportunityNestedInput
+  coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutOpportunityNestedInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedUpdateManyWithoutOpportunityNestedInput
 }
 
 export type OpportunityCreateWithoutApplyPackInput = {
@@ -1060,6 +1162,9 @@ export type OpportunityCreateWithoutApplyPackInput = {
   user: Prisma.UserCreateNestedOneWithoutOpportunitiesInput
   requirement?: Prisma.OpportunityRequirementCreateNestedOneWithoutOpportunityInput
   match?: Prisma.OpportunityMatchCreateNestedOneWithoutOpportunityInput
+  tailoredCvs?: Prisma.TailoredCvCreateNestedManyWithoutOpportunityInput
+  coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutOpportunityInput
+  interviewPreps?: Prisma.InterviewPrepCreateNestedManyWithoutOpportunityInput
 }
 
 export type OpportunityUncheckedCreateWithoutApplyPackInput = {
@@ -1083,6 +1188,9 @@ export type OpportunityUncheckedCreateWithoutApplyPackInput = {
   updatedAt?: Date | string
   requirement?: Prisma.OpportunityRequirementUncheckedCreateNestedOneWithoutOpportunityInput
   match?: Prisma.OpportunityMatchUncheckedCreateNestedOneWithoutOpportunityInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedCreateNestedManyWithoutOpportunityInput
+  coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutOpportunityInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedCreateNestedManyWithoutOpportunityInput
 }
 
 export type OpportunityCreateOrConnectWithoutApplyPackInput = {
@@ -1122,6 +1230,9 @@ export type OpportunityUpdateWithoutApplyPackInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutOpportunitiesNestedInput
   requirement?: Prisma.OpportunityRequirementUpdateOneWithoutOpportunityNestedInput
   match?: Prisma.OpportunityMatchUpdateOneWithoutOpportunityNestedInput
+  tailoredCvs?: Prisma.TailoredCvUpdateManyWithoutOpportunityNestedInput
+  coverLetters?: Prisma.CoverLetterUpdateManyWithoutOpportunityNestedInput
+  interviewPreps?: Prisma.InterviewPrepUpdateManyWithoutOpportunityNestedInput
 }
 
 export type OpportunityUncheckedUpdateWithoutApplyPackInput = {
@@ -1145,6 +1256,369 @@ export type OpportunityUncheckedUpdateWithoutApplyPackInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requirement?: Prisma.OpportunityRequirementUncheckedUpdateOneWithoutOpportunityNestedInput
   match?: Prisma.OpportunityMatchUncheckedUpdateOneWithoutOpportunityNestedInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedUpdateManyWithoutOpportunityNestedInput
+  coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutOpportunityNestedInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedUpdateManyWithoutOpportunityNestedInput
+}
+
+export type OpportunityCreateWithoutTailoredCvsInput = {
+  id?: string
+  type?: $Enums.OpportunityType
+  status?: $Enums.OpportunityStatus
+  contentHash: string
+  fingerprint?: string | null
+  sourceType?: string | null
+  sourceRef?: string | null
+  title?: string | null
+  company?: string | null
+  country?: string | null
+  city?: string | null
+  url?: string | null
+  rawText: string
+  language?: string | null
+  postedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutOpportunitiesInput
+  requirement?: Prisma.OpportunityRequirementCreateNestedOneWithoutOpportunityInput
+  match?: Prisma.OpportunityMatchCreateNestedOneWithoutOpportunityInput
+  applyPack?: Prisma.ApplyPackCreateNestedOneWithoutOpportunityInput
+  coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutOpportunityInput
+  interviewPreps?: Prisma.InterviewPrepCreateNestedManyWithoutOpportunityInput
+}
+
+export type OpportunityUncheckedCreateWithoutTailoredCvsInput = {
+  id?: string
+  userId: string
+  type?: $Enums.OpportunityType
+  status?: $Enums.OpportunityStatus
+  contentHash: string
+  fingerprint?: string | null
+  sourceType?: string | null
+  sourceRef?: string | null
+  title?: string | null
+  company?: string | null
+  country?: string | null
+  city?: string | null
+  url?: string | null
+  rawText: string
+  language?: string | null
+  postedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  requirement?: Prisma.OpportunityRequirementUncheckedCreateNestedOneWithoutOpportunityInput
+  match?: Prisma.OpportunityMatchUncheckedCreateNestedOneWithoutOpportunityInput
+  applyPack?: Prisma.ApplyPackUncheckedCreateNestedOneWithoutOpportunityInput
+  coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutOpportunityInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedCreateNestedManyWithoutOpportunityInput
+}
+
+export type OpportunityCreateOrConnectWithoutTailoredCvsInput = {
+  where: Prisma.OpportunityWhereUniqueInput
+  create: Prisma.XOR<Prisma.OpportunityCreateWithoutTailoredCvsInput, Prisma.OpportunityUncheckedCreateWithoutTailoredCvsInput>
+}
+
+export type OpportunityUpsertWithoutTailoredCvsInput = {
+  update: Prisma.XOR<Prisma.OpportunityUpdateWithoutTailoredCvsInput, Prisma.OpportunityUncheckedUpdateWithoutTailoredCvsInput>
+  create: Prisma.XOR<Prisma.OpportunityCreateWithoutTailoredCvsInput, Prisma.OpportunityUncheckedCreateWithoutTailoredCvsInput>
+  where?: Prisma.OpportunityWhereInput
+}
+
+export type OpportunityUpdateToOneWithWhereWithoutTailoredCvsInput = {
+  where?: Prisma.OpportunityWhereInput
+  data: Prisma.XOR<Prisma.OpportunityUpdateWithoutTailoredCvsInput, Prisma.OpportunityUncheckedUpdateWithoutTailoredCvsInput>
+}
+
+export type OpportunityUpdateWithoutTailoredCvsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumOpportunityTypeFieldUpdateOperationsInput | $Enums.OpportunityType
+  status?: Prisma.EnumOpportunityStatusFieldUpdateOperationsInput | $Enums.OpportunityStatus
+  contentHash?: Prisma.StringFieldUpdateOperationsInput | string
+  fingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rawText?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutOpportunitiesNestedInput
+  requirement?: Prisma.OpportunityRequirementUpdateOneWithoutOpportunityNestedInput
+  match?: Prisma.OpportunityMatchUpdateOneWithoutOpportunityNestedInput
+  applyPack?: Prisma.ApplyPackUpdateOneWithoutOpportunityNestedInput
+  coverLetters?: Prisma.CoverLetterUpdateManyWithoutOpportunityNestedInput
+  interviewPreps?: Prisma.InterviewPrepUpdateManyWithoutOpportunityNestedInput
+}
+
+export type OpportunityUncheckedUpdateWithoutTailoredCvsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumOpportunityTypeFieldUpdateOperationsInput | $Enums.OpportunityType
+  status?: Prisma.EnumOpportunityStatusFieldUpdateOperationsInput | $Enums.OpportunityStatus
+  contentHash?: Prisma.StringFieldUpdateOperationsInput | string
+  fingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rawText?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  requirement?: Prisma.OpportunityRequirementUncheckedUpdateOneWithoutOpportunityNestedInput
+  match?: Prisma.OpportunityMatchUncheckedUpdateOneWithoutOpportunityNestedInput
+  applyPack?: Prisma.ApplyPackUncheckedUpdateOneWithoutOpportunityNestedInput
+  coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutOpportunityNestedInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedUpdateManyWithoutOpportunityNestedInput
+}
+
+export type OpportunityCreateWithoutCoverLettersInput = {
+  id?: string
+  type?: $Enums.OpportunityType
+  status?: $Enums.OpportunityStatus
+  contentHash: string
+  fingerprint?: string | null
+  sourceType?: string | null
+  sourceRef?: string | null
+  title?: string | null
+  company?: string | null
+  country?: string | null
+  city?: string | null
+  url?: string | null
+  rawText: string
+  language?: string | null
+  postedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutOpportunitiesInput
+  requirement?: Prisma.OpportunityRequirementCreateNestedOneWithoutOpportunityInput
+  match?: Prisma.OpportunityMatchCreateNestedOneWithoutOpportunityInput
+  applyPack?: Prisma.ApplyPackCreateNestedOneWithoutOpportunityInput
+  tailoredCvs?: Prisma.TailoredCvCreateNestedManyWithoutOpportunityInput
+  interviewPreps?: Prisma.InterviewPrepCreateNestedManyWithoutOpportunityInput
+}
+
+export type OpportunityUncheckedCreateWithoutCoverLettersInput = {
+  id?: string
+  userId: string
+  type?: $Enums.OpportunityType
+  status?: $Enums.OpportunityStatus
+  contentHash: string
+  fingerprint?: string | null
+  sourceType?: string | null
+  sourceRef?: string | null
+  title?: string | null
+  company?: string | null
+  country?: string | null
+  city?: string | null
+  url?: string | null
+  rawText: string
+  language?: string | null
+  postedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  requirement?: Prisma.OpportunityRequirementUncheckedCreateNestedOneWithoutOpportunityInput
+  match?: Prisma.OpportunityMatchUncheckedCreateNestedOneWithoutOpportunityInput
+  applyPack?: Prisma.ApplyPackUncheckedCreateNestedOneWithoutOpportunityInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedCreateNestedManyWithoutOpportunityInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedCreateNestedManyWithoutOpportunityInput
+}
+
+export type OpportunityCreateOrConnectWithoutCoverLettersInput = {
+  where: Prisma.OpportunityWhereUniqueInput
+  create: Prisma.XOR<Prisma.OpportunityCreateWithoutCoverLettersInput, Prisma.OpportunityUncheckedCreateWithoutCoverLettersInput>
+}
+
+export type OpportunityUpsertWithoutCoverLettersInput = {
+  update: Prisma.XOR<Prisma.OpportunityUpdateWithoutCoverLettersInput, Prisma.OpportunityUncheckedUpdateWithoutCoverLettersInput>
+  create: Prisma.XOR<Prisma.OpportunityCreateWithoutCoverLettersInput, Prisma.OpportunityUncheckedCreateWithoutCoverLettersInput>
+  where?: Prisma.OpportunityWhereInput
+}
+
+export type OpportunityUpdateToOneWithWhereWithoutCoverLettersInput = {
+  where?: Prisma.OpportunityWhereInput
+  data: Prisma.XOR<Prisma.OpportunityUpdateWithoutCoverLettersInput, Prisma.OpportunityUncheckedUpdateWithoutCoverLettersInput>
+}
+
+export type OpportunityUpdateWithoutCoverLettersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumOpportunityTypeFieldUpdateOperationsInput | $Enums.OpportunityType
+  status?: Prisma.EnumOpportunityStatusFieldUpdateOperationsInput | $Enums.OpportunityStatus
+  contentHash?: Prisma.StringFieldUpdateOperationsInput | string
+  fingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rawText?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutOpportunitiesNestedInput
+  requirement?: Prisma.OpportunityRequirementUpdateOneWithoutOpportunityNestedInput
+  match?: Prisma.OpportunityMatchUpdateOneWithoutOpportunityNestedInput
+  applyPack?: Prisma.ApplyPackUpdateOneWithoutOpportunityNestedInput
+  tailoredCvs?: Prisma.TailoredCvUpdateManyWithoutOpportunityNestedInput
+  interviewPreps?: Prisma.InterviewPrepUpdateManyWithoutOpportunityNestedInput
+}
+
+export type OpportunityUncheckedUpdateWithoutCoverLettersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumOpportunityTypeFieldUpdateOperationsInput | $Enums.OpportunityType
+  status?: Prisma.EnumOpportunityStatusFieldUpdateOperationsInput | $Enums.OpportunityStatus
+  contentHash?: Prisma.StringFieldUpdateOperationsInput | string
+  fingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rawText?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  requirement?: Prisma.OpportunityRequirementUncheckedUpdateOneWithoutOpportunityNestedInput
+  match?: Prisma.OpportunityMatchUncheckedUpdateOneWithoutOpportunityNestedInput
+  applyPack?: Prisma.ApplyPackUncheckedUpdateOneWithoutOpportunityNestedInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedUpdateManyWithoutOpportunityNestedInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedUpdateManyWithoutOpportunityNestedInput
+}
+
+export type OpportunityCreateWithoutInterviewPrepsInput = {
+  id?: string
+  type?: $Enums.OpportunityType
+  status?: $Enums.OpportunityStatus
+  contentHash: string
+  fingerprint?: string | null
+  sourceType?: string | null
+  sourceRef?: string | null
+  title?: string | null
+  company?: string | null
+  country?: string | null
+  city?: string | null
+  url?: string | null
+  rawText: string
+  language?: string | null
+  postedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutOpportunitiesInput
+  requirement?: Prisma.OpportunityRequirementCreateNestedOneWithoutOpportunityInput
+  match?: Prisma.OpportunityMatchCreateNestedOneWithoutOpportunityInput
+  applyPack?: Prisma.ApplyPackCreateNestedOneWithoutOpportunityInput
+  tailoredCvs?: Prisma.TailoredCvCreateNestedManyWithoutOpportunityInput
+  coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutOpportunityInput
+}
+
+export type OpportunityUncheckedCreateWithoutInterviewPrepsInput = {
+  id?: string
+  userId: string
+  type?: $Enums.OpportunityType
+  status?: $Enums.OpportunityStatus
+  contentHash: string
+  fingerprint?: string | null
+  sourceType?: string | null
+  sourceRef?: string | null
+  title?: string | null
+  company?: string | null
+  country?: string | null
+  city?: string | null
+  url?: string | null
+  rawText: string
+  language?: string | null
+  postedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  requirement?: Prisma.OpportunityRequirementUncheckedCreateNestedOneWithoutOpportunityInput
+  match?: Prisma.OpportunityMatchUncheckedCreateNestedOneWithoutOpportunityInput
+  applyPack?: Prisma.ApplyPackUncheckedCreateNestedOneWithoutOpportunityInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedCreateNestedManyWithoutOpportunityInput
+  coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutOpportunityInput
+}
+
+export type OpportunityCreateOrConnectWithoutInterviewPrepsInput = {
+  where: Prisma.OpportunityWhereUniqueInput
+  create: Prisma.XOR<Prisma.OpportunityCreateWithoutInterviewPrepsInput, Prisma.OpportunityUncheckedCreateWithoutInterviewPrepsInput>
+}
+
+export type OpportunityUpsertWithoutInterviewPrepsInput = {
+  update: Prisma.XOR<Prisma.OpportunityUpdateWithoutInterviewPrepsInput, Prisma.OpportunityUncheckedUpdateWithoutInterviewPrepsInput>
+  create: Prisma.XOR<Prisma.OpportunityCreateWithoutInterviewPrepsInput, Prisma.OpportunityUncheckedCreateWithoutInterviewPrepsInput>
+  where?: Prisma.OpportunityWhereInput
+}
+
+export type OpportunityUpdateToOneWithWhereWithoutInterviewPrepsInput = {
+  where?: Prisma.OpportunityWhereInput
+  data: Prisma.XOR<Prisma.OpportunityUpdateWithoutInterviewPrepsInput, Prisma.OpportunityUncheckedUpdateWithoutInterviewPrepsInput>
+}
+
+export type OpportunityUpdateWithoutInterviewPrepsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumOpportunityTypeFieldUpdateOperationsInput | $Enums.OpportunityType
+  status?: Prisma.EnumOpportunityStatusFieldUpdateOperationsInput | $Enums.OpportunityStatus
+  contentHash?: Prisma.StringFieldUpdateOperationsInput | string
+  fingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rawText?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutOpportunitiesNestedInput
+  requirement?: Prisma.OpportunityRequirementUpdateOneWithoutOpportunityNestedInput
+  match?: Prisma.OpportunityMatchUpdateOneWithoutOpportunityNestedInput
+  applyPack?: Prisma.ApplyPackUpdateOneWithoutOpportunityNestedInput
+  tailoredCvs?: Prisma.TailoredCvUpdateManyWithoutOpportunityNestedInput
+  coverLetters?: Prisma.CoverLetterUpdateManyWithoutOpportunityNestedInput
+}
+
+export type OpportunityUncheckedUpdateWithoutInterviewPrepsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumOpportunityTypeFieldUpdateOperationsInput | $Enums.OpportunityType
+  status?: Prisma.EnumOpportunityStatusFieldUpdateOperationsInput | $Enums.OpportunityStatus
+  contentHash?: Prisma.StringFieldUpdateOperationsInput | string
+  fingerprint?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  company?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rawText?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  requirement?: Prisma.OpportunityRequirementUncheckedUpdateOneWithoutOpportunityNestedInput
+  match?: Prisma.OpportunityMatchUncheckedUpdateOneWithoutOpportunityNestedInput
+  applyPack?: Prisma.ApplyPackUncheckedUpdateOneWithoutOpportunityNestedInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedUpdateManyWithoutOpportunityNestedInput
+  coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutOpportunityNestedInput
 }
 
 export type OpportunityCreateManyUserInput = {
@@ -1188,6 +1662,9 @@ export type OpportunityUpdateWithoutUserInput = {
   requirement?: Prisma.OpportunityRequirementUpdateOneWithoutOpportunityNestedInput
   match?: Prisma.OpportunityMatchUpdateOneWithoutOpportunityNestedInput
   applyPack?: Prisma.ApplyPackUpdateOneWithoutOpportunityNestedInput
+  tailoredCvs?: Prisma.TailoredCvUpdateManyWithoutOpportunityNestedInput
+  coverLetters?: Prisma.CoverLetterUpdateManyWithoutOpportunityNestedInput
+  interviewPreps?: Prisma.InterviewPrepUpdateManyWithoutOpportunityNestedInput
 }
 
 export type OpportunityUncheckedUpdateWithoutUserInput = {
@@ -1211,6 +1688,9 @@ export type OpportunityUncheckedUpdateWithoutUserInput = {
   requirement?: Prisma.OpportunityRequirementUncheckedUpdateOneWithoutOpportunityNestedInput
   match?: Prisma.OpportunityMatchUncheckedUpdateOneWithoutOpportunityNestedInput
   applyPack?: Prisma.ApplyPackUncheckedUpdateOneWithoutOpportunityNestedInput
+  tailoredCvs?: Prisma.TailoredCvUncheckedUpdateManyWithoutOpportunityNestedInput
+  coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutOpportunityNestedInput
+  interviewPreps?: Prisma.InterviewPrepUncheckedUpdateManyWithoutOpportunityNestedInput
 }
 
 export type OpportunityUncheckedUpdateManyWithoutUserInput = {
@@ -1233,6 +1713,53 @@ export type OpportunityUncheckedUpdateManyWithoutUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+
+/**
+ * Count Type OpportunityCountOutputType
+ */
+
+export type OpportunityCountOutputType = {
+  tailoredCvs: number
+  coverLetters: number
+  interviewPreps: number
+}
+
+export type OpportunityCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  tailoredCvs?: boolean | OpportunityCountOutputTypeCountTailoredCvsArgs
+  coverLetters?: boolean | OpportunityCountOutputTypeCountCoverLettersArgs
+  interviewPreps?: boolean | OpportunityCountOutputTypeCountInterviewPrepsArgs
+}
+
+/**
+ * OpportunityCountOutputType without action
+ */
+export type OpportunityCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OpportunityCountOutputType
+   */
+  select?: Prisma.OpportunityCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * OpportunityCountOutputType without action
+ */
+export type OpportunityCountOutputTypeCountTailoredCvsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TailoredCvWhereInput
+}
+
+/**
+ * OpportunityCountOutputType without action
+ */
+export type OpportunityCountOutputTypeCountCoverLettersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CoverLetterWhereInput
+}
+
+/**
+ * OpportunityCountOutputType without action
+ */
+export type OpportunityCountOutputTypeCountInterviewPrepsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.InterviewPrepWhereInput
+}
 
 
 export type OpportunitySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1258,6 +1785,10 @@ export type OpportunitySelect<ExtArgs extends runtime.Types.Extensions.InternalA
   requirement?: boolean | Prisma.Opportunity$requirementArgs<ExtArgs>
   match?: boolean | Prisma.Opportunity$matchArgs<ExtArgs>
   applyPack?: boolean | Prisma.Opportunity$applyPackArgs<ExtArgs>
+  tailoredCvs?: boolean | Prisma.Opportunity$tailoredCvsArgs<ExtArgs>
+  coverLetters?: boolean | Prisma.Opportunity$coverLettersArgs<ExtArgs>
+  interviewPreps?: boolean | Prisma.Opportunity$interviewPrepsArgs<ExtArgs>
+  _count?: boolean | Prisma.OpportunityCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["opportunity"]>
 
 export type OpportunitySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1331,6 +1862,10 @@ export type OpportunityInclude<ExtArgs extends runtime.Types.Extensions.Internal
   requirement?: boolean | Prisma.Opportunity$requirementArgs<ExtArgs>
   match?: boolean | Prisma.Opportunity$matchArgs<ExtArgs>
   applyPack?: boolean | Prisma.Opportunity$applyPackArgs<ExtArgs>
+  tailoredCvs?: boolean | Prisma.Opportunity$tailoredCvsArgs<ExtArgs>
+  coverLetters?: boolean | Prisma.Opportunity$coverLettersArgs<ExtArgs>
+  interviewPreps?: boolean | Prisma.Opportunity$interviewPrepsArgs<ExtArgs>
+  _count?: boolean | Prisma.OpportunityCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type OpportunityIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1346,6 +1881,9 @@ export type $OpportunityPayload<ExtArgs extends runtime.Types.Extensions.Interna
     requirement: Prisma.$OpportunityRequirementPayload<ExtArgs> | null
     match: Prisma.$OpportunityMatchPayload<ExtArgs> | null
     applyPack: Prisma.$ApplyPackPayload<ExtArgs> | null
+    tailoredCvs: Prisma.$TailoredCvPayload<ExtArgs>[]
+    coverLetters: Prisma.$CoverLetterPayload<ExtArgs>[]
+    interviewPreps: Prisma.$InterviewPrepPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1764,6 +2302,9 @@ export interface Prisma__OpportunityClient<T, Null = never, ExtArgs extends runt
   requirement<T extends Prisma.Opportunity$requirementArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Opportunity$requirementArgs<ExtArgs>>): Prisma.Prisma__OpportunityRequirementClient<runtime.Types.Result.GetResult<Prisma.$OpportunityRequirementPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   match<T extends Prisma.Opportunity$matchArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Opportunity$matchArgs<ExtArgs>>): Prisma.Prisma__OpportunityMatchClient<runtime.Types.Result.GetResult<Prisma.$OpportunityMatchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   applyPack<T extends Prisma.Opportunity$applyPackArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Opportunity$applyPackArgs<ExtArgs>>): Prisma.Prisma__ApplyPackClient<runtime.Types.Result.GetResult<Prisma.$ApplyPackPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  tailoredCvs<T extends Prisma.Opportunity$tailoredCvsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Opportunity$tailoredCvsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TailoredCvPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  coverLetters<T extends Prisma.Opportunity$coverLettersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Opportunity$coverLettersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CoverLetterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  interviewPreps<T extends Prisma.Opportunity$interviewPrepsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Opportunity$interviewPrepsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InterviewPrepPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2266,6 +2807,78 @@ export type Opportunity$applyPackArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   include?: Prisma.ApplyPackInclude<ExtArgs> | null
   where?: Prisma.ApplyPackWhereInput
+}
+
+/**
+ * Opportunity.tailoredCvs
+ */
+export type Opportunity$tailoredCvsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TailoredCv
+   */
+  select?: Prisma.TailoredCvSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TailoredCv
+   */
+  omit?: Prisma.TailoredCvOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TailoredCvInclude<ExtArgs> | null
+  where?: Prisma.TailoredCvWhereInput
+  orderBy?: Prisma.TailoredCvOrderByWithRelationInput | Prisma.TailoredCvOrderByWithRelationInput[]
+  cursor?: Prisma.TailoredCvWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TailoredCvScalarFieldEnum | Prisma.TailoredCvScalarFieldEnum[]
+}
+
+/**
+ * Opportunity.coverLetters
+ */
+export type Opportunity$coverLettersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CoverLetter
+   */
+  select?: Prisma.CoverLetterSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CoverLetter
+   */
+  omit?: Prisma.CoverLetterOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CoverLetterInclude<ExtArgs> | null
+  where?: Prisma.CoverLetterWhereInput
+  orderBy?: Prisma.CoverLetterOrderByWithRelationInput | Prisma.CoverLetterOrderByWithRelationInput[]
+  cursor?: Prisma.CoverLetterWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CoverLetterScalarFieldEnum | Prisma.CoverLetterScalarFieldEnum[]
+}
+
+/**
+ * Opportunity.interviewPreps
+ */
+export type Opportunity$interviewPrepsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the InterviewPrep
+   */
+  select?: Prisma.InterviewPrepSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the InterviewPrep
+   */
+  omit?: Prisma.InterviewPrepOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.InterviewPrepInclude<ExtArgs> | null
+  where?: Prisma.InterviewPrepWhereInput
+  orderBy?: Prisma.InterviewPrepOrderByWithRelationInput | Prisma.InterviewPrepOrderByWithRelationInput[]
+  cursor?: Prisma.InterviewPrepWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.InterviewPrepScalarFieldEnum | Prisma.InterviewPrepScalarFieldEnum[]
 }
 
 /**

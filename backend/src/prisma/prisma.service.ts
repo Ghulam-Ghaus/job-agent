@@ -44,6 +44,14 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
   get outreachMessage() { return this.client.outreachMessage; }
   get suppressionEntry() { return this.client.suppressionEntry; }
 
+  // Sprint 5 — products & showcase
+  get product() { return this.client.product; }
+
+  // Sprint 6 — career assets (tailored CV, cover letter, interview prep)
+  get tailoredCv() { return this.client.tailoredCv; }
+  get coverLetter() { return this.client.coverLetter; }
+  get interviewPrep() { return this.client.interviewPrep; }
+
   /** Run raw SQL — used by health check and migrations helpers */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   $queryRaw(...args: Parameters<PrismaClient['$queryRaw']>): Promise<any> {

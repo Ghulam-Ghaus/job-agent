@@ -31,6 +31,8 @@ export type ProjectMinAggregateOutputType = {
   description: string | null
   url: string | null
   repoUrl: string | null
+  isPublic: boolean | null
+  featured: boolean | null
   startDate: Date | null
   endDate: Date | null
   createdAt: Date | null
@@ -44,6 +46,8 @@ export type ProjectMaxAggregateOutputType = {
   description: string | null
   url: string | null
   repoUrl: string | null
+  isPublic: boolean | null
+  featured: boolean | null
   startDate: Date | null
   endDate: Date | null
   createdAt: Date | null
@@ -60,6 +64,8 @@ export type ProjectCountAggregateOutputType = {
   repoUrl: number
   highlights: number
   tags: number
+  isPublic: number
+  featured: number
   startDate: number
   endDate: number
   createdAt: number
@@ -75,6 +81,8 @@ export type ProjectMinAggregateInputType = {
   description?: true
   url?: true
   repoUrl?: true
+  isPublic?: true
+  featured?: true
   startDate?: true
   endDate?: true
   createdAt?: true
@@ -88,6 +96,8 @@ export type ProjectMaxAggregateInputType = {
   description?: true
   url?: true
   repoUrl?: true
+  isPublic?: true
+  featured?: true
   startDate?: true
   endDate?: true
   createdAt?: true
@@ -104,6 +114,8 @@ export type ProjectCountAggregateInputType = {
   repoUrl?: true
   highlights?: true
   tags?: true
+  isPublic?: true
+  featured?: true
   startDate?: true
   endDate?: true
   createdAt?: true
@@ -193,6 +205,8 @@ export type ProjectGroupByOutputType = {
   repoUrl: string | null
   highlights: runtime.JsonValue
   tags: runtime.JsonValue
+  isPublic: boolean
+  featured: boolean
   startDate: Date | null
   endDate: Date | null
   createdAt: Date
@@ -230,6 +244,8 @@ export type ProjectWhereInput = {
   repoUrl?: Prisma.StringNullableFilter<"Project"> | string | null
   highlights?: Prisma.JsonFilter<"Project">
   tags?: Prisma.JsonFilter<"Project">
+  isPublic?: Prisma.BoolFilter<"Project"> | boolean
+  featured?: Prisma.BoolFilter<"Project"> | boolean
   startDate?: Prisma.DateTimeNullableFilter<"Project"> | Date | string | null
   endDate?: Prisma.DateTimeNullableFilter<"Project"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Project"> | Date | string
@@ -247,6 +263,8 @@ export type ProjectOrderByWithRelationInput = {
   repoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   highlights?: Prisma.SortOrder
   tags?: Prisma.SortOrder
+  isPublic?: Prisma.SortOrder
+  featured?: Prisma.SortOrder
   startDate?: Prisma.SortOrderInput | Prisma.SortOrder
   endDate?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -267,6 +285,8 @@ export type ProjectWhereUniqueInput = Prisma.AtLeast<{
   repoUrl?: Prisma.StringNullableFilter<"Project"> | string | null
   highlights?: Prisma.JsonFilter<"Project">
   tags?: Prisma.JsonFilter<"Project">
+  isPublic?: Prisma.BoolFilter<"Project"> | boolean
+  featured?: Prisma.BoolFilter<"Project"> | boolean
   startDate?: Prisma.DateTimeNullableFilter<"Project"> | Date | string | null
   endDate?: Prisma.DateTimeNullableFilter<"Project"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Project"> | Date | string
@@ -284,6 +304,8 @@ export type ProjectOrderByWithAggregationInput = {
   repoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   highlights?: Prisma.SortOrder
   tags?: Prisma.SortOrder
+  isPublic?: Prisma.SortOrder
+  featured?: Prisma.SortOrder
   startDate?: Prisma.SortOrderInput | Prisma.SortOrder
   endDate?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -306,6 +328,8 @@ export type ProjectScalarWhereWithAggregatesInput = {
   repoUrl?: Prisma.StringNullableWithAggregatesFilter<"Project"> | string | null
   highlights?: Prisma.JsonWithAggregatesFilter<"Project">
   tags?: Prisma.JsonWithAggregatesFilter<"Project">
+  isPublic?: Prisma.BoolWithAggregatesFilter<"Project"> | boolean
+  featured?: Prisma.BoolWithAggregatesFilter<"Project"> | boolean
   startDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Project"> | Date | string | null
   endDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Project"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Project"> | Date | string
@@ -321,6 +345,8 @@ export type ProjectCreateInput = {
   repoUrl?: string | null
   highlights?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  isPublic?: boolean
+  featured?: boolean
   startDate?: Date | string | null
   endDate?: Date | string | null
   createdAt?: Date | string
@@ -338,6 +364,8 @@ export type ProjectUncheckedCreateInput = {
   repoUrl?: string | null
   highlights?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  isPublic?: boolean
+  featured?: boolean
   startDate?: Date | string | null
   endDate?: Date | string | null
   createdAt?: Date | string
@@ -353,6 +381,8 @@ export type ProjectUpdateInput = {
   repoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   highlights?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -370,6 +400,8 @@ export type ProjectUncheckedUpdateInput = {
   repoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   highlights?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -386,6 +418,8 @@ export type ProjectCreateManyInput = {
   repoUrl?: string | null
   highlights?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  isPublic?: boolean
+  featured?: boolean
   startDate?: Date | string | null
   endDate?: Date | string | null
   createdAt?: Date | string
@@ -401,6 +435,8 @@ export type ProjectUpdateManyMutationInput = {
   repoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   highlights?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -417,6 +453,8 @@ export type ProjectUncheckedUpdateManyInput = {
   repoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   highlights?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -443,6 +481,8 @@ export type ProjectCountOrderByAggregateInput = {
   repoUrl?: Prisma.SortOrder
   highlights?: Prisma.SortOrder
   tags?: Prisma.SortOrder
+  isPublic?: Prisma.SortOrder
+  featured?: Prisma.SortOrder
   startDate?: Prisma.SortOrder
   endDate?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -456,6 +496,8 @@ export type ProjectMaxOrderByAggregateInput = {
   description?: Prisma.SortOrder
   url?: Prisma.SortOrder
   repoUrl?: Prisma.SortOrder
+  isPublic?: Prisma.SortOrder
+  featured?: Prisma.SortOrder
   startDate?: Prisma.SortOrder
   endDate?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -469,6 +511,8 @@ export type ProjectMinOrderByAggregateInput = {
   description?: Prisma.SortOrder
   url?: Prisma.SortOrder
   repoUrl?: Prisma.SortOrder
+  isPublic?: Prisma.SortOrder
+  featured?: Prisma.SortOrder
   startDate?: Prisma.SortOrder
   endDate?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -526,6 +570,8 @@ export type ProjectCreateWithoutUserInput = {
   repoUrl?: string | null
   highlights?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  isPublic?: boolean
+  featured?: boolean
   startDate?: Date | string | null
   endDate?: Date | string | null
   createdAt?: Date | string
@@ -541,6 +587,8 @@ export type ProjectUncheckedCreateWithoutUserInput = {
   repoUrl?: string | null
   highlights?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  isPublic?: boolean
+  featured?: boolean
   startDate?: Date | string | null
   endDate?: Date | string | null
   createdAt?: Date | string
@@ -586,6 +634,8 @@ export type ProjectScalarWhereInput = {
   repoUrl?: Prisma.StringNullableFilter<"Project"> | string | null
   highlights?: Prisma.JsonFilter<"Project">
   tags?: Prisma.JsonFilter<"Project">
+  isPublic?: Prisma.BoolFilter<"Project"> | boolean
+  featured?: Prisma.BoolFilter<"Project"> | boolean
   startDate?: Prisma.DateTimeNullableFilter<"Project"> | Date | string | null
   endDate?: Prisma.DateTimeNullableFilter<"Project"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Project"> | Date | string
@@ -601,6 +651,8 @@ export type ProjectCreateManyUserInput = {
   repoUrl?: string | null
   highlights?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  isPublic?: boolean
+  featured?: boolean
   startDate?: Date | string | null
   endDate?: Date | string | null
   createdAt?: Date | string
@@ -616,6 +668,8 @@ export type ProjectUpdateWithoutUserInput = {
   repoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   highlights?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -631,6 +685,8 @@ export type ProjectUncheckedUpdateWithoutUserInput = {
   repoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   highlights?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -646,6 +702,8 @@ export type ProjectUncheckedUpdateManyWithoutUserInput = {
   repoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   highlights?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  isPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -664,6 +722,8 @@ export type ProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   repoUrl?: boolean
   highlights?: boolean
   tags?: boolean
+  isPublic?: boolean
+  featured?: boolean
   startDate?: boolean
   endDate?: boolean
   createdAt?: boolean
@@ -681,6 +741,8 @@ export type ProjectSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   repoUrl?: boolean
   highlights?: boolean
   tags?: boolean
+  isPublic?: boolean
+  featured?: boolean
   startDate?: boolean
   endDate?: boolean
   createdAt?: boolean
@@ -698,6 +760,8 @@ export type ProjectSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   repoUrl?: boolean
   highlights?: boolean
   tags?: boolean
+  isPublic?: boolean
+  featured?: boolean
   startDate?: boolean
   endDate?: boolean
   createdAt?: boolean
@@ -715,13 +779,15 @@ export type ProjectSelectScalar = {
   repoUrl?: boolean
   highlights?: boolean
   tags?: boolean
+  isPublic?: boolean
+  featured?: boolean
   startDate?: boolean
   endDate?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ProjectOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "title" | "description" | "techStack" | "url" | "repoUrl" | "highlights" | "tags" | "startDate" | "endDate" | "createdAt" | "updatedAt", ExtArgs["result"]["project"]>
+export type ProjectOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "title" | "description" | "techStack" | "url" | "repoUrl" | "highlights" | "tags" | "isPublic" | "featured" | "startDate" | "endDate" | "createdAt" | "updatedAt", ExtArgs["result"]["project"]>
 export type ProjectInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -747,6 +813,8 @@ export type $ProjectPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     repoUrl: string | null
     highlights: runtime.JsonValue
     tags: runtime.JsonValue
+    isPublic: boolean
+    featured: boolean
     startDate: Date | null
     endDate: Date | null
     createdAt: Date
@@ -1184,6 +1252,8 @@ export interface ProjectFieldRefs {
   readonly repoUrl: Prisma.FieldRef<"Project", 'String'>
   readonly highlights: Prisma.FieldRef<"Project", 'Json'>
   readonly tags: Prisma.FieldRef<"Project", 'Json'>
+  readonly isPublic: Prisma.FieldRef<"Project", 'Boolean'>
+  readonly featured: Prisma.FieldRef<"Project", 'Boolean'>
   readonly startDate: Prisma.FieldRef<"Project", 'DateTime'>
   readonly endDate: Prisma.FieldRef<"Project", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Project", 'DateTime'>

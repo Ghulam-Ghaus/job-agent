@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
-  LayoutDashboard,
   Briefcase,
   FileText,
   Settings,
@@ -16,17 +15,21 @@ import {
   ChevronLeft,
   ChevronRight,
   Building2,
+  Globe,
+  GraduationCap,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { api } from '@/lib/api-client';
 
 const navigation = [
-  { name: 'Dashboard', href: '/', icon: LayoutDashboard },
   { name: 'Opportunities', href: '/dashboard', icon: Briefcase },
+  { name: 'Interview Prep', href: '/interview-prep', icon: GraduationCap },
   { name: 'Direct Clients', href: '/leads', icon: Building2 },
   { name: 'Approval Queue', href: '/approvals', icon: CheckCircle2 },
   { name: 'Master Profile', href: '/profile', icon: FileText },
-  { name: 'Onboarding Setup', href: '/onboarding', icon: Sparkles },
+  { name: 'Admin Console', href: '/admin', icon: ShieldCheck },
+  { name: 'Public Showcase', href: '/', icon: Globe, external: true },
+  { name: 'Offerings & Products', href: '/products', icon: Sparkles },
   { name: 'BullMQ Queues', href: 'http://localhost:4000/admin/queues', icon: Settings, external: true },
 ];
 
@@ -34,12 +37,25 @@ export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
+  const [user, setUser] = useState<{ email: string; role: string } | null>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem('jobagent_sidebar_collapsed');
     if (saved !== null) {
       setCollapsed(saved === 'true');
     }
+
+    // Fetch authenticated user info
+    api.auth
+      .me()
+      .then((res) => {
+        if (res?.user) {
+          setUser({ email: res.user.email, role: res.user.role });
+        }
+      })
+      .catch(() => {
+        setUser(null);
+      });
   }, []);
 
   const toggleCollapsed = () => {
@@ -56,6 +72,7 @@ export function Sidebar() {
     } catch {
       // Ignore error on logout
     } finally {
+      setUser(null);
       router.push('/login');
     }
   };
@@ -155,49 +172,80 @@ export function Sidebar() {
       {/* User / Session Footer */}
       <div className={`border-t border-border/40 bg-accent/20 transition-all ${collapsed ? 'p-2 flex flex-col items-center' : 'p-4'}`}>
         {!collapsed ? (
-          <>
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2 min-w-0">
-                <div className="h-7 w-7 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center shrink-0">
-                  <ShieldCheck className="h-4 w-4 text-emerald-400" />
+          user ? (
+            <>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className="h-7 w-7 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center shrink-0">
+                    <ShieldCheck className="h-4 w-4 text-emerald-400" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-medium text-foreground truncate">
+                      {user.role === 'SUPER_ADMIN' ? 'Super Admin' : 'Workspace User'}
+                    </p>
+                    <p className="text-[10px] text-muted-foreground truncate max-w-[120px]">
+                      {user.email}
+                    </p>
+                  </div>
                 </div>
-                <div className="min-w-0">
-                  <p className="text-xs font-medium text-foreground truncate">Super Admin</p>
-                  <p className="text-[10px] text-muted-foreground truncate max-w-[120px]">
-                    admin@jobagent.local
-                  </p>
-                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleLogout}
+                  title="Logout"
+                  className="h-7 w-7 text-muted-foreground hover:text-destructive shrink-0"
+                >
+                  <LogOut className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+              <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-mono">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+                <span className="truncate">Core Engine Active</span>
+              </div>
+            </>
+          ) : (
+            <div className="flex items-center justify-between py-1">
+              <span className="text-xs text-muted-foreground">Not signed in</span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => router.push('/login')}
+                className="h-7 text-xs border-primary/30 text-primary hover:bg-primary/10"
+              >
+                Sign In
+              </Button>
+            </div>
+          )
+        ) : (
+          user ? (
+            <div className="flex flex-col items-center gap-2 py-1">
+              <div
+                className="h-7 w-7 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center"
+                title={`${user.role}: ${user.email}`}
+              >
+                <ShieldCheck className="h-4 w-4 text-emerald-400" />
               </div>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={handleLogout}
                 title="Logout"
-                className="h-7 w-7 text-muted-foreground hover:text-destructive shrink-0"
+                className="h-7 w-7 text-muted-foreground hover:text-destructive"
               >
                 <LogOut className="h-3.5 w-3.5" />
               </Button>
             </div>
-            <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-mono">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
-              <span className="truncate">Core Engine Active</span>
-            </div>
-          </>
-        ) : (
-          <div className="flex flex-col items-center gap-2 py-1">
-            <div className="h-7 w-7 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center" title="Super Admin (admin@jobagent.local)">
-              <ShieldCheck className="h-4 w-4 text-emerald-400" />
-            </div>
+          ) : (
             <Button
               variant="ghost"
               size="icon"
-              onClick={handleLogout}
-              title="Logout"
-              className="h-7 w-7 text-muted-foreground hover:text-destructive"
+              onClick={() => router.push('/login')}
+              title="Sign In"
+              className="h-7 w-7 text-primary hover:bg-primary/10"
             >
-              <LogOut className="h-3.5 w-3.5" />
+              <LogOut className="h-3.5 w-3.5 rotate-180" />
             </Button>
-          </div>
+          )
         )}
       </div>
     </aside>

@@ -29,6 +29,10 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ConnectorsModule } from './connectors/connectors.module.js';
 import { TelegramModule } from './telegram/telegram.module.js';
 import { LeadsModule } from './leads/leads.module.js';
+import { PublicModule } from './public/public.module.js';
+import { AdminModule } from './admin/admin.module.js';
+import { TailoredCvModule } from './tailored-cv/tailored-cv.module.js';
+import { InterviewPrepModule } from './interview-prep/interview-prep.module.js';
 
 @Module({
   imports: [
@@ -103,6 +107,10 @@ import { LeadsModule } from './leads/leads.module.js';
     ConnectorsModule,
     TelegramModule,
     LeadsModule,
+    PublicModule,
+    AdminModule,
+    TailoredCvModule,
+    InterviewPrepModule,
   ],
   controllers: [HealthController],
 })

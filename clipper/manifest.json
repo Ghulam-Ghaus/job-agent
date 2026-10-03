@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "JobAgent AI — Web Clipper",
+  "version": "1.0.0",
+  "description": "One-click clip job postings, freelance projects, and direct client leads into JobAgent AI.",
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Send to JobAgent AI"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}
