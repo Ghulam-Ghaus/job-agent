@@ -107,3 +107,23 @@ export type ApplyPack = Prisma.ApplyPackModel
  * 
  */
 export type ApprovalRecord = Prisma.ApprovalRecordModel
+/**
+ * Model Company
+ * 
+ */
+export type Company = Prisma.CompanyModel
+/**
+ * Model Contact
+ * 
+ */
+export type Contact = Prisma.ContactModel
+/**
+ * Model OutreachMessage
+ * 
+ */
+export type OutreachMessage = Prisma.OutreachMessageModel
+/**
+ * Model SuppressionEntry
+ * 
+ */
+export type SuppressionEntry = Prisma.SuppressionEntryModel

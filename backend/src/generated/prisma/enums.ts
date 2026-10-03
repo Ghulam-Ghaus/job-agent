@@ -73,3 +73,29 @@ export const LlmProvider = {
 } as const
 
 export type LlmProvider = (typeof LlmProvider)[keyof typeof LlmProvider]
+
+
+export const LeadStatus = {
+  RESEARCHING: 'RESEARCHING',
+  QUALIFIED: 'QUALIFIED',
+  DRAFT_READY: 'DRAFT_READY',
+  CONTACTED: 'CONTACTED',
+  REPLIED: 'REPLIED',
+  MEETING: 'MEETING',
+  PROPOSAL_SENT: 'PROPOSAL_SENT',
+  WON: 'WON',
+  LOST: 'LOST',
+  NOT_INTERESTED: 'NOT_INTERESTED'
+} as const
+
+export type LeadStatus = (typeof LeadStatus)[keyof typeof LeadStatus]
+
+
+export const OutreachStatus = {
+  DRAFT: 'DRAFT',
+  APPROVED: 'APPROVED',
+  SENT: 'SENT',
+  REJECTED: 'REJECTED'
+} as const
+
+export type OutreachStatus = (typeof OutreachStatus)[keyof typeof OutreachStatus]

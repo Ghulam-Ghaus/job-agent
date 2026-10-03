@@ -15,6 +15,7 @@ import {
   Sparkles,
   ChevronLeft,
   ChevronRight,
+  Building2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { api } from '@/lib/api-client';
@@ -22,6 +23,7 @@ import { api } from '@/lib/api-client';
 const navigation = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
   { name: 'Opportunities', href: '/dashboard', icon: Briefcase },
+  { name: 'Direct Clients', href: '/leads', icon: Building2 },
   { name: 'Approval Queue', href: '/approvals', icon: CheckCircle2 },
   { name: 'Master Profile', href: '/profile', icon: FileText },
   { name: 'Onboarding Setup', href: '/onboarding', icon: Sparkles },

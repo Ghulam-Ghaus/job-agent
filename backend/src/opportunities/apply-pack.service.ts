@@ -68,34 +68,50 @@ export class ApplyPackService {
       `Notice: ${profile?.noticePeriodDays ?? '?'} days`,
     ].join('\n');
 
-    // ── Pass 1: Generate cover note ─────────────────────────────────────
-    this.logger.log(`Pass 1: Generating cover note for opp ${opportunityId}`);
+    // ── Pass 1: Generate cover note or freelance proposal ──────────────
+    const isFreelance = opp.type === 'FREELANCE';
+    this.logger.log(`Pass 1: Generating ${isFreelance ? 'freelance proposal' : 'cover note'} for opp ${opportunityId}`);
 
-    const pass1 = await this.llm.generateStructured({
-      system: `You are a professional job application writer. Write a concise, compelling cover note tailored to the specific job.
+    const systemPrompt = isFreelance
+      ? `You are an expert freelance proposal writer crafting a winning Upwork proposal.
+RULES:
+- Hook the client in the very first sentence by directly addressing their project requirements/problem. Do NOT start with "Dear Hiring Manager", "I hope you are well", or generic pleasantries.
+- Only reference skills, experience, and past achievements that exist in the candidate's profile below.
+- Highlight 2-3 specific relevant technologies and past experiences from the profile.
+- Include 1-2 thoughtful, clarifying technical questions showing you understand the project scope.
+- Keep it punchy and concise (150-250 words), focused on delivering client value.
+- Do NOT invent or embellish any qualifications or metrics.`
+      : `You are a professional job application writer. Write a concise, compelling cover note tailored to the specific job.
 RULES:
 - Only mention skills, experience, and achievements that exist in the candidate's profile below.
 - Do NOT invent or embellish any qualifications.
 - Keep it under 300 words.
 - Be specific — reference actual companies, technologies, and years from the profile.
-- Sound professional but human, not robotic.`,
-      prompt: `CANDIDATE PROFILE:\n${profileSummary}\n\nJOB REQUIREMENTS:\n${JSON.stringify(fields, null, 2)}\n\nJob Title: ${opp.title ?? 'Unknown'}\nCompany: ${opp.company ?? 'Unknown'}\n\nWrite a tailored cover note for this application.`,
+- Sound professional but human, not robotic.`;
+
+    const userPrompt = isFreelance
+      ? `CANDIDATE PROFILE:\n${profileSummary}\n\nPROJECT REQUIREMENTS:\n${JSON.stringify(fields, null, 2)}\n\nProject Title: ${opp.title ?? 'Freelance Project'}\nClient: ${opp.company ?? 'Client'}\n\nWrite a tailored, high-converting Upwork proposal for this contract.`
+      : `CANDIDATE PROFILE:\n${profileSummary}\n\nJOB REQUIREMENTS:\n${JSON.stringify(fields, null, 2)}\n\nJob Title: ${opp.title ?? 'Unknown'}\nCompany: ${opp.company ?? 'Unknown'}\n\nWrite a tailored cover note for this application.`;
+
+    const pass1 = await this.llm.generateStructured({
+      system: systemPrompt,
+      prompt: userPrompt,
       schema: CoverNoteSchema,
-      purpose: 'apply_pack_generation',
+      purpose: isFreelance ? 'freelance_proposal_generation' : 'apply_pack_generation',
       userId,
     });
 
     // ── Pass 2: Verify claims ───────────────────────────────────────────
-    this.logger.log(`Pass 2: Verifying cover note claims for opp ${opportunityId}`);
+    this.logger.log(`Pass 2: Verifying claims for opp ${opportunityId}`);
 
     const pass2 = await this.llm.generateStructured({
-      system: `You are a strict fact-checker. Your job is to verify every claim in a cover letter against the candidate's actual profile data.
+      system: `You are a strict fact-checker. Your job is to verify every claim in a ${isFreelance ? 'freelance proposal' : 'cover letter'} against the candidate's actual profile data.
 RULES:
-- If the cover note mentions a skill, company, role, or achievement NOT found in the profile, flag it.
-- If the cover note exaggerates years of experience beyond what the profile shows, flag it.
+- If the text mentions a skill, company, role, or achievement NOT found in the profile, flag it.
+- If the text exaggerates years of experience beyond what the profile shows, flag it.
 - If everything checks out, return status "passed" with an empty issues array.
-- Be thorough — false claims in applications are serious.`,
-      prompt: `CANDIDATE PROFILE:\n${profileSummary}\n\nCOVER NOTE TO VERIFY:\n${pass1.coverNote}\n\nVerify every factual claim in this cover note against the candidate's profile.`,
+- Be thorough — false claims in applications or proposals are strictly prohibited.`,
+      prompt: `CANDIDATE PROFILE:\n${profileSummary}\n\nPROPOSAL/NOTE TO VERIFY:\n${pass1.coverNote}\n\nVerify every factual claim in this text against the candidate's profile.`,
       schema: VerifierSchema,
       purpose: 'apply_pack_verification',
       userId,

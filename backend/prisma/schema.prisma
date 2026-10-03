@@ -88,6 +88,9 @@ model User {
   notifications    Notification[]
   applyPacks       ApplyPack[]
   approvalRecords  ApprovalRecord[]
+  companies        Company[]
+  outreachMessages OutreachMessage[]
+  suppressions     SuppressionEntry[]
 
   @@map("users")
 }
@@ -419,4 +422,118 @@ model ApprovalRecord {
   @@index([userId])
   @@map("approval_records")
 }
+
+// ─── Sprint 4: Direct Clients & Leads ─────────────────────────────────────────
+
+enum LeadStatus {
+  RESEARCHING
+  QUALIFIED
+  DRAFT_READY
+  CONTACTED
+  REPLIED
+  MEETING
+  PROPOSAL_SENT
+  WON
+  LOST
+  NOT_INTERESTED
+}
+
+enum OutreachStatus {
+  DRAFT
+  APPROVED
+  SENT
+  REJECTED
+}
+
+model Company {
+  id                 String      @id @default(cuid())
+  userId             String
+  name               String
+  placeId            String?     // Google Places ID
+  website            String?
+  phone              String?
+  address            String?
+  city               String?
+  country            String?
+  businessType       String?     // e.g. "dental_clinic", "accounting", "logistics"
+  status             LeadStatus  @default(RESEARCHING)
+  qualificationScore Int?        // 0–100 based on need signals
+  needSignalsJson    Json        @default("[]") // [{ signal: string, evidence: string, severity: 'HIGH'|'MED'|'LOW' }]
+  notes              String?
+  lastContactedAt    DateTime?
+  nextFollowUpAt     DateTime?
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+
+  user               User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contacts           Contact[]
+  outreachMessages   OutreachMessage[]
+
+  @@unique([userId, placeId])
+  @@index([userId])
+  @@index([userId, status])
+  @@map("companies")
+}
+
+model Contact {
+  id          String   @id @default(cuid())
+  companyId   String
+  name        String
+  role        String?  // e.g. "Founder", "Managing Partner", "Operations Director"
+  email       String?
+  phone       String?
+  linkedinUrl String?
+  isPrimary   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  outreachMessages OutreachMessage[]
+
+  @@index([companyId])
+  @@map("contacts")
+}
+
+model OutreachMessage {
+  id          String         @id @default(cuid())
+  companyId   String
+  contactId   String?
+  userId      String
+  channel     String         @default("EMAIL")
+  subject     String
+  body        String
+  status      OutreachStatus @default(DRAFT)
+  sentAt      DateTime?
+  openedAt    DateTime?
+  repliedAt   DateTime?
+  approvalId  String?
+  optOutToken String         @unique @default(cuid())
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  company     Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  contact     Contact?       @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([companyId])
+  @@index([status])
+  @@map("outreach_messages")
+}
+
+model SuppressionEntry {
+  id        String   @id @default(cuid())
+  userId    String
+  domain    String?  // e.g. "competitor.com" or opted-out business domain
+  email     String?  // e.g. "ceo@company.com"
+  reason    String   // e.g. "opt_out", "competitor", "bounced", "manual"
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, domain])
+  @@index([userId])
+  @@map("suppression_entries")
+}
+
 

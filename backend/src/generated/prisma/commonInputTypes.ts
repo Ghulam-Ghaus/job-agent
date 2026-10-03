@@ -433,6 +433,40 @@ export type EnumLlmProviderWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumLlmProviderFilter<$PrismaModel>
 }
 
+export type EnumLeadStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.LeadStatus | Prisma.EnumLeadStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.LeadStatus[] | Prisma.ListEnumLeadStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.LeadStatus[] | Prisma.ListEnumLeadStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumLeadStatusFilter<$PrismaModel> | $Enums.LeadStatus
+}
+
+export type EnumLeadStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.LeadStatus | Prisma.EnumLeadStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.LeadStatus[] | Prisma.ListEnumLeadStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.LeadStatus[] | Prisma.ListEnumLeadStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumLeadStatusWithAggregatesFilter<$PrismaModel> | $Enums.LeadStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumLeadStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumLeadStatusFilter<$PrismaModel>
+}
+
+export type EnumOutreachStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.OutreachStatus | Prisma.EnumOutreachStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.OutreachStatus[] | Prisma.ListEnumOutreachStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OutreachStatus[] | Prisma.ListEnumOutreachStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOutreachStatusFilter<$PrismaModel> | $Enums.OutreachStatus
+}
+
+export type EnumOutreachStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.OutreachStatus | Prisma.EnumOutreachStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.OutreachStatus[] | Prisma.ListEnumOutreachStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OutreachStatus[] | Prisma.ListEnumOutreachStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOutreachStatusWithAggregatesFilter<$PrismaModel> | $Enums.OutreachStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumOutreachStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumOutreachStatusFilter<$PrismaModel>
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
@@ -798,6 +832,40 @@ export type NestedEnumLlmProviderWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumLlmProviderFilter<$PrismaModel>
   _max?: Prisma.NestedEnumLlmProviderFilter<$PrismaModel>
+}
+
+export type NestedEnumLeadStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.LeadStatus | Prisma.EnumLeadStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.LeadStatus[] | Prisma.ListEnumLeadStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.LeadStatus[] | Prisma.ListEnumLeadStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumLeadStatusFilter<$PrismaModel> | $Enums.LeadStatus
+}
+
+export type NestedEnumLeadStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.LeadStatus | Prisma.EnumLeadStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.LeadStatus[] | Prisma.ListEnumLeadStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.LeadStatus[] | Prisma.ListEnumLeadStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumLeadStatusWithAggregatesFilter<$PrismaModel> | $Enums.LeadStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumLeadStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumLeadStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumOutreachStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.OutreachStatus | Prisma.EnumOutreachStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.OutreachStatus[] | Prisma.ListEnumOutreachStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OutreachStatus[] | Prisma.ListEnumOutreachStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOutreachStatusFilter<$PrismaModel> | $Enums.OutreachStatus
+}
+
+export type NestedEnumOutreachStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.OutreachStatus | Prisma.EnumOutreachStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.OutreachStatus[] | Prisma.ListEnumOutreachStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OutreachStatus[] | Prisma.ListEnumOutreachStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOutreachStatusWithAggregatesFilter<$PrismaModel> | $Enums.OutreachStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumOutreachStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumOutreachStatusFilter<$PrismaModel>
 }
 
 

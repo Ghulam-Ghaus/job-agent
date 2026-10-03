@@ -5,12 +5,17 @@ import { JobRequirementFields } from './extraction.service.js';
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
 export interface ScoreBreakdown {
-  technical: number;   // max 40
-  experience: number;  // max 20
+  technical: number;   // max 40 (job) or 25 (freelance)
+  experience: number;  // max 20 (job) or 10 (freelance)
   location: number;    // max 15
   seniority: number;   // max 10
   salary: number;      // max 10
   visa: number;        // max 5
+  // Freelance specific dimensions
+  budgetFit?: number;    // max 20
+  clientTrust?: number;  // max 20
+  competition?: number;  // max 15
+  scopeClarity?: number; // max 10
 }
 
 export interface SkillGap {
@@ -54,6 +59,7 @@ export class ScoringService {
   async score(
     userId: string,
     fields: JobRequirementFields,
+    opportunityType?: 'JOB' | 'FREELANCE' | 'LEAD',
   ): Promise<MatchResult> {
     // ── Load user data ──────────────────────────────────────────────────────
     const [profile, skills, experiences, prefs, cvs] = await Promise.all([
@@ -63,6 +69,11 @@ export class ScoringService {
       this.prisma.jobPreference.findUnique({ where: { userId } }),
       this.prisma.cv.findMany({ where: { userId }, select: { id: true, isDefault: true, tags: true, label: true } }),
     ]);
+
+    // Check if this is a freelance job per Sprint 3
+    if (opportunityType === 'FREELANCE' || fields.isFreelance) {
+      return this.scoreFreelance(userId, fields, skills, experiences, prefs, cvs);
+    }
 
     const breakdown: ScoreBreakdown = {
       technical: 0,
@@ -235,6 +246,172 @@ export class ScoringService {
 
     this.logger.log(
       `Score for userId=${userId}: ${score}/100 (tech=${breakdown.technical}, exp=${breakdown.experience}, loc=${breakdown.location})`,
+    );
+
+    return { score, breakdown, gaps, recommendedCvId };
+  }
+
+  /**
+   * Specialized multi-dimensional scoring for Freelance / Upwork opportunities (Sprint 3)
+   * Evaluates:
+   * 1. Technical skills (25 pts)
+   * 2. Budget / Rate fit (20 pts)
+   * 3. Client trust & history (20 pts)
+   * 4. Competition / Proposals (15 pts)
+   * 5. Scope clarity (10 pts)
+   * 6. Experience & Track record (10 pts)
+   */
+  private scoreFreelance(
+    userId: string,
+    fields: JobRequirementFields,
+    skills: Array<{ name: string }>,
+    experiences: Array<{ startDate: string | Date; endDate?: string | Date | null; isCurrent?: boolean }>,
+    _prefs: any,
+    cvs: Array<{ id: string; isDefault: boolean; label?: string }>,
+  ): MatchResult {
+    const gaps: SkillGap[] = [];
+    const breakdown: ScoreBreakdown = {
+      technical: 0,
+      experience: 0,
+      location: 0,
+      seniority: 0,
+      salary: 0,
+      visa: 0,
+      budgetFit: 0,
+      clientTrust: 0,
+      competition: 0,
+      scopeClarity: 0,
+    };
+
+    // 1. Technical Skills (25 pts)
+    const userSkillNames = new Set(skills.map((s) => normaliseName(s.name)));
+    const requiredSkills = fields.skills ?? [];
+    if (requiredSkills.length > 0) {
+      let matched = 0;
+      for (const req of requiredSkills) {
+        if (userSkillNames.has(normaliseName(req.name))) {
+          matched++;
+        } else {
+          gaps.push({
+            skill: req.name,
+            required: req.required,
+            reason: 'Missing from your freelance ATS skills',
+          });
+        }
+      }
+      breakdown.technical = clamp((matched / requiredSkills.length) * 25, 25);
+    } else {
+      breakdown.technical = 18; // general scope
+    }
+
+    // 2. Budget Fit (20 pts)
+    const rateMax = fields.freelanceRateMax ?? fields.salaryMax ?? 0;
+    const isHourly = fields.freelanceRateType === 'HOURLY' || fields.salaryPeriod === 'HOURLY';
+
+    if (isHourly) {
+      if (rateMax >= 60) breakdown.budgetFit = 20;
+      else if (rateMax >= 40) breakdown.budgetFit = 17;
+      else if (rateMax >= 25) breakdown.budgetFit = 13;
+      else if (rateMax > 0) {
+        breakdown.budgetFit = 6;
+        gaps.push({ skill: 'Hourly Rate', required: false, reason: `Rate ($${rateMax}/hr) is below target` });
+      } else {
+        breakdown.budgetFit = 14; // unknown
+      }
+    } else {
+      // Fixed price
+      if (rateMax >= 2000) breakdown.budgetFit = 20;
+      else if (rateMax >= 1000) breakdown.budgetFit = 17;
+      else if (rateMax >= 400) breakdown.budgetFit = 13;
+      else if (rateMax > 0) {
+        breakdown.budgetFit = 6;
+        gaps.push({ skill: 'Fixed Budget', required: false, reason: `Fixed budget ($${rateMax}) is low` });
+      } else {
+        breakdown.budgetFit = 14; // unknown
+      }
+    }
+    breakdown.salary = breakdown.budgetFit;
+
+    // 3. Client Trust & History (20 pts)
+    let trustScore = 0;
+    if (fields.clientPaymentVerified !== false) {
+      trustScore += 10;
+    } else {
+      gaps.push({ skill: 'Client Verification', required: false, reason: 'Payment method is not verified' });
+    }
+
+    const rating = fields.clientRating ?? 5.0;
+    if (rating >= 4.8) trustScore += 5;
+    else if (rating >= 4.5) trustScore += 3;
+    else if (rating < 4.0 && fields.clientRating) {
+      gaps.push({ skill: 'Client Rating', required: false, reason: `Client rating is low (${rating}/5)` });
+    }
+
+    const spent = fields.clientTotalSpent ?? '';
+    if (spent.includes('k+') || spent.includes('M+') || Number(spent.replace(/[^0-9]/g, '')) >= 5000) {
+      trustScore += 5;
+    } else if (spent) {
+      trustScore += 2;
+    } else {
+      trustScore += 3;
+    }
+    breakdown.clientTrust = clamp(trustScore, 20);
+
+    // 4. Competition / Proposals (15 pts)
+    const proposals = (fields.proposalsCount ?? '').toLowerCase();
+    if (proposals.includes('less than 5') || proposals.includes('< 5') || proposals.includes('<5')) {
+      breakdown.competition = 15;
+    } else if (proposals.includes('5 to 10') || proposals.includes('5-10')) {
+      breakdown.competition = 12;
+    } else if (proposals.includes('10 to 15') || proposals.includes('10-15')) {
+      breakdown.competition = 8;
+    } else if (proposals.includes('15 to 20') || proposals.includes('20 to 50')) {
+      breakdown.competition = 4;
+      gaps.push({ skill: 'High Competition', required: false, reason: `Already has ${fields.proposalsCount} proposals` });
+    } else if (proposals.includes('50+') || proposals.includes('> 50')) {
+      breakdown.competition = 1;
+      gaps.push({ skill: 'High Competition', required: false, reason: 'Over 50 proposals submitted' });
+    } else {
+      breakdown.competition = 10; // unknown
+    }
+
+    // 5. Scope Clarity (10 pts)
+    const descLen = (fields.description ?? '').length;
+    if (fields.scopeClarity === 'CLEAR' || descLen >= 600) {
+      breakdown.scopeClarity = 10;
+    } else if (fields.scopeClarity === 'MODERATE' || descLen >= 250) {
+      breakdown.scopeClarity = 7;
+    } else {
+      breakdown.scopeClarity = 4;
+      gaps.push({ skill: 'Scope Ambiguity', required: false, reason: 'Project brief is short or lacks specific deliverables' });
+    }
+
+    // 6. Experience & Track Record (10 pts)
+    const totalExpYears = experiences.reduce((acc, exp) => {
+      const start = new Date(exp.startDate);
+      const end = exp.isCurrent ? new Date() : exp.endDate ? new Date(exp.endDate) : new Date();
+      return acc + Math.max(0, (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24 * 365));
+    }, 0);
+
+    if (totalExpYears >= 4) breakdown.experience = 10;
+    else if (totalExpYears >= 2) breakdown.experience = 7;
+    else breakdown.experience = 4;
+
+    // Total score
+    const total =
+      breakdown.technical +
+      (breakdown.budgetFit ?? 0) +
+      (breakdown.clientTrust ?? 0) +
+      (breakdown.competition ?? 0) +
+      (breakdown.scopeClarity ?? 0) +
+      breakdown.experience;
+    const score = clamp(total, 100);
+
+    const defaultCv = cvs.find((c) => c.isDefault);
+    const recommendedCvId = defaultCv?.id ?? cvs[0]?.id ?? null;
+
+    this.logger.log(
+      `Freelance Score for userId=${userId}: ${score}/100 (tech=${breakdown.technical}, budget=${breakdown.budgetFit}, trust=${breakdown.clientTrust}, comp=${breakdown.competition}, scope=${breakdown.scopeClarity})`,
     );
 
     return { score, breakdown, gaps, recommendedCvId };

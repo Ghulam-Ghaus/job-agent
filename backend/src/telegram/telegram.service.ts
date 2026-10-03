@@ -350,45 +350,89 @@ export class TelegramService implements OnModuleInit, OnModuleDestroy {
         return false;
       }
 
+      const isFreelance = opp.type === 'FREELANCE';
       const score = opp.match.score;
-      const title = opp.title || 'Job Opportunity';
-      const company = opp.company || 'Unknown Company';
-      const location = [opp.city, opp.country].filter(Boolean).join(', ') || 'Unspecified';
+      const title = opp.title || (isFreelance ? 'Freelance Contract' : 'Job Opportunity');
+      const company = opp.company || (isFreelance ? 'Upwork Client' : 'Unknown Company');
+      const location = [opp.city, opp.country].filter(Boolean).join(', ') || (isFreelance ? 'Remote' : 'Unspecified');
       const packId = opp.applyPack?.id;
 
-      let salaryText = 'Unknown / Unstated';
-      if (opp.requirement?.fieldsJson) {
-        const fields = opp.requirement.fieldsJson as any;
-        if (fields.salaryMax) {
-          salaryText = `$${Number(fields.salaryMax).toLocaleString()}/yr`;
+      let cardText = '';
+
+      if (isFreelance) {
+        let budgetText = 'Unstated';
+        let clientTrustText = 'Unverified';
+        let compText = 'Unknown';
+
+        if (opp.requirement?.fieldsJson) {
+          const fields = opp.requirement.fieldsJson as any;
+          if (fields.freelanceRateMax) {
+            budgetText = fields.freelanceRateType === 'HOURLY'
+              ? `$${fields.freelanceRateMin ? `${fields.freelanceRateMin}-$` : ''}${fields.freelanceRateMax}/hr`
+              : `$${Number(fields.freelanceRateMax).toLocaleString()} Fixed`;
+          } else if (fields.salaryMax) {
+            budgetText = `$${Number(fields.salaryMax).toLocaleString()}`;
+          }
+
+          const clientParts = [];
+          if (fields.clientPaymentVerified) clientParts.push('Payment Verified ✅');
+          if (fields.clientRating) clientParts.push(`${fields.clientRating}★`);
+          if (fields.clientTotalSpent) clientParts.push(fields.clientTotalSpent);
+          if (clientParts.length > 0) clientTrustText = clientParts.join(' · ');
+
+          if (fields.proposalsCount) compText = `${fields.proposalsCount} proposals`;
         }
+
+        const gaps = ((opp.match.gapsJson as any[]) || []).slice(0, 2);
+        const gapsText =
+          gaps.length > 0
+            ? gaps.map((g) => `• ${g.skill}: ${g.reason}`).join('\n')
+            : 'No critical gaps';
+
+        cardText =
+          `💼 *UPWORK FREELANCE MATCH: ${score}/100*\n` +
+          `━━━━━━━━━━━━━━━━━━━━\n` +
+          `📌 *Project:* ${this.escapeMarkdown(title)}\n` +
+          `💰 *Budget:* ${this.escapeMarkdown(budgetText)}\n` +
+          `🛡️ *Client:* ${this.escapeMarkdown(clientTrustText)}\n` +
+          `⚡ *Competition:* ${this.escapeMarkdown(compText)}\n\n` +
+          `⚠️ *Notes / Gaps:*\n${this.escapeMarkdown(gapsText)}\n\n` +
+          `📝 *Proposal:* Tailored Upwork proposal verified against your profile. Ready to copy & submit manually.`;
+      } else {
+        let salaryText = 'Unknown / Unstated';
+        if (opp.requirement?.fieldsJson) {
+          const fields = opp.requirement.fieldsJson as any;
+          if (fields.salaryMax) {
+            salaryText = `$${Number(fields.salaryMax).toLocaleString()}/yr`;
+          }
+        }
+
+        const gaps = ((opp.match.gapsJson as any[]) || []).slice(0, 2);
+        const gapsText =
+          gaps.length > 0
+            ? gaps.map((g) => `• ${g.skill}: ${g.reason}`).join('\n')
+            : 'None detected';
+
+        cardText =
+          `🎯 *HIGH MATCH OPPORTUNITY: ${score}/100*\n` +
+          `━━━━━━━━━━━━━━━━━━━━\n` +
+          `💼 *Role:* ${this.escapeMarkdown(title)}\n` +
+          `🏢 *Company:* ${this.escapeMarkdown(company)}\n` +
+          `📍 *Location:* ${this.escapeMarkdown(location)}\n` +
+          `💰 *Salary:* ${this.escapeMarkdown(salaryText)}\n\n` +
+          `⚠️ *Gaps / Notes:*\n${this.escapeMarkdown(gapsText)}\n\n` +
+          `📦 *Ready to Apply:* A tailored Apply Pack has been generated.`;
       }
-
-      const gaps = ((opp.match.gapsJson as any[]) || []).slice(0, 2);
-      const gapsText =
-        gaps.length > 0
-          ? gaps.map((g) => `• ${g.skill}: ${g.reason}`).join('\n')
-          : 'None detected';
-
-      const cardText =
-        `🎯 *HIGH MATCH OPPORTUNITY: ${score}/100*\n` +
-        `━━━━━━━━━━━━━━━━━━━━\n` +
-        `💼 *Role:* ${this.escapeMarkdown(title)}\n` +
-        `🏢 *Company:* ${this.escapeMarkdown(company)}\n` +
-        `📍 *Location:* ${this.escapeMarkdown(location)}\n` +
-        `💰 *Salary:* ${this.escapeMarkdown(salaryText)}\n\n` +
-        `⚠️ *Gaps / Notes:*\n${this.escapeMarkdown(gapsText)}\n\n` +
-        `📦 *Ready to Apply:* A tailored Apply Pack has been generated.`;
 
       // Build inline action buttons
       const inlineButtons: any[] = [];
       const row1: any[] = [];
 
       if (opp.url) {
-        row1.push(Markup.button.url('🔗 Open Job Link', opp.url));
+        row1.push(Markup.button.url(isFreelance ? '🔗 Open Upwork' : '🔗 Open Job Link', opp.url));
       }
       if (packId) {
-        row1.push(Markup.button.callback('📄 View Pack', `pack:${packId}`));
+        row1.push(Markup.button.callback(isFreelance ? '📄 View Proposal' : '📄 View Pack', `pack:${packId}`));
       }
       if (row1.length > 0) inlineButtons.push(row1);
 
@@ -492,6 +536,60 @@ export class TelegramService implements OnModuleInit, OnModuleDestroy {
       }
     } catch (err: unknown) {
       this.logger.error(`Failed to dispatch daily digest: ${String(err)}`);
+    }
+  }
+
+  /**
+   * Check for contacted client leads due for follow-up (PLAN §11.4)
+   * Runs daily at 09:00
+   */
+  @Cron('0 9 * * *')
+  async checkLeadFollowUps(): Promise<void> {
+    if (!this.bot || !this.isEnabled) return;
+
+    try {
+      const now = new Date();
+      const overdueLeads = await this.prisma.company.findMany({
+        where: {
+          status: 'CONTACTED',
+          nextFollowUpAt: { lte: now },
+        },
+        include: {
+          user: {
+            include: {
+              profile: true,
+            },
+          },
+        },
+        take: 10,
+      });
+
+      for (const lead of overdueLeads) {
+        const chatId = lead.user?.profile?.telegramChatId;
+        if (!chatId) continue;
+
+        const message =
+          `🔔 *LEAD FOLLOW\\-UP REMINDER*\n` +
+          `━━━━━━━━━━━━━━━━━━━━\n` +
+          `🏢 *Business:* ${this.escapeMarkdown(lead.name)}\n` +
+          `📍 *City:* ${this.escapeMarkdown(lead.city || 'Local')}\n` +
+          `📅 *Contacted:* ${lead.lastContactedAt ? this.escapeMarkdown(new Date(lead.lastContactedAt).toLocaleDateString()) : 'Earlier'}\n\n` +
+          `💡 *Status:* Awaiting response\\. Time to send a gentle follow\\-up or log meeting\\.`;
+
+        await this.bot.telegram.sendMessage(chatId, message, {
+          parse_mode: 'MarkdownV2',
+        });
+
+        // Push next follow-up by 3 days so we don't spam daily
+        const nextDate = new Date();
+        nextDate.setDate(nextDate.getDate() + 3);
+        await this.prisma.company.update({
+          where: { id: lead.id },
+          data: { nextFollowUpAt: nextDate },
+        });
+      }
+    } catch (err: unknown) {
+      this.logger.error(`Error checking lead follow-ups: ${String(err)}`);
     }
   }
 

@@ -38,6 +38,12 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
   get applyPack() { return this.client.applyPack; }
   get approvalRecord() { return this.client.approvalRecord; }
 
+  // Sprint 4 — direct clients & leads
+  get company() { return this.client.company; }
+  get contact() { return this.client.contact; }
+  get outreachMessage() { return this.client.outreachMessage; }
+  get suppressionEntry() { return this.client.suppressionEntry; }
+
   /** Run raw SQL — used by health check and migrations helpers */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   $queryRaw(...args: Parameters<PrismaClient['$queryRaw']>): Promise<any> {

@@ -101,7 +101,9 @@ export class EmailService {
 
     // Determine platform
     let platform = 'GENERIC';
-    if (from.includes('linkedin') || subject.includes('LinkedIn')) {
+    if (from.includes('upwork') || subject.toLowerCase().includes('upwork')) {
+      platform = 'UPWORK';
+    } else if (from.includes('linkedin') || subject.includes('LinkedIn')) {
       platform = 'LINKEDIN';
     } else if (from.includes('bayt') || subject.includes('Bayt')) {
       platform = 'BAYT';
@@ -109,11 +111,11 @@ export class EmailService {
       platform = 'GULFTALENT';
     } else if (from.includes('indeed') || subject.includes('Indeed')) {
       platform = 'INDEED';
-    } else if (from.includes('upwork') || subject.includes('Upwork')) {
-      platform = 'UPWORK';
     }
 
-    const isFreelance = platform === 'UPWORK';
+    if (platform === 'UPWORK') {
+      return this.parseUpworkEmail(mail, userId);
+    }
 
     // Extract links from email HTML or text
     const linkMatches = [...html.matchAll(/href=["'](https?:\/\/[^"']+)["']/gi)];
@@ -136,10 +138,80 @@ export class EmailService {
       userId,
       rawText,
       url: primaryUrl,
-      type: isFreelance ? 'FREELANCE' : 'JOB',
+      type: 'JOB',
       sourceType: 'EMAIL',
     });
 
+    return 1;
+  }
+
+  /**
+   * Dedicated parser for Upwork freelance alert emails.
+   * Parses job title, hourly / fixed price budget, client payment verification,
+   * proposals competition tier, and skills.
+   */
+  async parseUpworkEmail(mail: ParsedMail, userId: string): Promise<number> {
+    const subject = mail.subject ?? '';
+    const text = mail.text ?? '';
+    const html = (mail.html as string) ?? '';
+    const content = text || html.replace(/<[^>]+>/g, ' ');
+
+    // Match Upwork job URLs (e.g. https://www.upwork.com/jobs/~01abc123456789)
+    const urlMatches = [
+      ...content.matchAll(/https?:\/\/(?:www\.)?upwork\.com\/jobs\/([~a-zA-Z0-9_]+)/gi),
+      ...html.matchAll(/href=["'](https?:\/\/(?:www\.)?upwork\.com\/jobs\/[~a-zA-Z0-9_]+)["']/gi),
+    ];
+    const upworkUrls = Array.from(new Set(urlMatches.map((m) => m[1] ? (m[1].startsWith('http') ? m[1] : `https://www.upwork.com/jobs/${m[1]}`) : m[0])));
+
+    // Extract budget / rates
+    const hourlyMatch = content.match(/Hourly[:\s]+(\$[0-9.]+\s*-\s*\$[0-9.]+|\$[0-9.]+)(?:\s*\/hr)?/i);
+    const fixedMatch = content.match(/(?:Fixed[- ]?price|Est\. Budget)[:\s]+(\$[0-9,]+)/i);
+    const budgetStr = hourlyMatch ? `Hourly: ${hourlyMatch[1]}/hr` : fixedMatch ? `Fixed-price: ${fixedMatch[1]}` : 'Budget: Unspecified';
+
+    // Client verification & history
+    const paymentVerified = /payment\s+verified/i.test(content);
+    const ratingMatch = content.match(/Rating[:\s]+([0-5](?:\.\d+)?)/i) || content.match(/([0-5](?:\.\d+)?)\s+of\s+5\s+stars/i);
+    const rating = ratingMatch ? ratingMatch[1] : undefined;
+    const spentMatch = content.match(/(\$[0-9kKmM+]+)\s+spent/i);
+    const spent = spentMatch ? spentMatch[1] : undefined;
+    const countryMatch = content.match(/(?:Location|Client Location|Country)[:\s]+([A-Za-z\s]+)/i);
+    const clientCountry = countryMatch ? countryMatch[1].trim() : undefined;
+
+    // Competition / Proposals tier
+    const proposalsMatch = content.match(/Proposals[:\s]+(Less than 5|5 to 10|10 to 15|15 to 20|20 to 50|\d+\+?)/i);
+    const proposalsTier = proposalsMatch ? proposalsMatch[1] : 'Unknown';
+
+    // Skills
+    const skillsMatch = content.match(/Skills?[:\s]+([^\n\r]+)/i);
+    const skillsStr = skillsMatch ? skillsMatch[1].trim() : '';
+
+    // Title from subject (cleaning prefixes like 'Job Alert:', 'New job:', etc.)
+    const cleanTitle = subject
+      .replace(/^(?:Fwd:\s*|Re:\s*)?(?:\[Upwork\]\s*)?(?:Job Alert:\s*|New job:\s*|Upwork:\s*)?/i, '')
+      .trim() || 'Freelance Opportunity';
+
+    // Format structured freelance rawText
+    const rawText = [
+      `Source: UPWORK Freelance Alert`,
+      `Job Title: ${cleanTitle}`,
+      `Budget: ${budgetStr}`,
+      `Client Trust: Payment verified: ${paymentVerified ? 'Yes' : 'No'}${rating ? `, Rating: ${rating}/5` : ''}${spent ? `, Total Spent: ${spent}` : ''}${clientCountry ? `, Country: ${clientCountry}` : ''}`,
+      `Competition: ${proposalsTier} proposals`,
+      skillsStr ? `Skills: ${skillsStr}` : '',
+      `URL: ${upworkUrls[0] || 'https://www.upwork.com'}`,
+      `Date: ${mail.date?.toISOString() ?? new Date().toISOString()}`,
+      `\nProject Description:\n${content.slice(0, 4000)}`,
+    ].filter(Boolean).join('\n');
+
+    await this.pipeline.addJob({
+      userId,
+      rawText,
+      url: upworkUrls[0],
+      type: 'FREELANCE',
+      sourceType: 'EMAIL',
+    });
+
+    this.logger.log(`Enqueued Upwork freelance opportunity: "${cleanTitle}" (${budgetStr}, Proposals: ${proposalsTier})`);
     return 1;
   }
 }

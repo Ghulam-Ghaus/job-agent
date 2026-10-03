@@ -68,7 +68,11 @@ export const ModelName = {
   LlmCall: 'LlmCall',
   Notification: 'Notification',
   ApplyPack: 'ApplyPack',
-  ApprovalRecord: 'ApprovalRecord'
+  ApprovalRecord: 'ApprovalRecord',
+  Company: 'Company',
+  Contact: 'Contact',
+  OutreachMessage: 'OutreachMessage',
+  SuppressionEntry: 'SuppressionEntry'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -375,6 +379,79 @@ export const ApprovalRecordScalarFieldEnum = {
 } as const
 
 export type ApprovalRecordScalarFieldEnum = (typeof ApprovalRecordScalarFieldEnum)[keyof typeof ApprovalRecordScalarFieldEnum]
+
+
+export const CompanyScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  placeId: 'placeId',
+  website: 'website',
+  phone: 'phone',
+  address: 'address',
+  city: 'city',
+  country: 'country',
+  businessType: 'businessType',
+  status: 'status',
+  qualificationScore: 'qualificationScore',
+  needSignalsJson: 'needSignalsJson',
+  notes: 'notes',
+  lastContactedAt: 'lastContactedAt',
+  nextFollowUpAt: 'nextFollowUpAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CompanyScalarFieldEnum = (typeof CompanyScalarFieldEnum)[keyof typeof CompanyScalarFieldEnum]
+
+
+export const ContactScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  name: 'name',
+  role: 'role',
+  email: 'email',
+  phone: 'phone',
+  linkedinUrl: 'linkedinUrl',
+  isPrimary: 'isPrimary',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ContactScalarFieldEnum = (typeof ContactScalarFieldEnum)[keyof typeof ContactScalarFieldEnum]
+
+
+export const OutreachMessageScalarFieldEnum = {
+  id: 'id',
+  companyId: 'companyId',
+  contactId: 'contactId',
+  userId: 'userId',
+  channel: 'channel',
+  subject: 'subject',
+  body: 'body',
+  status: 'status',
+  sentAt: 'sentAt',
+  openedAt: 'openedAt',
+  repliedAt: 'repliedAt',
+  approvalId: 'approvalId',
+  optOutToken: 'optOutToken',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OutreachMessageScalarFieldEnum = (typeof OutreachMessageScalarFieldEnum)[keyof typeof OutreachMessageScalarFieldEnum]
+
+
+export const SuppressionEntryScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  domain: 'domain',
+  email: 'email',
+  reason: 'reason',
+  createdAt: 'createdAt'
+} as const
+
+export type SuppressionEntryScalarFieldEnum = (typeof SuppressionEntryScalarFieldEnum)[keyof typeof SuppressionEntryScalarFieldEnum]
 
 
 export const SortOrder = {

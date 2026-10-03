@@ -96,7 +96,7 @@ export class JobProcessorService extends WorkerHost {
     }
 
     // 3. Score against user profile
-    const matchResult = await this.scoring.score(userId, fields);
+    const matchResult = await this.scoring.score(userId, fields, opp.type);
     await this.prisma.opportunityMatch.upsert({
       where: { opportunityId: opp.id },
       create: {

@@ -6,11 +6,12 @@ import { EmailService } from './email/email.service.js';
 import { AtsService } from './ats/ats.service.js';
 import { SchedulerService } from './scheduler.service.js';
 import { ConnectorsController } from './connectors.controller.js';
+import { PlacesService } from './places/places.service.js';
 
 @Module({
   imports: [ConfigModule, QueuesModule, PrismaModule],
   controllers: [ConnectorsController],
-  providers: [EmailService, AtsService, SchedulerService],
-  exports: [EmailService, AtsService, SchedulerService],
+  providers: [EmailService, AtsService, SchedulerService, PlacesService],
+  exports: [EmailService, AtsService, SchedulerService, PlacesService],
 })
 export class ConnectorsModule {}

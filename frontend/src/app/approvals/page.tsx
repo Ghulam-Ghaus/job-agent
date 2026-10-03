@@ -70,11 +70,21 @@ function PackReviewCard({
   const [editedNote, setEditedNote] = useState(pack.coverNoteEdited ?? pack.coverNote);
   const [saving, setSaving] = useState(false);
   const [acting, setActing] = useState<'approving' | 'rejecting' | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const opp = pack.opportunity;
   const match = opp?.match;
   const fields = opp?.requirement?.fieldsJson as JobRequirementFields | undefined;
   const issues = (pack.verifierIssues ?? []) as VerifierIssue[];
+  const isFreelance = opp?.type === 'FREELANCE';
+
+  async function copyToClipboard() {
+    const textToCopy = editedNote;
+    if (!textToCopy) return;
+    await navigator.clipboard.writeText(textToCopy);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
+  }
 
   async function saveEdit() {
     if (!opp) return;
@@ -133,6 +143,22 @@ function PackReviewCard({
             <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: '#f1f5f9' }}>
               {opp?.title ?? 'Untitled'}
             </h3>
+            {isFreelance && (
+              <span
+                style={{
+                  padding: '2px 8px',
+                  borderRadius: 4,
+                  fontSize: 10,
+                  fontWeight: 700,
+                  color: '#34d399',
+                  background: 'rgba(16,185,129,.15)',
+                  border: '1px solid rgba(16,185,129,.3)',
+                  textTransform: 'uppercase',
+                }}
+              >
+                💼 Upwork Proposal
+              </span>
+            )}
             <span
               style={{
                 padding: '2px 8px',
@@ -189,7 +215,7 @@ function PackReviewCard({
           <div style={{ marginTop: 16 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
               <span style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.05em' }}>
-                Cover Note
+                {isFreelance ? '📝 Tailored Upwork Proposal' : '📄 Cover Note'}
               </span>
               <button
                 onClick={(e) => { e.stopPropagation(); setEditing(!editing); }}
@@ -312,36 +338,82 @@ function PackReviewCard({
           )}
 
           {/* Action Buttons */}
-          <div style={{ display: 'flex', gap: 12, marginTop: 24 }}>
+          <div style={{ display: 'flex', gap: 10, marginTop: 24, flexWrap: 'wrap' }}>
+            {isFreelance && opp?.url && (
+              <a
+                href={opp.url}
+                target="_blank"
+                rel="noreferrer"
+                style={{
+                  padding: '12px 18px',
+                  borderRadius: 10,
+                  border: '1px solid rgba(99,102,241,.3)',
+                  background: 'rgba(99,102,241,.1)',
+                  color: '#818cf8',
+                  fontSize: 13,
+                  fontWeight: 700,
+                  textDecoration: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                }}
+              >
+                🔗 Open Upwork
+              </a>
+            )}
+            {isFreelance && (
+              <button
+                type="button"
+                onClick={copyToClipboard}
+                style={{
+                  padding: '12px 18px',
+                  borderRadius: 10,
+                  border: '1px solid rgba(16,185,129,.4)',
+                  background: copied ? 'rgba(16,185,129,.25)' : 'rgba(16,185,129,.12)',
+                  color: '#34d399',
+                  cursor: 'pointer',
+                  fontSize: 13,
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  transition: 'all .2s',
+                }}
+              >
+                {copied ? '✅ Proposal Copied!' : '📋 Copy Proposal'}
+              </button>
+            )}
             <button
               onClick={handleReject}
               disabled={acting !== null}
               style={{
                 flex: 1,
+                minWidth: 100,
                 padding: '12px 0',
                 borderRadius: 10,
                 border: '1px solid rgba(239,68,68,.3)',
                 background: acting === 'rejecting' ? 'rgba(239,68,68,.15)' : 'rgba(239,68,68,.07)',
                 color: '#f87171',
                 cursor: acting ? 'not-allowed' : 'pointer',
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: 700,
               }}
             >
-              {acting === 'rejecting' ? '⏳ Rejecting…' : '✗ Reject'}
+              {acting === 'rejecting' ? '⏳ Rejecting…' : '✗ Dismiss'}
             </button>
             <button
               onClick={handleApprove}
               disabled={acting !== null}
               style={{
                 flex: 2,
+                minWidth: 160,
                 padding: '12px 0',
                 borderRadius: 10,
                 border: 'none',
                 background: acting === 'approving' ? '#334155' : 'linear-gradient(135deg,#22c55e,#16a34a)',
                 color: acting === 'approving' ? '#64748b' : '#fff',
                 cursor: acting ? 'not-allowed' : 'pointer',
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: 700,
                 boxShadow: acting ? 'none' : '0 4px 15px rgba(34,197,94,.3)',
               }}

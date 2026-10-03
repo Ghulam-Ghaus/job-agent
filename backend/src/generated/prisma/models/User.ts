@@ -212,6 +212,9 @@ export type UserWhereInput = {
   notifications?: Prisma.NotificationListRelationFilter
   applyPacks?: Prisma.ApplyPackListRelationFilter
   approvalRecords?: Prisma.ApprovalRecordListRelationFilter
+  companies?: Prisma.CompanyListRelationFilter
+  outreachMessages?: Prisma.OutreachMessageListRelationFilter
+  suppressions?: Prisma.SuppressionEntryListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -236,6 +239,9 @@ export type UserOrderByWithRelationInput = {
   notifications?: Prisma.NotificationOrderByRelationAggregateInput
   applyPacks?: Prisma.ApplyPackOrderByRelationAggregateInput
   approvalRecords?: Prisma.ApprovalRecordOrderByRelationAggregateInput
+  companies?: Prisma.CompanyOrderByRelationAggregateInput
+  outreachMessages?: Prisma.OutreachMessageOrderByRelationAggregateInput
+  suppressions?: Prisma.SuppressionEntryOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -263,6 +269,9 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   notifications?: Prisma.NotificationListRelationFilter
   applyPacks?: Prisma.ApplyPackListRelationFilter
   approvalRecords?: Prisma.ApprovalRecordListRelationFilter
+  companies?: Prisma.CompanyListRelationFilter
+  outreachMessages?: Prisma.OutreachMessageListRelationFilter
+  suppressions?: Prisma.SuppressionEntryListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -313,6 +322,9 @@ export type UserCreateInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
   approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -337,6 +349,9 @@ export type UserUncheckedCreateInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
   approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -361,6 +376,9 @@ export type UserUpdateInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
   approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -385,6 +403,9 @@ export type UserUncheckedUpdateInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
   approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -673,6 +694,48 @@ export type UserUpdateOneRequiredWithoutApprovalRecordsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutApprovalRecordsInput, Prisma.UserUpdateWithoutApprovalRecordsInput>, Prisma.UserUncheckedUpdateWithoutApprovalRecordsInput>
 }
 
+export type UserCreateNestedOneWithoutCompaniesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCompaniesInput, Prisma.UserUncheckedCreateWithoutCompaniesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCompaniesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutCompaniesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCompaniesInput, Prisma.UserUncheckedCreateWithoutCompaniesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCompaniesInput
+  upsert?: Prisma.UserUpsertWithoutCompaniesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCompaniesInput, Prisma.UserUpdateWithoutCompaniesInput>, Prisma.UserUncheckedUpdateWithoutCompaniesInput>
+}
+
+export type UserCreateNestedOneWithoutOutreachMessagesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutOutreachMessagesInput, Prisma.UserUncheckedCreateWithoutOutreachMessagesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOutreachMessagesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutOutreachMessagesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutOutreachMessagesInput, Prisma.UserUncheckedCreateWithoutOutreachMessagesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOutreachMessagesInput
+  upsert?: Prisma.UserUpsertWithoutOutreachMessagesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutOutreachMessagesInput, Prisma.UserUpdateWithoutOutreachMessagesInput>, Prisma.UserUncheckedUpdateWithoutOutreachMessagesInput>
+}
+
+export type UserCreateNestedOneWithoutSuppressionsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSuppressionsInput, Prisma.UserUncheckedCreateWithoutSuppressionsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSuppressionsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutSuppressionsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSuppressionsInput, Prisma.UserUncheckedCreateWithoutSuppressionsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSuppressionsInput
+  upsert?: Prisma.UserUpsertWithoutSuppressionsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSuppressionsInput, Prisma.UserUpdateWithoutSuppressionsInput>, Prisma.UserUncheckedUpdateWithoutSuppressionsInput>
+}
+
 export type UserCreateWithoutSessionsInput = {
   id?: string
   email: string
@@ -694,6 +757,9 @@ export type UserCreateWithoutSessionsInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
   approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -717,6 +783,9 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
   approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -756,6 +825,9 @@ export type UserUpdateWithoutSessionsInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
   approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -779,6 +851,9 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
   approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAuditLogsInput = {
@@ -802,6 +877,9 @@ export type UserCreateWithoutAuditLogsInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
   approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -825,6 +903,9 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
   approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -864,6 +945,9 @@ export type UserUpdateWithoutAuditLogsInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
   approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -887,6 +971,9 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
   approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutProfileInput = {
@@ -910,6 +997,9 @@ export type UserCreateWithoutProfileInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
   approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutProfileInput = {
@@ -933,6 +1023,9 @@ export type UserUncheckedCreateWithoutProfileInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
   approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutProfileInput = {
@@ -972,6 +1065,9 @@ export type UserUpdateWithoutProfileInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
   approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProfileInput = {
@@ -995,6 +1091,9 @@ export type UserUncheckedUpdateWithoutProfileInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
   approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutExperiencesInput = {
@@ -1018,6 +1117,9 @@ export type UserCreateWithoutExperiencesInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
   approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutExperiencesInput = {
@@ -1041,6 +1143,9 @@ export type UserUncheckedCreateWithoutExperiencesInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
   approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutExperiencesInput = {
@@ -1080,6 +1185,9 @@ export type UserUpdateWithoutExperiencesInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
   approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutExperiencesInput = {
@@ -1103,6 +1211,9 @@ export type UserUncheckedUpdateWithoutExperiencesInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
   approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSkillsInput = {
@@ -1126,6 +1237,9 @@ export type UserCreateWithoutSkillsInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
   approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSkillsInput = {
@@ -1149,6 +1263,9 @@ export type UserUncheckedCreateWithoutSkillsInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
   approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSkillsInput = {
@@ -1188,6 +1305,9 @@ export type UserUpdateWithoutSkillsInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
   approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSkillsInput = {
@@ -1211,6 +1331,9 @@ export type UserUncheckedUpdateWithoutSkillsInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
   approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutProjectsInput = {
@@ -1234,6 +1357,9 @@ export type UserCreateWithoutProjectsInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
   approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutProjectsInput = {
@@ -1257,6 +1383,9 @@ export type UserUncheckedCreateWithoutProjectsInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
   approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutProjectsInput = {
@@ -1296,6 +1425,9 @@ export type UserUpdateWithoutProjectsInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
   approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProjectsInput = {
@@ -1319,6 +1451,9 @@ export type UserUncheckedUpdateWithoutProjectsInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
   approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCvsInput = {
@@ -1342,6 +1477,9 @@ export type UserCreateWithoutCvsInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
   approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCvsInput = {
@@ -1365,6 +1503,9 @@ export type UserUncheckedCreateWithoutCvsInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
   approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCvsInput = {
@@ -1404,6 +1545,9 @@ export type UserUpdateWithoutCvsInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
   approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCvsInput = {
@@ -1427,6 +1571,9 @@ export type UserUncheckedUpdateWithoutCvsInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
   approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAnswerBankInput = {
@@ -1450,6 +1597,9 @@ export type UserCreateWithoutAnswerBankInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
   approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAnswerBankInput = {
@@ -1473,6 +1623,9 @@ export type UserUncheckedCreateWithoutAnswerBankInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
   approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAnswerBankInput = {
@@ -1512,6 +1665,9 @@ export type UserUpdateWithoutAnswerBankInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
   approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAnswerBankInput = {
@@ -1535,6 +1691,9 @@ export type UserUncheckedUpdateWithoutAnswerBankInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
   approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPreferencesInput = {
@@ -1558,6 +1717,9 @@ export type UserCreateWithoutPreferencesInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
   approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPreferencesInput = {
@@ -1581,6 +1743,9 @@ export type UserUncheckedCreateWithoutPreferencesInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
   approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPreferencesInput = {
@@ -1620,6 +1785,9 @@ export type UserUpdateWithoutPreferencesInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
   approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPreferencesInput = {
@@ -1643,6 +1811,9 @@ export type UserUncheckedUpdateWithoutPreferencesInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
   approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutOpportunitiesInput = {
@@ -1666,6 +1837,9 @@ export type UserCreateWithoutOpportunitiesInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
   approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutOpportunitiesInput = {
@@ -1689,6 +1863,9 @@ export type UserUncheckedCreateWithoutOpportunitiesInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
   approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutOpportunitiesInput = {
@@ -1728,6 +1905,9 @@ export type UserUpdateWithoutOpportunitiesInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
   approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOpportunitiesInput = {
@@ -1751,6 +1931,9 @@ export type UserUncheckedUpdateWithoutOpportunitiesInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
   approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutLlmCallsInput = {
@@ -1774,6 +1957,9 @@ export type UserCreateWithoutLlmCallsInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
   approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutLlmCallsInput = {
@@ -1797,6 +1983,9 @@ export type UserUncheckedCreateWithoutLlmCallsInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
   approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutLlmCallsInput = {
@@ -1836,6 +2025,9 @@ export type UserUpdateWithoutLlmCallsInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
   approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLlmCallsInput = {
@@ -1859,6 +2051,9 @@ export type UserUncheckedUpdateWithoutLlmCallsInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
   approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotificationsInput = {
@@ -1882,6 +2077,9 @@ export type UserCreateWithoutNotificationsInput = {
   llmCalls?: Prisma.LlmCallCreateNestedManyWithoutUserInput
   applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
   approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -1905,6 +2103,9 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   llmCalls?: Prisma.LlmCallUncheckedCreateNestedManyWithoutUserInput
   applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
   approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -1944,6 +2145,9 @@ export type UserUpdateWithoutNotificationsInput = {
   llmCalls?: Prisma.LlmCallUpdateManyWithoutUserNestedInput
   applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
   approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -1967,6 +2171,9 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   llmCalls?: Prisma.LlmCallUncheckedUpdateManyWithoutUserNestedInput
   applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
   approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutApplyPacksInput = {
@@ -1990,6 +2197,9 @@ export type UserCreateWithoutApplyPacksInput = {
   llmCalls?: Prisma.LlmCallCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutApplyPacksInput = {
@@ -2013,6 +2223,9 @@ export type UserUncheckedCreateWithoutApplyPacksInput = {
   llmCalls?: Prisma.LlmCallUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutApplyPacksInput = {
@@ -2052,6 +2265,9 @@ export type UserUpdateWithoutApplyPacksInput = {
   llmCalls?: Prisma.LlmCallUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutApplyPacksInput = {
@@ -2075,6 +2291,9 @@ export type UserUncheckedUpdateWithoutApplyPacksInput = {
   llmCalls?: Prisma.LlmCallUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutApprovalRecordsInput = {
@@ -2098,6 +2317,9 @@ export type UserCreateWithoutApprovalRecordsInput = {
   llmCalls?: Prisma.LlmCallCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutApprovalRecordsInput = {
@@ -2121,6 +2343,9 @@ export type UserUncheckedCreateWithoutApprovalRecordsInput = {
   llmCalls?: Prisma.LlmCallUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutApprovalRecordsInput = {
@@ -2160,6 +2385,9 @@ export type UserUpdateWithoutApprovalRecordsInput = {
   llmCalls?: Prisma.LlmCallUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutApprovalRecordsInput = {
@@ -2183,6 +2411,369 @@ export type UserUncheckedUpdateWithoutApprovalRecordsInput = {
   llmCalls?: Prisma.LlmCallUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutCompaniesInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  role?: $Enums.Role
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  profile?: Prisma.ProfileCreateNestedOneWithoutUserInput
+  experiences?: Prisma.ExperienceCreateNestedManyWithoutUserInput
+  skills?: Prisma.SkillCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutUserInput
+  cvs?: Prisma.CvCreateNestedManyWithoutUserInput
+  answerBank?: Prisma.AnswerBankItemCreateNestedManyWithoutUserInput
+  preferences?: Prisma.JobPreferenceCreateNestedOneWithoutUserInput
+  opportunities?: Prisma.OpportunityCreateNestedManyWithoutUserInput
+  llmCalls?: Prisma.LlmCallCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutCompaniesInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  role?: $Enums.Role
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  profile?: Prisma.ProfileUncheckedCreateNestedOneWithoutUserInput
+  experiences?: Prisma.ExperienceUncheckedCreateNestedManyWithoutUserInput
+  skills?: Prisma.SkillUncheckedCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutUserInput
+  cvs?: Prisma.CvUncheckedCreateNestedManyWithoutUserInput
+  answerBank?: Prisma.AnswerBankItemUncheckedCreateNestedManyWithoutUserInput
+  preferences?: Prisma.JobPreferenceUncheckedCreateNestedOneWithoutUserInput
+  opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutUserInput
+  llmCalls?: Prisma.LlmCallUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutCompaniesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCompaniesInput, Prisma.UserUncheckedCreateWithoutCompaniesInput>
+}
+
+export type UserUpsertWithoutCompaniesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCompaniesInput, Prisma.UserUncheckedUpdateWithoutCompaniesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCompaniesInput, Prisma.UserUncheckedCreateWithoutCompaniesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCompaniesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCompaniesInput, Prisma.UserUncheckedUpdateWithoutCompaniesInput>
+}
+
+export type UserUpdateWithoutCompaniesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  profile?: Prisma.ProfileUpdateOneWithoutUserNestedInput
+  experiences?: Prisma.ExperienceUpdateManyWithoutUserNestedInput
+  skills?: Prisma.SkillUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutUserNestedInput
+  cvs?: Prisma.CvUpdateManyWithoutUserNestedInput
+  answerBank?: Prisma.AnswerBankItemUpdateManyWithoutUserNestedInput
+  preferences?: Prisma.JobPreferenceUpdateOneWithoutUserNestedInput
+  opportunities?: Prisma.OpportunityUpdateManyWithoutUserNestedInput
+  llmCalls?: Prisma.LlmCallUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCompaniesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  profile?: Prisma.ProfileUncheckedUpdateOneWithoutUserNestedInput
+  experiences?: Prisma.ExperienceUncheckedUpdateManyWithoutUserNestedInput
+  skills?: Prisma.SkillUncheckedUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput
+  cvs?: Prisma.CvUncheckedUpdateManyWithoutUserNestedInput
+  answerBank?: Prisma.AnswerBankItemUncheckedUpdateManyWithoutUserNestedInput
+  preferences?: Prisma.JobPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutUserNestedInput
+  llmCalls?: Prisma.LlmCallUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutOutreachMessagesInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  role?: $Enums.Role
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  profile?: Prisma.ProfileCreateNestedOneWithoutUserInput
+  experiences?: Prisma.ExperienceCreateNestedManyWithoutUserInput
+  skills?: Prisma.SkillCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutUserInput
+  cvs?: Prisma.CvCreateNestedManyWithoutUserInput
+  answerBank?: Prisma.AnswerBankItemCreateNestedManyWithoutUserInput
+  preferences?: Prisma.JobPreferenceCreateNestedOneWithoutUserInput
+  opportunities?: Prisma.OpportunityCreateNestedManyWithoutUserInput
+  llmCalls?: Prisma.LlmCallCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutOutreachMessagesInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  role?: $Enums.Role
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  profile?: Prisma.ProfileUncheckedCreateNestedOneWithoutUserInput
+  experiences?: Prisma.ExperienceUncheckedCreateNestedManyWithoutUserInput
+  skills?: Prisma.SkillUncheckedCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutUserInput
+  cvs?: Prisma.CvUncheckedCreateNestedManyWithoutUserInput
+  answerBank?: Prisma.AnswerBankItemUncheckedCreateNestedManyWithoutUserInput
+  preferences?: Prisma.JobPreferenceUncheckedCreateNestedOneWithoutUserInput
+  opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutUserInput
+  llmCalls?: Prisma.LlmCallUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  suppressions?: Prisma.SuppressionEntryUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutOutreachMessagesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutOutreachMessagesInput, Prisma.UserUncheckedCreateWithoutOutreachMessagesInput>
+}
+
+export type UserUpsertWithoutOutreachMessagesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutOutreachMessagesInput, Prisma.UserUncheckedUpdateWithoutOutreachMessagesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutOutreachMessagesInput, Prisma.UserUncheckedCreateWithoutOutreachMessagesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutOutreachMessagesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutOutreachMessagesInput, Prisma.UserUncheckedUpdateWithoutOutreachMessagesInput>
+}
+
+export type UserUpdateWithoutOutreachMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  profile?: Prisma.ProfileUpdateOneWithoutUserNestedInput
+  experiences?: Prisma.ExperienceUpdateManyWithoutUserNestedInput
+  skills?: Prisma.SkillUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutUserNestedInput
+  cvs?: Prisma.CvUpdateManyWithoutUserNestedInput
+  answerBank?: Prisma.AnswerBankItemUpdateManyWithoutUserNestedInput
+  preferences?: Prisma.JobPreferenceUpdateOneWithoutUserNestedInput
+  opportunities?: Prisma.OpportunityUpdateManyWithoutUserNestedInput
+  llmCalls?: Prisma.LlmCallUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutOutreachMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  profile?: Prisma.ProfileUncheckedUpdateOneWithoutUserNestedInput
+  experiences?: Prisma.ExperienceUncheckedUpdateManyWithoutUserNestedInput
+  skills?: Prisma.SkillUncheckedUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput
+  cvs?: Prisma.CvUncheckedUpdateManyWithoutUserNestedInput
+  answerBank?: Prisma.AnswerBankItemUncheckedUpdateManyWithoutUserNestedInput
+  preferences?: Prisma.JobPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutUserNestedInput
+  llmCalls?: Prisma.LlmCallUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  suppressions?: Prisma.SuppressionEntryUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutSuppressionsInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  role?: $Enums.Role
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  profile?: Prisma.ProfileCreateNestedOneWithoutUserInput
+  experiences?: Prisma.ExperienceCreateNestedManyWithoutUserInput
+  skills?: Prisma.SkillCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutUserInput
+  cvs?: Prisma.CvCreateNestedManyWithoutUserInput
+  answerBank?: Prisma.AnswerBankItemCreateNestedManyWithoutUserInput
+  preferences?: Prisma.JobPreferenceCreateNestedOneWithoutUserInput
+  opportunities?: Prisma.OpportunityCreateNestedManyWithoutUserInput
+  llmCalls?: Prisma.LlmCallCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutSuppressionsInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  role?: $Enums.Role
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  profile?: Prisma.ProfileUncheckedCreateNestedOneWithoutUserInput
+  experiences?: Prisma.ExperienceUncheckedCreateNestedManyWithoutUserInput
+  skills?: Prisma.SkillUncheckedCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutUserInput
+  cvs?: Prisma.CvUncheckedCreateNestedManyWithoutUserInput
+  answerBank?: Prisma.AnswerBankItemUncheckedCreateNestedManyWithoutUserInput
+  preferences?: Prisma.JobPreferenceUncheckedCreateNestedOneWithoutUserInput
+  opportunities?: Prisma.OpportunityUncheckedCreateNestedManyWithoutUserInput
+  llmCalls?: Prisma.LlmCallUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  applyPacks?: Prisma.ApplyPackUncheckedCreateNestedManyWithoutUserInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedCreateNestedManyWithoutUserInput
+  companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutUserInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutSuppressionsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutSuppressionsInput, Prisma.UserUncheckedCreateWithoutSuppressionsInput>
+}
+
+export type UserUpsertWithoutSuppressionsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSuppressionsInput, Prisma.UserUncheckedUpdateWithoutSuppressionsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSuppressionsInput, Prisma.UserUncheckedCreateWithoutSuppressionsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutSuppressionsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSuppressionsInput, Prisma.UserUncheckedUpdateWithoutSuppressionsInput>
+}
+
+export type UserUpdateWithoutSuppressionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  profile?: Prisma.ProfileUpdateOneWithoutUserNestedInput
+  experiences?: Prisma.ExperienceUpdateManyWithoutUserNestedInput
+  skills?: Prisma.SkillUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutUserNestedInput
+  cvs?: Prisma.CvUpdateManyWithoutUserNestedInput
+  answerBank?: Prisma.AnswerBankItemUpdateManyWithoutUserNestedInput
+  preferences?: Prisma.JobPreferenceUpdateOneWithoutUserNestedInput
+  opportunities?: Prisma.OpportunityUpdateManyWithoutUserNestedInput
+  llmCalls?: Prisma.LlmCallUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutSuppressionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  profile?: Prisma.ProfileUncheckedUpdateOneWithoutUserNestedInput
+  experiences?: Prisma.ExperienceUncheckedUpdateManyWithoutUserNestedInput
+  skills?: Prisma.SkillUncheckedUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput
+  cvs?: Prisma.CvUncheckedUpdateManyWithoutUserNestedInput
+  answerBank?: Prisma.AnswerBankItemUncheckedUpdateManyWithoutUserNestedInput
+  preferences?: Prisma.JobPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  opportunities?: Prisma.OpportunityUncheckedUpdateManyWithoutUserNestedInput
+  llmCalls?: Prisma.LlmCallUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  applyPacks?: Prisma.ApplyPackUncheckedUpdateManyWithoutUserNestedInput
+  approvalRecords?: Prisma.ApprovalRecordUncheckedUpdateManyWithoutUserNestedInput
+  companies?: Prisma.CompanyUncheckedUpdateManyWithoutUserNestedInput
+  outreachMessages?: Prisma.OutreachMessageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -2203,6 +2794,9 @@ export type UserCountOutputType = {
   notifications: number
   applyPacks: number
   approvalRecords: number
+  companies: number
+  outreachMessages: number
+  suppressions: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2218,6 +2812,9 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
   applyPacks?: boolean | UserCountOutputTypeCountApplyPacksArgs
   approvalRecords?: boolean | UserCountOutputTypeCountApprovalRecordsArgs
+  companies?: boolean | UserCountOutputTypeCountCompaniesArgs
+  outreachMessages?: boolean | UserCountOutputTypeCountOutreachMessagesArgs
+  suppressions?: boolean | UserCountOutputTypeCountSuppressionsArgs
 }
 
 /**
@@ -2314,6 +2911,27 @@ export type UserCountOutputTypeCountApprovalRecordsArgs<ExtArgs extends runtime.
   where?: Prisma.ApprovalRecordWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCompaniesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CompanyWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountOutreachMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OutreachMessageWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSuppressionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SuppressionEntryWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2337,6 +2955,9 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
   applyPacks?: boolean | Prisma.User$applyPacksArgs<ExtArgs>
   approvalRecords?: boolean | Prisma.User$approvalRecordsArgs<ExtArgs>
+  companies?: boolean | Prisma.User$companiesArgs<ExtArgs>
+  outreachMessages?: boolean | Prisma.User$outreachMessagesArgs<ExtArgs>
+  suppressions?: boolean | Prisma.User$suppressionsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -2386,6 +3007,9 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
   applyPacks?: boolean | Prisma.User$applyPacksArgs<ExtArgs>
   approvalRecords?: boolean | Prisma.User$approvalRecordsArgs<ExtArgs>
+  companies?: boolean | Prisma.User$companiesArgs<ExtArgs>
+  outreachMessages?: boolean | Prisma.User$outreachMessagesArgs<ExtArgs>
+  suppressions?: boolean | Prisma.User$suppressionsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -2408,6 +3032,9 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     notifications: Prisma.$NotificationPayload<ExtArgs>[]
     applyPacks: Prisma.$ApplyPackPayload<ExtArgs>[]
     approvalRecords: Prisma.$ApprovalRecordPayload<ExtArgs>[]
+    companies: Prisma.$CompanyPayload<ExtArgs>[]
+    outreachMessages: Prisma.$OutreachMessagePayload<ExtArgs>[]
+    suppressions: Prisma.$SuppressionEntryPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2825,6 +3452,9 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   notifications<T extends Prisma.User$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   applyPacks<T extends Prisma.User$applyPacksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$applyPacksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApplyPackPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   approvalRecords<T extends Prisma.User$approvalRecordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$approvalRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApprovalRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  companies<T extends Prisma.User$companiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$companiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  outreachMessages<T extends Prisma.User$outreachMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$outreachMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OutreachMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  suppressions<T extends Prisma.User$suppressionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$suppressionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SuppressionEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3577,6 +4207,78 @@ export type User$approvalRecordsArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.ApprovalRecordScalarFieldEnum | Prisma.ApprovalRecordScalarFieldEnum[]
+}
+
+/**
+ * User.companies
+ */
+export type User$companiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Company
+   */
+  select?: Prisma.CompanySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Company
+   */
+  omit?: Prisma.CompanyOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CompanyInclude<ExtArgs> | null
+  where?: Prisma.CompanyWhereInput
+  orderBy?: Prisma.CompanyOrderByWithRelationInput | Prisma.CompanyOrderByWithRelationInput[]
+  cursor?: Prisma.CompanyWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CompanyScalarFieldEnum | Prisma.CompanyScalarFieldEnum[]
+}
+
+/**
+ * User.outreachMessages
+ */
+export type User$outreachMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OutreachMessage
+   */
+  select?: Prisma.OutreachMessageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the OutreachMessage
+   */
+  omit?: Prisma.OutreachMessageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OutreachMessageInclude<ExtArgs> | null
+  where?: Prisma.OutreachMessageWhereInput
+  orderBy?: Prisma.OutreachMessageOrderByWithRelationInput | Prisma.OutreachMessageOrderByWithRelationInput[]
+  cursor?: Prisma.OutreachMessageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OutreachMessageScalarFieldEnum | Prisma.OutreachMessageScalarFieldEnum[]
+}
+
+/**
+ * User.suppressions
+ */
+export type User$suppressionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SuppressionEntry
+   */
+  select?: Prisma.SuppressionEntrySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SuppressionEntry
+   */
+  omit?: Prisma.SuppressionEntryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SuppressionEntryInclude<ExtArgs> | null
+  where?: Prisma.SuppressionEntryWhereInput
+  orderBy?: Prisma.SuppressionEntryOrderByWithRelationInput | Prisma.SuppressionEntryOrderByWithRelationInput[]
+  cursor?: Prisma.SuppressionEntryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SuppressionEntryScalarFieldEnum | Prisma.SuppressionEntryScalarFieldEnum[]
 }
 
 /**

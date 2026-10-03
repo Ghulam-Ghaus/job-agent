@@ -104,6 +104,10 @@ export interface ScoreBreakdown {
   seniority: number;
   salary: number;
   visa: number;
+  budgetFit?: number;
+  clientTrust?: number;
+  competition?: number;
+  scopeClarity?: number;
 }
 
 export interface SkillGap {
@@ -129,6 +133,15 @@ export interface JobRequirementFields {
   industry?: string;
   description?: string;
   postedAt?: string;
+  isFreelance?: boolean;
+  freelanceRateMin?: number;
+  freelanceRateMax?: number;
+  freelanceRateType?: 'HOURLY' | 'FIXED';
+  clientPaymentVerified?: boolean;
+  clientRating?: number;
+  clientTotalSpent?: string;
+  proposalsCount?: string;
+  scopeClarity?: 'CLEAR' | 'MODERATE' | 'VAGUE';
 }
 
 export interface OpportunityRequirement {
@@ -201,6 +214,110 @@ export interface ApprovalRecord {
   decision: 'approved' | 'rejected';
   notes?: string | null;
   decidedAt: string;
+}
+
+// ─── Sprint 4: Direct Clients & Leads ─────────────────────────────────────────
+
+export type LeadStatus =
+  | 'RESEARCHING'
+  | 'QUALIFIED'
+  | 'DRAFT_READY'
+  | 'CONTACTED'
+  | 'REPLIED'
+  | 'MEETING'
+  | 'PROPOSAL_SENT'
+  | 'WON'
+  | 'LOST'
+  | 'NOT_INTERESTED';
+
+export type OutreachStatus = 'DRAFT' | 'APPROVED' | 'SENT' | 'REJECTED';
+
+export interface NeedSignal {
+  signal: string;
+  evidence: string;
+  severity: 'HIGH' | 'MED' | 'LOW';
+}
+
+export interface Contact {
+  id: string;
+  companyId: string;
+  name: string;
+  role?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  linkedinUrl?: string | null;
+  isPrimary: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface OutreachMessage {
+  id: string;
+  companyId: string;
+  contactId?: string | null;
+  userId: string;
+  channel: string;
+  subject: string;
+  body: string;
+  status: OutreachStatus;
+  sentAt?: string | null;
+  openedAt?: string | null;
+  repliedAt?: string | null;
+  approvalId?: string | null;
+  optOutToken: string;
+  createdAt: string;
+  updatedAt: string;
+  contact?: Contact | null;
+}
+
+export interface Company {
+  id: string;
+  userId: string;
+  name: string;
+  placeId?: string | null;
+  website?: string | null;
+  phone?: string | null;
+  address?: string | null;
+  city?: string | null;
+  country?: string | null;
+  businessType?: string | null;
+  status: LeadStatus;
+  qualificationScore?: number | null;
+  needSignalsJson: NeedSignal[];
+  notes?: string | null;
+  lastContactedAt?: string | null;
+  nextFollowUpAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  contacts: Contact[];
+  outreachMessages: OutreachMessage[];
+}
+
+export interface DiscoveredPlace {
+  name: string;
+  placeId?: string;
+  website?: string;
+  phone?: string;
+  address?: string;
+  city?: string;
+  businessType?: string;
+  status?: string;
+}
+
+export interface QuotaInfo {
+  callsThisMonth: number;
+  monthlyLimit: number;
+  costThisMonthUsd: number;
+  remaining: number;
+}
+
+export interface SuppressionEntry {
+  id: string;
+  userId: string;
+  domain?: string | null;
+  email?: string | null;
+  reason: string;
+  createdAt: string;
 }
 
 export class ApiClientError extends Error {
@@ -429,6 +546,38 @@ export const api = {
         '/connectors/ats/sync',
         { targets },
       ),
+  },
+
+  leads: {
+    discover: (query: string, locationBias?: string) =>
+      api.post<DiscoveredPlace[]>('/leads/discover', { query, locationBias }),
+    getQuota: () =>
+      api.get<QuotaInfo>('/leads/quota'),
+    import: (placeData: Partial<DiscoveredPlace>) =>
+      api.post<Company>('/leads/import', placeData),
+    list: (params?: { status?: LeadStatus; search?: string }) => {
+      const q = new URLSearchParams();
+      if (params?.status) q.append('status', params.status);
+      if (params?.search) q.append('search', params.search);
+      const queryStr = q.toString() ? `?${q.toString()}` : '';
+      return api.get<Company[]>(`/leads${queryStr}`);
+    },
+    get: (id: string) =>
+      api.get<Company>(`/leads/${id}`),
+    update: (id: string, data: { status?: LeadStatus; notes?: string; nextFollowUpAt?: string }) =>
+      api.patch<Company>(`/leads/${id}`, data),
+    delete: (id: string) =>
+      api.delete<void>(`/leads/${id}`),
+    draftOutreach: (id: string) =>
+      api.post<OutreachMessage>(`/leads/${id}/draft-outreach`),
+    approveAndSend: (outreachId: string) =>
+      api.post<{ success: boolean; outreach: OutreachMessage; message: string }>(`/leads/outreach/${outreachId}/send`),
+    getSuppressions: () =>
+      api.get<SuppressionEntry[]>('/leads/suppressions'),
+    addSuppression: (data: { domain?: string; email?: string; reason?: string }) =>
+      api.post<SuppressionEntry>('/leads/suppressions', data),
+    removeSuppression: (id: string) =>
+      api.delete<void>(`/leads/suppressions/${id}`),
   },
 
   health: {

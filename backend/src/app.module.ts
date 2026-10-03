@@ -28,6 +28,7 @@ import { QueuesModule } from './queues/queues.module.js';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ConnectorsModule } from './connectors/connectors.module.js';
 import { TelegramModule } from './telegram/telegram.module.js';
+import { LeadsModule } from './leads/leads.module.js';
 
 @Module({
   imports: [
@@ -101,6 +102,7 @@ import { TelegramModule } from './telegram/telegram.module.js';
     ScheduleModule.forRoot(),
     ConnectorsModule,
     TelegramModule,
+    LeadsModule,
   ],
   controllers: [HealthController],
 })

@@ -419,14 +419,27 @@ function EvidenceDrawer({
         {breakdown && (
           <section style={{ marginBottom: 24 }}>
             <h3 style={{ margin: '0 0 12px', fontSize: 13, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.05em' }}>
-              Score Breakdown
+              Score Breakdown {opp.type === 'FREELANCE' ? '(Freelance Model)' : '(Full-Time Model)'}
             </h3>
-            <BreakdownBar label="Technical Skills" value={breakdown.technical} max={40} />
-            <BreakdownBar label="Experience" value={breakdown.experience} max={20} />
-            <BreakdownBar label="Location / Remote" value={breakdown.location} max={15} />
-            <BreakdownBar label="Seniority" value={breakdown.seniority} max={10} />
-            <BreakdownBar label="Salary" value={breakdown.salary} max={10} />
-            <BreakdownBar label="Visa" value={breakdown.visa} max={5} />
+            {opp.type === 'FREELANCE' ? (
+              <>
+                <BreakdownBar label="Technical Fit" value={breakdown.technical} max={25} />
+                <BreakdownBar label="Budget Fit" value={breakdown.budgetFit ?? breakdown.salary} max={20} />
+                <BreakdownBar label="Client Trust & History" value={breakdown.clientTrust ?? 15} max={20} />
+                <BreakdownBar label="Competition (Proposals)" value={breakdown.competition ?? 10} max={15} />
+                <BreakdownBar label="Scope Clarity" value={breakdown.scopeClarity ?? 7} max={10} />
+                <BreakdownBar label="Track Record & Exp" value={breakdown.experience} max={10} />
+              </>
+            ) : (
+              <>
+                <BreakdownBar label="Technical Skills" value={breakdown.technical} max={40} />
+                <BreakdownBar label="Experience" value={breakdown.experience} max={20} />
+                <BreakdownBar label="Location / Remote" value={breakdown.location} max={15} />
+                <BreakdownBar label="Seniority" value={breakdown.seniority} max={10} />
+                <BreakdownBar label="Salary" value={breakdown.salary} max={10} />
+                <BreakdownBar label="Visa" value={breakdown.visa} max={5} />
+              </>
+            )}
           </section>
         )}
 
@@ -676,12 +689,28 @@ function OpportunityCard({
         <div style={{ fontSize: 13, color: '#64748b', marginBottom: 6 }}>
           {opp.company ?? '—'} {opp.country ? `· ${opp.country}` : ''} {opp.city ? `· ${opp.city}` : ''}
         </div>
-        <div style={{ display: 'flex', gap: 12, fontSize: 11, color: '#475569' }}>
-          <span>
-            {opp.type === 'JOB' ? '💼' : opp.type === 'FREELANCE' ? '🔓' : '🎯'} {opp.type}
+        <div style={{ display: 'flex', gap: 12, fontSize: 11, color: '#475569', flexWrap: 'wrap', alignItems: 'center' }}>
+          <span
+            style={{
+              padding: '1px 6px',
+              borderRadius: 4,
+              fontSize: 10,
+              fontWeight: 700,
+              background: opp.type === 'FREELANCE' ? 'rgba(16,185,129,.15)' : 'rgba(99,102,241,.15)',
+              color: opp.type === 'FREELANCE' ? '#34d399' : '#818cf8',
+              border: `1px solid ${opp.type === 'FREELANCE' ? 'rgba(16,185,129,.3)' : 'rgba(99,102,241,.3)'}`,
+            }}
+          >
+            {opp.type === 'FREELANCE' ? '💼 UPWORK' : '🏢 JOB'}
           </span>
           {opp.requirement?.fieldsJson && (() => {
             const f = opp.requirement!.fieldsJson as JobRequirementFields;
+            if (opp.type === 'FREELANCE' && f.freelanceRateMax) {
+              const rateStr = f.freelanceRateType === 'HOURLY'
+                ? `$${f.freelanceRateMin ? `${f.freelanceRateMin}-$` : ''}${f.freelanceRateMax}/hr`
+                : `$${f.freelanceRateMax.toLocaleString()} Fixed`;
+              return <span style={{ color: '#34d399', fontWeight: 600 }}>💰 {rateStr}</span>;
+            }
             return f.remote ? <span>🌐 Remote</span> : null;
           })()}
           <span>📅 {formatDate(opp.createdAt)}</span>
@@ -715,7 +744,7 @@ function OpportunityCard({
           <button
             onClick={(e) => { e.stopPropagation(); onBuildPack(); }}
             disabled={buildingPack}
-            title="Generate apply pack"
+            title={opp.type === 'FREELANCE' ? 'Generate tailored Upwork proposal' : 'Generate apply pack'}
             style={{
               padding: '6px 10px',
               borderRadius: 6,
@@ -727,7 +756,7 @@ function OpportunityCard({
               fontWeight: 600,
             }}
           >
-            {buildingPack ? '⏳ Building…' : '📦 Pack'}
+            {buildingPack ? '⏳ Drafting…' : (opp.type === 'FREELANCE' ? '📝 Proposal' : '📦 Pack')}
           </button>
         )}
         <button
@@ -762,6 +791,7 @@ export default function JobsDashboard() {
   const [reprocessingId, setReprocessingId] = useState<string | null>(null);
   const [buildingPackId, setBuildingPackId] = useState<string | null>(null);
   const [filterStatus, setFilterStatus] = useState<string>('ALL');
+  const [filterType, setFilterType] = useState<'ALL' | 'JOB' | 'FREELANCE'>('ALL');
   const [syncing, setSyncing] = useState(false);
 
   async function handleSyncConnectors() {
@@ -827,8 +857,11 @@ export default function JobsDashboard() {
   }
 
   const statuses = ['ALL', 'DISCOVERED', 'QUALIFIED', 'DRAFT_READY', 'APPLIED', 'SHORTLISTED', 'REJECTED'];
-  const filtered =
-    filterStatus === 'ALL' ? opps : opps.filter((o) => o.status === filterStatus);
+  const filtered = opps.filter((o) => {
+    const statusMatch = filterStatus === 'ALL' || o.status === filterStatus;
+    const typeMatch = filterType === 'ALL' || o.type === filterType;
+    return statusMatch && typeMatch;
+  });
 
   // Stats
   const avgScore =
@@ -893,6 +926,38 @@ export default function JobsDashboard() {
                 <div style={{ fontSize: 12, color: '#64748b' }}>{s.label}</div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Stream / Opportunity Type selector */}
+        {opps.length > 0 && (
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
+            {[
+              { id: 'ALL', label: '🌐 All Opportunities', count: opps.length },
+              { id: 'JOB', label: '🏢 Full-Time Jobs', count: opps.filter((o) => o.type !== 'FREELANCE').length },
+              { id: 'FREELANCE', label: '💼 Upwork Freelance', count: opps.filter((o) => o.type === 'FREELANCE').length },
+            ].map((t) => {
+              const active = filterType === t.id;
+              return (
+                <button
+                  key={t.id}
+                  onClick={() => setFilterType(t.id as any)}
+                  style={{
+                    padding: '6px 14px',
+                    borderRadius: 8,
+                    border: `1px solid ${active ? 'rgba(99,102,241,.6)' : 'rgba(255,255,255,.08)'}`,
+                    background: active ? 'rgba(99,102,241,.25)' : 'rgba(255,255,255,.03)',
+                    color: active ? '#fff' : '#94a3b8',
+                    cursor: 'pointer',
+                    fontSize: 12,
+                    fontWeight: 600,
+                    transition: 'all .2s',
+                  }}
+                >
+                  {t.label} ({t.count})
+                </button>
+              );
+            })}
           </div>
         )}
 

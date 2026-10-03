@@ -31,6 +31,16 @@ const RequirementSchema = z.object({
   industry: z.string().optional(),
   description: z.string().optional(),
   postedAt: z.string().optional(), // ISO date string from text
+  // ── Sprint 3: Freelance Fields ──
+  isFreelance: z.boolean().optional(),
+  freelanceRateMin: z.number().optional(),
+  freelanceRateMax: z.number().optional(),
+  freelanceRateType: z.enum(['HOURLY', 'FIXED']).optional(),
+  clientPaymentVerified: z.boolean().optional(),
+  clientRating: z.number().optional(),
+  clientTotalSpent: z.string().optional(),
+  proposalsCount: z.string().optional(),
+  scopeClarity: z.enum(['CLEAR', 'MODERATE', 'VAGUE']).optional(),
 });
 
 const EvidenceSchema = z.record(z.string(), z.string()); // { fieldName: "verbatim quote" }
