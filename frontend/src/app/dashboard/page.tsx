@@ -918,11 +918,15 @@ function EvidenceDrawer({
               >
                 Close
               </button>
-              <a
-                href={api.tailoredCv.downloadUrl(tailoredCv.id)}
-                download
-                target="_blank"
-                rel="noreferrer"
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    await api.tailoredCv.downloadPdf(tailoredCv.id);
+                  } catch {
+                    window.open(api.tailoredCv.downloadUrl(tailoredCv.id), '_blank');
+                  }
+                }}
                 style={{
                   padding: '8px 20px',
                   borderRadius: 8,
@@ -940,7 +944,7 @@ function EvidenceDrawer({
                 }}
               >
                 <span>⬇️ Download ATS PDF</span>
-              </a>
+              </button>
             </div>
           </div>
         </div>
@@ -1047,11 +1051,15 @@ function EvidenceDrawer({
                 >
                   Close
                 </button>
-                <a
-                  href={api.tailoredCv.coverLetterDownloadUrl(coverLetter.id)}
-                  download
-                  target="_blank"
-                  rel="noreferrer"
+                <button
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      await api.tailoredCv.downloadCoverLetterPdf(coverLetter.id);
+                    } catch {
+                      window.open(api.tailoredCv.coverLetterDownloadUrl(coverLetter.id), '_blank');
+                    }
+                  }}
                   style={{
                     padding: '8px 18px',
                     borderRadius: 8,
@@ -1068,7 +1076,7 @@ function EvidenceDrawer({
                   }}
                 >
                   <span>⬇️ Download PDF</span>
-                </a>
+                </button>
               </div>
             </div>
           </div>

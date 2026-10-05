@@ -345,9 +345,9 @@ function PackReviewCard({
                 onClick={async () => {
                   try {
                     const cv = await api.tailoredCv.generate({ opportunityId: opp.id });
-                    window.open(api.tailoredCv.downloadUrl(cv.id), '_blank');
+                    await api.tailoredCv.downloadPdf(cv.id);
                   } catch {
-                    alert('Failed to generate tailored CV');
+                    alert('Failed to generate or download tailored CV');
                   }
                 }}
                 style={{

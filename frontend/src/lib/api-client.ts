@@ -667,6 +667,51 @@ async function uploadFile<T>(
   return (json && 'data' in json ? json.data : json) as T;
 }
 
+/** Download a file via authenticated GET request and trigger browser save */
+async function downloadFile(
+  endpoint: string,
+  fallbackFilename = 'document.pdf',
+  isRetry = false,
+): Promise<void> {
+  const url = `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+  const response = await fetch(url, {
+    method: 'GET',
+    credentials: 'include',
+  });
+
+  if (response.status === 401 && !isRetry) {
+    const refreshed = await attemptTokenRefresh();
+    if (refreshed) {
+      return downloadFile(endpoint, fallbackFilename, true);
+    }
+    handleSessionExpired();
+    return;
+  }
+
+  if (!response.ok) {
+    throw new ApiClientError(response.status, `Download failed with status ${response.status}`);
+  }
+
+  const blob = await response.blob();
+  const disposition = response.headers.get('content-disposition');
+  let filename = fallbackFilename;
+  if (disposition && disposition.includes('filename=')) {
+    const match = disposition.match(/filename="?([^";]+)"?/);
+    if (match && match[1]) filename = match[1];
+  }
+
+  if (typeof window !== 'undefined') {
+    const blobUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(blobUrl);
+  }
+}
+
 export interface ParsedCvResult {
   cv: Cv;
   url: string;
@@ -911,6 +956,8 @@ export const api = {
     },
     get: (id: string) => api.get<TailoredCv>(`/tailored-cv/${id}`),
     downloadUrl: (id: string) => `${API_BASE_URL}/tailored-cv/${id}/download`,
+    downloadPdf: (id: string, fallbackFilename?: string) =>
+      downloadFile(`/tailored-cv/${id}/download`, fallbackFilename || `tailored-cv-${id}.pdf`),
     addSkillFromGap: (data: {
       name: string;
       category?: string;
@@ -926,6 +973,11 @@ export const api = {
     generateCoverLetter: (data: { opportunityId: string; forceRegenerate?: boolean }) =>
       api.post<CoverLetter>('/tailored-cv/cover-letter', data),
     coverLetterDownloadUrl: (id: string) => `${API_BASE_URL}/tailored-cv/cover-letter/${id}/download`,
+    downloadCoverLetterPdf: (id: string, fallbackFilename?: string) =>
+      downloadFile(
+        `/tailored-cv/cover-letter/${id}/download`,
+        fallbackFilename || `cover-letter-${id}.pdf`,
+      ),
   },
 
   interviewPrep: {
