@@ -292,6 +292,33 @@ Do Sprint 5 only. Public pages (/, /u/[slug], /products) fed by a whitelist-only
 Do Sprint 6 only. Per-opportunity actions: (1) Tailored CV — reorder/emphasize/rephrase ONLY verified profile data for the JD, verifier pass, ATS-friendly single-template PDF download (PDFKit); skill gaps get an explicit "I have this skill → add to profile" confirm (never auto-added). (2) Cover letter — JD-matched, profile-only facts, verifier pass, edit/copy/regenerate/PDF. (3) Interview prep — role-based (JD optional): topics, hands-on tasks with done-tracking, practice Q&A grounded in profile, honest gap bridges; also a standalone /interview-prep page for any role. All LLM output Zod-validated, logged to LlmCall, cached by input hash; all queries scoped by userId.
 ```
 
+### Sprint 7 — Settings, Real Projects & Experience Refinements
+```text
+Do Sprint 7 only.
+1. Navigation & Auth Polish:
+   - Add "← Back to Showcase Website" on /login.
+   - On landing page (/), dynamically detect active session and replace "Sign In" with "Open Workspace →" and user badge.
+   - Route all public profile / portfolio links directly to external live portfolio: https://gghaus-portfolio.web.app/.
+2. Ingest 7 Production Projects (Deduplication Guard):
+   - Ingest: Voice Intake System (Python, WebSockets, Twilio, Whisper, Cartesia, Supabase), The Nursery App (Node.js, Express, MySQL, AWS, DynamoDB), User Management System (NestJS, PostgreSQL, TypeORM), Virtual Hospital System (NestJS, PostgreSQL, WebSockets), HERO (NestJS, PostgreSQL, WebSockets, CRON), Asset Management System (Express, Multer, PostgreSQL), HPMS (Express, PostgreSQL, TypeORM).
+   - Ensure zero duplicates by matching on title and userId.
+3. Prominent Application Submission URLs & 1-Click Copy Pack:
+   - Render opp.url prominently on EVERY opportunity card, in the Evidence Drawer, and in the Approval Pack (not just freelance).
+   - Provide a 1-click "Copy Tailored Pack & Open Portal" action for 30-second submission.
+4. ATS Ingestion & Location Filter Settings:
+   - Add ATS & Connectors settings modal/tab in Dashboard.
+   - Enable user to add/remove custom Greenhouse and Lever company slugs.
+   - Add target location filters (e.g., Saudi Arabia, Riyadh, UAE, Dubai, Remote, Europe) to filter ingested postings.
+   - Report sync stats accurately: X checked, Y newly added, Z skipped as duplicates.
+5. Gulf vs. European CV Auto-Selection Engine:
+   - Location in Gulf/GCC (Saudi, UAE, Qatar, Bahrain, Kuwait) -> Auto-select Gulf Executive ATS Template (Iqama/visa status, notice period, location mobility, direct WhatsApp, domain achievements).
+   - Location in UK/Europe/International -> Auto-select European Standard ATS Template (GDPR compliant, zero bias fields, STAR metrics).
+   - Manual override toggle in the preview modal and default preference in Settings.
+6. Unified Services Showcase:
+   - Align /products and landing page to showcase real bespoke engineering & consultancy services (AI Voice Agents, Scalable Backends, Cloud Architecture) with inquiry triggers instead of mock fixed-price software boxes.
+DONE WHEN: Projects seeded cleanly, application URLs visible and clickable on every job, ATS settings configurable with location filters, and Gulf/European CV styles auto-switch based on opportunity location.
+```
+
 ### Later (only if the loop is proven)
 Embeddings (pgvector), Google Calendar, Fiverr inbox drafts, organizations/CASL/plans for the GG IT SOLUTIONS product, optional Ollama pre-filter.
 

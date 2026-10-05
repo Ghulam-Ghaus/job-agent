@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { TailoredCvService } from './tailored-cv.service.js';
+import { TailoredCvService, detectCvStyle } from './tailored-cv.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { LlmService } from '../llm/llm.service.js';
 import { OpportunitiesService } from '../opportunities/opportunities.service.js';
@@ -59,6 +59,9 @@ describe('TailoredCvService', () => {
       },
       user: {
         findUnique: vi.fn().mockResolvedValue({ email: 'admin@jobagent.local' }),
+      },
+      jobPreference: {
+        findUnique: vi.fn().mockResolvedValue({ cvStyle: 'AUTO' }),
       },
       opportunity: {
         findFirst: vi.fn().mockResolvedValue({
@@ -162,5 +165,55 @@ describe('TailoredCvService', () => {
     expect(pdf.buffer).toBeInstanceOf(Buffer);
     expect(pdf.buffer.length).toBeGreaterThan(500);
     expect(pdf.filename).toContain('.pdf');
+  });
+
+  describe('CV style selection', () => {
+    const cvRow = (country?: string) => ({
+      id: 'tcv-1',
+      targetRole: 'Backend Engineer',
+      opportunity: country ? { country, rawText: `Location: ${country}` } : null,
+      contentJson: {
+        headline: 'Backend Engineer',
+        summary: 'Summary',
+        skills: [],
+        experiences: [],
+        projects: [],
+      },
+    });
+
+    it('detects Gulf vs international locations', () => {
+      expect(detectCvStyle('Riyadh, Saudi Arabia')).toBe('GULF');
+      expect(detectCvStyle('Dubai')).toBe('GULF');
+      expect(detectCvStyle('London, UK')).toBe('EUROPE');
+      expect(detectCvStyle('Remote')).toBe('EUROPE');
+      expect(detectCvStyle(undefined)).toBe('EUROPE');
+    });
+
+    it('auto-selects the Gulf layout for a Saudi opportunity', async () => {
+      prismaMock.tailoredCv.findFirst = vi.fn().mockResolvedValue(cvRow('Saudi Arabia'));
+      const pdf = await service.renderPdfBuffer('tcv-1', 'user-1');
+      expect(pdf.style).toBe('GULF');
+      expect(pdf.filename).toContain('_GCC.pdf');
+    });
+
+    it('auto-selects the European layout for a UK opportunity', async () => {
+      prismaMock.tailoredCv.findFirst = vi.fn().mockResolvedValue(cvRow('United Kingdom'));
+      const pdf = await service.renderPdfBuffer('tcv-1', 'user-1');
+      expect(pdf.style).toBe('EUROPE');
+    });
+
+    it('lets a saved preference override auto-detection', async () => {
+      prismaMock.tailoredCv.findFirst = vi.fn().mockResolvedValue(cvRow('United Kingdom'));
+      prismaMock.jobPreference.findUnique = vi.fn().mockResolvedValue({ cvStyle: 'GULF' });
+      const pdf = await service.renderPdfBuffer('tcv-1', 'user-1');
+      expect(pdf.style).toBe('GULF');
+    });
+
+    it('lets an explicit request override the saved preference', async () => {
+      prismaMock.tailoredCv.findFirst = vi.fn().mockResolvedValue(cvRow('Saudi Arabia'));
+      prismaMock.jobPreference.findUnique = vi.fn().mockResolvedValue({ cvStyle: 'GULF' });
+      const pdf = await service.renderPdfBuffer('tcv-1', 'user-1', 'europe');
+      expect(pdf.style).toBe('EUROPE');
+    });
   });
 });

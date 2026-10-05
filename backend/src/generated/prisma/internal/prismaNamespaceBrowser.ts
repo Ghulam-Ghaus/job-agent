@@ -270,6 +270,9 @@ export const JobPreferenceScalarFieldEnum = {
   blacklistKeywords: 'blacklistKeywords',
   preferredIndustries: 'preferredIndustries',
   scoreWeights: 'scoreWeights',
+  atsTargets: 'atsTargets',
+  locationFilters: 'locationFilters',
+  cvStyle: 'cvStyle',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

@@ -27,9 +27,12 @@ import {
   type PublicProduct,
 } from '@/lib/api-client';
 
+const PORTFOLIO_URL = 'https://gghaus-portfolio.web.app/';
+
 export default function PublicLandingPage() {
   const [profile, setProfile] = useState<PublicProfile | null>(null);
   const [products, setProducts] = useState<PublicProduct[]>([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // Inquiry form modal state
   const [showInquiryModal, setShowInquiryModal] = useState(false);
@@ -55,6 +58,10 @@ export default function PublicLandingPage() {
       }
     }
     loadShowcase();
+    api.auth
+      .me()
+      .then(() => setIsLoggedIn(true))
+      .catch(() => setIsLoggedIn(false));
   }, []);
 
   const handleInquirySubmit = async (e: React.FormEvent) => {
@@ -131,12 +138,24 @@ export default function PublicLandingPage() {
           </nav>
 
           <div className="flex items-center gap-3">
-            <Link
-              href="/dashboard"
-              className="text-xs font-medium text-slate-400 hover:text-white transition-colors hidden sm:block"
-            >
-              Sign In
-            </Link>
+            {isLoggedIn ? (
+              <Link
+                href="/dashboard"
+                id="nav-open-workspace"
+                className="text-xs font-semibold text-emerald-300 hover:text-emerald-200 transition-colors flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 shadow-sm"
+              >
+                <span>Open Workspace</span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                id="nav-sign-in"
+                className="text-xs font-medium text-slate-300 hover:text-white transition-colors flex items-center gap-1 px-3 py-1.5 rounded-lg border border-white/10 hover:border-white/20"
+              >
+                Sign In
+              </Link>
+            )}
             <Button
               size="sm"
               onClick={() => {
@@ -183,7 +202,7 @@ export default function PublicLandingPage() {
           <span>•</span>
           <span className="flex items-center gap-1.5">
             <Zap className="h-3.5 w-3.5 text-amber-400" />
-            <span>8+ Years Experience</span>
+            <span>4+ Years Experience</span>
           </span>
           <span>•</span>
           <span className="flex items-center gap-1.5">
@@ -512,9 +531,14 @@ export default function PublicLandingPage() {
       {/* Footer */}
       <footer className="border-t border-white/5 py-12 px-6 bg-black/40 text-xs text-slate-500 text-center space-y-4">
         <div className="flex items-center justify-center gap-6 text-slate-400 font-medium">
-          <Link href="/u/ghulam-ghaus" className="hover:text-white transition-colors">
-            Public Profile
-          </Link>
+          <a
+            href={PORTFOLIO_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="hover:text-white transition-colors"
+          >
+            Full Portfolio
+          </a>
           <Link href="/products" className="hover:text-white transition-colors">
             Product Catalog
           </Link>

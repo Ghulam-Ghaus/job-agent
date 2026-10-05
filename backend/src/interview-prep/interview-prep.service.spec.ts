@@ -108,7 +108,7 @@ describe('InterviewPrepService', () => {
     expect(res).toBeDefined();
     expect(res.targetRole).toBe('Senior Backend Engineer');
     expect(res.tasksJson).toHaveLength(1);
-    expect(res.tasksJson[0].done).toBe(false);
+    expect((res.tasksJson as Array<{ done: boolean }>)[0].done).toBe(false);
   });
 
   it('should toggle task completion', async () => {

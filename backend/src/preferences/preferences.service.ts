@@ -19,6 +19,9 @@ export class PreferencesService {
         blacklistCompanies: dto.blacklistCompanies ?? [],
         blacklistKeywords: dto.blacklistKeywords ?? [],
         preferredIndustries: dto.preferredIndustries ?? [],
+        atsTargets: (dto.atsTargets ?? []).map((t) => ({ platform: t.platform, slug: t.slug })),
+        locationFilters: dto.locationFilters ?? [],
+        cvStyle: dto.cvStyle ?? 'AUTO',
       },
       update: {
         ...(dto.targetRoles !== undefined && { targetRoles: dto.targetRoles }),
@@ -28,6 +31,11 @@ export class PreferencesService {
         ...(dto.blacklistCompanies !== undefined && { blacklistCompanies: dto.blacklistCompanies }),
         ...(dto.blacklistKeywords !== undefined && { blacklistKeywords: dto.blacklistKeywords }),
         ...(dto.preferredIndustries !== undefined && { preferredIndustries: dto.preferredIndustries }),
+        ...(dto.atsTargets !== undefined && {
+          atsTargets: dto.atsTargets.map((t) => ({ platform: t.platform, slug: t.slug })),
+        }),
+        ...(dto.locationFilters !== undefined && { locationFilters: dto.locationFilters }),
+        ...(dto.cvStyle !== undefined && { cvStyle: dto.cvStyle }),
       },
     });
   }

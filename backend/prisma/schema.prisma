@@ -282,6 +282,9 @@ model JobPreference {
   blacklistKeywords   Json     @default("[]") // string[]
   preferredIndustries Json     @default("[]") // string[]
   scoreWeights        Json? // override default weights from Setting
+  atsTargets          Json     @default("[]") // [{ platform: "greenhouse"|"lever", slug }]
+  locationFilters     Json     @default("[]") // string[] e.g. ["Saudi Arabia","Dubai","Remote"]
+  cvStyle             String   @default("AUTO") // AUTO | GULF | EUROPE
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 

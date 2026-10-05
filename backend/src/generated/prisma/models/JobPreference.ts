@@ -39,6 +39,7 @@ export type JobPreferenceMinAggregateOutputType = {
   userId: string | null
   minSalaryUsd: number | null
   remoteOk: boolean | null
+  cvStyle: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -48,6 +49,7 @@ export type JobPreferenceMaxAggregateOutputType = {
   userId: string | null
   minSalaryUsd: number | null
   remoteOk: boolean | null
+  cvStyle: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -63,6 +65,9 @@ export type JobPreferenceCountAggregateOutputType = {
   blacklistKeywords: number
   preferredIndustries: number
   scoreWeights: number
+  atsTargets: number
+  locationFilters: number
+  cvStyle: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -82,6 +87,7 @@ export type JobPreferenceMinAggregateInputType = {
   userId?: true
   minSalaryUsd?: true
   remoteOk?: true
+  cvStyle?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -91,6 +97,7 @@ export type JobPreferenceMaxAggregateInputType = {
   userId?: true
   minSalaryUsd?: true
   remoteOk?: true
+  cvStyle?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -106,6 +113,9 @@ export type JobPreferenceCountAggregateInputType = {
   blacklistKeywords?: true
   preferredIndustries?: true
   scoreWeights?: true
+  atsTargets?: true
+  locationFilters?: true
+  cvStyle?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -208,6 +218,9 @@ export type JobPreferenceGroupByOutputType = {
   blacklistKeywords: runtime.JsonValue
   preferredIndustries: runtime.JsonValue
   scoreWeights: runtime.JsonValue | null
+  atsTargets: runtime.JsonValue
+  locationFilters: runtime.JsonValue
+  cvStyle: string
   createdAt: Date
   updatedAt: Date
   _count: JobPreferenceCountAggregateOutputType | null
@@ -246,6 +259,9 @@ export type JobPreferenceWhereInput = {
   blacklistKeywords?: Prisma.JsonFilter<"JobPreference">
   preferredIndustries?: Prisma.JsonFilter<"JobPreference">
   scoreWeights?: Prisma.JsonNullableFilter<"JobPreference">
+  atsTargets?: Prisma.JsonFilter<"JobPreference">
+  locationFilters?: Prisma.JsonFilter<"JobPreference">
+  cvStyle?: Prisma.StringFilter<"JobPreference"> | string
   createdAt?: Prisma.DateTimeFilter<"JobPreference"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"JobPreference"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -262,6 +278,9 @@ export type JobPreferenceOrderByWithRelationInput = {
   blacklistKeywords?: Prisma.SortOrder
   preferredIndustries?: Prisma.SortOrder
   scoreWeights?: Prisma.SortOrderInput | Prisma.SortOrder
+  atsTargets?: Prisma.SortOrder
+  locationFilters?: Prisma.SortOrder
+  cvStyle?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
@@ -281,6 +300,9 @@ export type JobPreferenceWhereUniqueInput = Prisma.AtLeast<{
   blacklistKeywords?: Prisma.JsonFilter<"JobPreference">
   preferredIndustries?: Prisma.JsonFilter<"JobPreference">
   scoreWeights?: Prisma.JsonNullableFilter<"JobPreference">
+  atsTargets?: Prisma.JsonFilter<"JobPreference">
+  locationFilters?: Prisma.JsonFilter<"JobPreference">
+  cvStyle?: Prisma.StringFilter<"JobPreference"> | string
   createdAt?: Prisma.DateTimeFilter<"JobPreference"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"JobPreference"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -297,6 +319,9 @@ export type JobPreferenceOrderByWithAggregationInput = {
   blacklistKeywords?: Prisma.SortOrder
   preferredIndustries?: Prisma.SortOrder
   scoreWeights?: Prisma.SortOrderInput | Prisma.SortOrder
+  atsTargets?: Prisma.SortOrder
+  locationFilters?: Prisma.SortOrder
+  cvStyle?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.JobPreferenceCountOrderByAggregateInput
@@ -320,6 +345,9 @@ export type JobPreferenceScalarWhereWithAggregatesInput = {
   blacklistKeywords?: Prisma.JsonWithAggregatesFilter<"JobPreference">
   preferredIndustries?: Prisma.JsonWithAggregatesFilter<"JobPreference">
   scoreWeights?: Prisma.JsonNullableWithAggregatesFilter<"JobPreference">
+  atsTargets?: Prisma.JsonWithAggregatesFilter<"JobPreference">
+  locationFilters?: Prisma.JsonWithAggregatesFilter<"JobPreference">
+  cvStyle?: Prisma.StringWithAggregatesFilter<"JobPreference"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"JobPreference"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"JobPreference"> | Date | string
 }
@@ -334,6 +362,9 @@ export type JobPreferenceCreateInput = {
   blacklistKeywords?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   preferredIndustries?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scoreWeights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  atsTargets?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  locationFilters?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  cvStyle?: string
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutPreferencesInput
@@ -350,6 +381,9 @@ export type JobPreferenceUncheckedCreateInput = {
   blacklistKeywords?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   preferredIndustries?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scoreWeights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  atsTargets?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  locationFilters?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  cvStyle?: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -364,6 +398,9 @@ export type JobPreferenceUpdateInput = {
   blacklistKeywords?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   preferredIndustries?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scoreWeights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  atsTargets?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  locationFilters?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  cvStyle?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutPreferencesNestedInput
@@ -380,6 +417,9 @@ export type JobPreferenceUncheckedUpdateInput = {
   blacklistKeywords?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   preferredIndustries?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scoreWeights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  atsTargets?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  locationFilters?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  cvStyle?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -395,6 +435,9 @@ export type JobPreferenceCreateManyInput = {
   blacklistKeywords?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   preferredIndustries?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scoreWeights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  atsTargets?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  locationFilters?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  cvStyle?: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -409,6 +452,9 @@ export type JobPreferenceUpdateManyMutationInput = {
   blacklistKeywords?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   preferredIndustries?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scoreWeights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  atsTargets?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  locationFilters?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  cvStyle?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -424,6 +470,9 @@ export type JobPreferenceUncheckedUpdateManyInput = {
   blacklistKeywords?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   preferredIndustries?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scoreWeights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  atsTargets?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  locationFilters?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  cvStyle?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -444,6 +493,9 @@ export type JobPreferenceCountOrderByAggregateInput = {
   blacklistKeywords?: Prisma.SortOrder
   preferredIndustries?: Prisma.SortOrder
   scoreWeights?: Prisma.SortOrder
+  atsTargets?: Prisma.SortOrder
+  locationFilters?: Prisma.SortOrder
+  cvStyle?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -457,6 +509,7 @@ export type JobPreferenceMaxOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   minSalaryUsd?: Prisma.SortOrder
   remoteOk?: Prisma.SortOrder
+  cvStyle?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -466,6 +519,7 @@ export type JobPreferenceMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   minSalaryUsd?: Prisma.SortOrder
   remoteOk?: Prisma.SortOrder
+  cvStyle?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -516,6 +570,9 @@ export type JobPreferenceCreateWithoutUserInput = {
   blacklistKeywords?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   preferredIndustries?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scoreWeights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  atsTargets?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  locationFilters?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  cvStyle?: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -530,6 +587,9 @@ export type JobPreferenceUncheckedCreateWithoutUserInput = {
   blacklistKeywords?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   preferredIndustries?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scoreWeights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  atsTargets?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  locationFilters?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  cvStyle?: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -560,6 +620,9 @@ export type JobPreferenceUpdateWithoutUserInput = {
   blacklistKeywords?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   preferredIndustries?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scoreWeights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  atsTargets?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  locationFilters?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  cvStyle?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -574,6 +637,9 @@ export type JobPreferenceUncheckedUpdateWithoutUserInput = {
   blacklistKeywords?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   preferredIndustries?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   scoreWeights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  atsTargets?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  locationFilters?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  cvStyle?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -591,6 +657,9 @@ export type JobPreferenceSelect<ExtArgs extends runtime.Types.Extensions.Interna
   blacklistKeywords?: boolean
   preferredIndustries?: boolean
   scoreWeights?: boolean
+  atsTargets?: boolean
+  locationFilters?: boolean
+  cvStyle?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -607,6 +676,9 @@ export type JobPreferenceSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   blacklistKeywords?: boolean
   preferredIndustries?: boolean
   scoreWeights?: boolean
+  atsTargets?: boolean
+  locationFilters?: boolean
+  cvStyle?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -623,6 +695,9 @@ export type JobPreferenceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   blacklistKeywords?: boolean
   preferredIndustries?: boolean
   scoreWeights?: boolean
+  atsTargets?: boolean
+  locationFilters?: boolean
+  cvStyle?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -639,11 +714,14 @@ export type JobPreferenceSelectScalar = {
   blacklistKeywords?: boolean
   preferredIndustries?: boolean
   scoreWeights?: boolean
+  atsTargets?: boolean
+  locationFilters?: boolean
+  cvStyle?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type JobPreferenceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "targetRoles" | "targetCountries" | "minSalaryUsd" | "remoteOk" | "blacklistCompanies" | "blacklistKeywords" | "preferredIndustries" | "scoreWeights" | "createdAt" | "updatedAt", ExtArgs["result"]["jobPreference"]>
+export type JobPreferenceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "targetRoles" | "targetCountries" | "minSalaryUsd" | "remoteOk" | "blacklistCompanies" | "blacklistKeywords" | "preferredIndustries" | "scoreWeights" | "atsTargets" | "locationFilters" | "cvStyle" | "createdAt" | "updatedAt", ExtArgs["result"]["jobPreference"]>
 export type JobPreferenceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -670,6 +748,9 @@ export type $JobPreferencePayload<ExtArgs extends runtime.Types.Extensions.Inter
     blacklistKeywords: runtime.JsonValue
     preferredIndustries: runtime.JsonValue
     scoreWeights: runtime.JsonValue | null
+    atsTargets: runtime.JsonValue
+    locationFilters: runtime.JsonValue
+    cvStyle: string
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["jobPreference"]>
@@ -1106,6 +1187,9 @@ export interface JobPreferenceFieldRefs {
   readonly blacklistKeywords: Prisma.FieldRef<"JobPreference", 'Json'>
   readonly preferredIndustries: Prisma.FieldRef<"JobPreference", 'Json'>
   readonly scoreWeights: Prisma.FieldRef<"JobPreference", 'Json'>
+  readonly atsTargets: Prisma.FieldRef<"JobPreference", 'Json'>
+  readonly locationFilters: Prisma.FieldRef<"JobPreference", 'Json'>
+  readonly cvStyle: Prisma.FieldRef<"JobPreference", 'String'>
   readonly createdAt: Prisma.FieldRef<"JobPreference", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"JobPreference", 'DateTime'>
 }

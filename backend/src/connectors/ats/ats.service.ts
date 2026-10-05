@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PipelineService } from '../../queues/pipeline/pipeline.service.js';
+import { PrismaService } from '../../prisma/prisma.service.js';
 
 export interface AtsCompanyTarget {
   platform: 'greenhouse' | 'lever';
@@ -8,15 +9,63 @@ export interface AtsCompanyTarget {
 
 export interface AtsSyncResult {
   companiesChecked: number;
+  /** Postings found on the boards (before filtering). */
+  jobsFound: number;
+  /** Postings newly queued for processing. */
   jobsEnqueued: number;
+  /** Postings skipped because the user already tracks that URL. */
+  duplicatesSkipped: number;
+  /** Postings skipped because the location did not match the user's filters. */
+  locationFiltered: number;
   errors: string[];
+}
+
+interface AtsJob {
+  url: string;
+  location: string;
+  rawText: string;
+}
+
+/** Location filter aliases so "Saudi Arabia" also matches "Riyadh", etc. */
+const LOCATION_ALIASES: Record<string, string[]> = {
+  'saudi arabia': ['saudi arabia', 'saudi', 'ksa', 'riyadh', 'jeddah', 'dammam', 'khobar', 'neom'],
+  uae: ['uae', 'united arab emirates', 'dubai', 'abu dhabi', 'sharjah'],
+  qatar: ['qatar', 'doha'],
+  kuwait: ['kuwait'],
+  bahrain: ['bahrain', 'manama'],
+  oman: ['oman', 'muscat'],
+  gcc: ['gcc', 'saudi', 'ksa', 'riyadh', 'jeddah', 'uae', 'dubai', 'abu dhabi', 'qatar', 'doha', 'kuwait', 'bahrain', 'oman'],
+  remote: ['remote', 'anywhere', 'worldwide', 'work from home'],
+  europe: [
+    'europe', 'emea', 'uk', 'united kingdom', 'london', 'germany', 'berlin', 'netherlands',
+    'amsterdam', 'france', 'paris', 'spain', 'madrid', 'barcelona', 'ireland', 'dublin',
+    'portugal', 'lisbon', 'sweden', 'stockholm', 'poland', 'warsaw',
+  ],
+};
+
+const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/**
+ * True if the posting location matches any filter. Empty filters match everything.
+ * An unknown/empty posting location is kept (we cannot prove it is outside the target).
+ */
+export function matchesLocationFilters(location: string, filters: string[]): boolean {
+  const cleaned = filters.map((f) => f.trim().toLowerCase()).filter(Boolean);
+  if (cleaned.length === 0) return true;
+  const loc = location.trim().toLowerCase();
+  if (!loc || loc === 'unknown') return true;
+
+  return cleaned.some((filter) => {
+    const terms = LOCATION_ALIASES[filter] ?? [filter];
+    return terms.some((t) => new RegExp(`\\b${escapeRegex(t)}\\b`, 'i').test(loc));
+  });
 }
 
 @Injectable()
 export class AtsService {
   private readonly logger = new Logger(AtsService.name);
 
-  // Default curated tech targets
+  // Default curated tech targets (used only when the user has not configured any)
   private defaultTargets: AtsCompanyTarget[] = [
     { platform: 'greenhouse', slug: 'careem' },
     { platform: 'greenhouse', slug: 'noon' },
@@ -26,35 +75,61 @@ export class AtsService {
     { platform: 'lever', slug: 'hungerstation' },
   ];
 
-  constructor(private readonly pipeline: PipelineService) {}
+  constructor(
+    private readonly pipeline: PipelineService,
+    private readonly prisma: PrismaService,
+  ) {}
+
+  getDefaultTargets(): AtsCompanyTarget[] {
+    return this.defaultTargets;
+  }
 
   /**
    * Sync open postings from public ATS boards (Greenhouse + Lever).
+   * Targets and location filters come from the user's saved preferences.
    * Rate limited to 1 request per second; fails soft per company.
    */
   async syncAtsPostings(
     userId: string,
     customTargets?: AtsCompanyTarget[],
   ): Promise<AtsSyncResult> {
-    const targets = customTargets && customTargets.length > 0 ? customTargets : this.defaultTargets;
+    const prefs = await this.prisma.jobPreference.findUnique({ where: { userId } });
+    const savedTargets = Array.isArray(prefs?.atsTargets)
+      ? (prefs.atsTargets as unknown as AtsCompanyTarget[])
+      : [];
+    const filters = Array.isArray(prefs?.locationFilters)
+      ? (prefs.locationFilters as unknown as string[])
+      : [];
+
+    const targets =
+      customTargets && customTargets.length > 0
+        ? customTargets
+        : savedTargets.length > 0
+          ? savedTargets
+          : this.defaultTargets;
+
     const result: AtsSyncResult = {
       companiesChecked: 0,
+      jobsFound: 0,
       jobsEnqueued: 0,
+      duplicatesSkipped: 0,
+      locationFiltered: 0,
       errors: [],
     };
 
-    this.logger.log(`Starting ATS sync for ${targets.length} target companies...`);
+    this.logger.log(
+      `Starting ATS sync for ${targets.length} companies (location filters: ${filters.join(', ') || 'none'})...`,
+    );
 
     for (const target of targets) {
       result.companiesChecked++;
       try {
-        if (target.platform === 'greenhouse') {
-          const count = await this.fetchGreenhouse(target.slug, userId);
-          result.jobsEnqueued += count;
-        } else if (target.platform === 'lever') {
-          const count = await this.fetchLever(target.slug, userId);
-          result.jobsEnqueued += count;
-        }
+        const jobs =
+          target.platform === 'greenhouse'
+            ? await this.fetchGreenhouse(target.slug)
+            : await this.fetchLever(target.slug);
+        result.jobsFound += jobs.length;
+        await this.ingest(userId, jobs, filters, result);
       } catch (err: unknown) {
         const msg = `Error fetching ATS for ${target.platform}:${target.slug}: ${String(err)}`;
         this.logger.warn(msg);
@@ -66,20 +141,57 @@ export class AtsService {
     }
 
     this.logger.log(
-      `ATS sync complete: ${result.companiesChecked} checked, ${result.jobsEnqueued} jobs enqueued`,
+      `ATS sync complete: ${result.companiesChecked} companies, ${result.jobsFound} found, ` +
+        `${result.jobsEnqueued} new, ${result.duplicatesSkipped} duplicates, ${result.locationFiltered} filtered by location`,
     );
 
     return result;
   }
 
-  private async fetchGreenhouse(slug: string, userId: string): Promise<number> {
+  private async ingest(
+    userId: string,
+    jobs: AtsJob[],
+    filters: string[],
+    result: AtsSyncResult,
+  ): Promise<void> {
+    const locationOk = jobs.filter((j) => {
+      const ok = matchesLocationFilters(j.location, filters);
+      if (!ok) result.locationFiltered++;
+      return ok;
+    });
+    if (locationOk.length === 0) return;
+
+    const existing = await this.prisma.opportunity.findMany({
+      where: { userId, url: { in: locationOk.map((j) => j.url) } },
+      select: { url: true },
+    });
+    const known = new Set(existing.map((e) => e.url));
+
+    for (const job of locationOk) {
+      if (known.has(job.url)) {
+        result.duplicatesSkipped++;
+        continue;
+      }
+      await this.pipeline.addJob({
+        userId,
+        rawText: job.rawText,
+        url: job.url,
+        type: 'JOB',
+        sourceType: 'ATS',
+      });
+      known.add(job.url);
+      result.jobsEnqueued++;
+    }
+  }
+
+  private async fetchGreenhouse(slug: string): Promise<AtsJob[]> {
     const url = `https://boards-api.greenhouse.io/v1/boards/${encodeURIComponent(slug)}/jobs?content=true`;
     const res = await fetch(url, { headers: { Accept: 'application/json' } });
 
     if (!res.ok) {
       if (res.status === 404) {
         this.logger.debug(`Greenhouse board not found for ${slug}`);
-        return 0;
+        return [];
       }
       throw new Error(`Greenhouse API responded with HTTP ${res.status}`);
     }
@@ -95,44 +207,34 @@ export class AtsService {
       }>;
     };
 
-    const jobs = data.jobs ?? [];
-    let enqueued = 0;
-
-    for (const job of jobs) {
+    return (data.jobs ?? []).map((job) => {
       const cleanContent = (job.content ?? '')
         .replace(/<[^>]+>/g, ' ')
         .replace(/&nbsp;/g, ' ')
         .trim();
-
-      const rawText = [
-        `Job Title: ${job.title}`,
-        `Company: ${slug}`,
-        `Location: ${job.location?.name ?? 'Unknown'}`,
-        `Application URL: ${job.absolute_url}`,
-        `Description:\n${cleanContent.slice(0, 4000)}`,
-      ].join('\n');
-
-      await this.pipeline.addJob({
-        userId,
-        rawText,
+      const location = job.location?.name ?? 'Unknown';
+      return {
         url: job.absolute_url,
-        type: 'JOB',
-        sourceType: 'ATS',
-      });
-      enqueued++;
-    }
-
-    return enqueued;
+        location,
+        rawText: [
+          `Job Title: ${job.title}`,
+          `Company: ${slug}`,
+          `Location: ${location}`,
+          `Application URL: ${job.absolute_url}`,
+          `Description:\n${cleanContent.slice(0, 4000)}`,
+        ].join('\n'),
+      };
+    });
   }
 
-  private async fetchLever(slug: string, userId: string): Promise<number> {
+  private async fetchLever(slug: string): Promise<AtsJob[]> {
     const url = `https://api.lever.co/v0/postings/${encodeURIComponent(slug)}?mode=json`;
     const res = await fetch(url, { headers: { Accept: 'application/json' } });
 
     if (!res.ok) {
       if (res.status === 404) {
         this.logger.debug(`Lever board not found for ${slug}`);
-        return 0;
+        return [];
       }
       throw new Error(`Lever API responded with HTTP ${res.status}`);
     }
@@ -145,30 +247,23 @@ export class AtsService {
       descriptionPlain?: string;
     }>;
 
-    if (!Array.isArray(data)) return 0;
+    if (!Array.isArray(data)) return [];
 
-    let enqueued = 0;
-    for (const item of data) {
-      const rawText = [
-        `Job Title: ${item.text}`,
-        `Company: ${slug}`,
-        `Location: ${item.categories?.location ?? 'Unknown'}`,
-        `Team: ${item.categories?.team ?? 'Engineering'}`,
-        `Commitment: ${item.categories?.commitment ?? 'Full-time'}`,
-        `Application URL: ${item.hostedUrl}`,
-        `Description:\n${(item.descriptionPlain ?? '').slice(0, 4000)}`,
-      ].join('\n');
-
-      await this.pipeline.addJob({
-        userId,
-        rawText,
+    return data.map((item) => {
+      const location = item.categories?.location ?? 'Unknown';
+      return {
         url: item.hostedUrl,
-        type: 'JOB',
-        sourceType: 'ATS',
-      });
-      enqueued++;
-    }
-
-    return enqueued;
+        location,
+        rawText: [
+          `Job Title: ${item.text}`,
+          `Company: ${slug}`,
+          `Location: ${location}`,
+          `Team: ${item.categories?.team ?? 'Engineering'}`,
+          `Commitment: ${item.categories?.commitment ?? 'Full-time'}`,
+          `Application URL: ${item.hostedUrl}`,
+          `Description:\n${(item.descriptionPlain ?? '').slice(0, 4000)}`,
+        ].join('\n'),
+      };
+    });
   }
 }

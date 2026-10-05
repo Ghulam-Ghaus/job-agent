@@ -63,6 +63,19 @@ const CoverLetterSchema = z.object({
   keyHooks: z.array(z.string()).describe('Top 2-3 value propositions matching employer needs'),
 });
 
+export type CvStyle = 'GULF' | 'EUROPE';
+
+const GULF_LOCATION_RE =
+  /\b(saudi|ksa|riyadh|jeddah|dammam|khobar|neom|uae|united arab emirates|dubai|abu dhabi|sharjah|qatar|doha|kuwait|bahrain|manama|oman|muscat|gcc|gulf|middle east|mena)\b/i;
+
+/**
+ * Gulf/GCC location -> GULF layout; everything else (UK, EU, remote/international, unknown) -> EUROPE.
+ * Unknown defaults to the international layout, which exposes fewer personal fields.
+ */
+export function detectCvStyle(locationText: string | null | undefined): CvStyle {
+  return locationText && GULF_LOCATION_RE.test(locationText) ? 'GULF' : 'EUROPE';
+}
+
 @Injectable()
 export class TailoredCvService {
   private readonly logger = new Logger(TailoredCvService.name);
@@ -222,10 +235,29 @@ RULES:
 
   // ─── 2. PDFKit PDF Rendering ───────────────────────────────────────────────
 
-  async renderPdfBuffer(tailoredCvId: string, userId: string): Promise<{ buffer: Buffer; filename: string }> {
+  async renderPdfBuffer(
+    tailoredCvId: string,
+    userId: string,
+    styleOverride?: string,
+  ): Promise<{ buffer: Buffer; filename: string; style: CvStyle }> {
     const tailoredCv = await this.getTailoredCv(tailoredCvId, userId);
-    const profile = await this.prisma.profile.findUnique({ where: { userId } });
-    const user = await this.prisma.user.findUnique({ where: { id: userId }, select: { email: true } });
+    const [profile, user, prefs] = await Promise.all([
+      this.prisma.profile.findUnique({ where: { userId } }),
+      this.prisma.user.findUnique({ where: { id: userId }, select: { email: true } }),
+      this.prisma.jobPreference.findUnique({ where: { userId } }),
+    ]);
+
+    // Style: explicit choice > saved preference > auto-detect from the opportunity location
+    const locationLine = tailoredCv.opportunity?.rawText?.match(/^Location:\s*(.+)$/im)?.[1];
+    const locationText = [tailoredCv.opportunity?.country, locationLine].filter(Boolean).join(' ');
+    const requested = (styleOverride ?? '').toUpperCase();
+    const saved = (prefs?.cvStyle ?? 'AUTO').toUpperCase();
+    const style: CvStyle =
+      requested === 'GULF' || requested === 'EUROPE'
+        ? requested
+        : saved === 'GULF' || saved === 'EUROPE'
+          ? saved
+          : detectCvStyle(locationText);
 
     const content = tailoredCv.contentJson as z.infer<typeof TailoredCvContentSchema>;
     const fullName = profile?.fullName || 'Ghulam Ghaus';
@@ -235,6 +267,14 @@ RULES:
     const linkedin = profile?.linkedinUrl || '';
     const github = profile?.githubUrl || '';
     const portfolio = profile?.portfolioUrl || '';
+    const languages = (Array.isArray(profile?.languages) ? profile.languages : []) as Array<{
+      language?: string;
+      level?: string;
+    }>;
+    const languageText = languages
+      .filter((l) => l.language)
+      .map((l) => (l.level ? `${l.language} (${l.level})` : l.language))
+      .join(', ');
 
     return new Promise((resolve, reject) => {
       try {
@@ -257,7 +297,8 @@ RULES:
           const sanitizedName = fullName.replace(/[^a-zA-Z0-9]/g, '_');
           resolve({
             buffer,
-            filename: `${sanitizedName}_${sanitizedRole}_CV.pdf`,
+            filename: `${sanitizedName}_${sanitizedRole}_CV_${style === 'GULF' ? 'GCC' : 'EU'}.pdf`,
+            style,
           });
         });
         doc.on('error', reject);
@@ -280,6 +321,29 @@ RULES:
         if (linkParts.length > 0) {
           doc.moveDown(0.1);
           doc.text(linkParts.join('  •  '), { align: 'center' });
+        }
+
+        // Gulf/GCC recruiters expect availability facts up front. Only profile data is used.
+        if (style === 'GULF') {
+          const visa = profile?.visaStatus || 'Unknown';
+          const notice =
+            profile?.noticePeriodDays !== null && profile?.noticePeriodDays !== undefined
+              ? `${profile.noticePeriodDays} days`
+              : 'Unknown';
+          const relocate = profile?.willingToRelocate ? 'Yes' : 'No';
+          doc.moveDown(0.15);
+          doc
+            .font('Helvetica-Bold')
+            .fontSize(8.5)
+            .fillColor('#0f172a')
+            .text(`Visa Status: ${visa}  |  Notice Period: ${notice}  |  Open to Relocation: ${relocate}`, {
+              align: 'center',
+            });
+          if (languageText) {
+            doc.font('Helvetica').fontSize(8.5).fillColor('#475569').text(`Languages: ${languageText}`, {
+              align: 'center',
+            });
+          }
         }
 
         doc.moveDown(0.6);
@@ -359,6 +423,13 @@ RULES:
             }
             doc.moveDown(0.3);
           }
+        }
+
+        // European/international layout: languages as a dedicated closing section (no visa/availability block)
+        if (style === 'EUROPE' && languageText) {
+          if (doc.y > 700) doc.addPage();
+          addSectionHeading('Languages');
+          doc.font('Helvetica').fontSize(9).fillColor('#334155').text(languageText);
         }
 
         doc.end();

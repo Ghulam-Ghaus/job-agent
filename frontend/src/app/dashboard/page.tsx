@@ -14,6 +14,7 @@ import {
   type TailoredCv,
   type CoverLetter,
 } from '@/lib/api-client';
+import { AtsSettingsModal } from '@/components/dashboard/ats-settings-modal';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -357,6 +358,7 @@ function EvidenceDrawer({
   const [generatingCv, setGeneratingCv] = useState(false);
   const [tailoredCv, setTailoredCv] = useState<TailoredCv | null>(null);
   const [showCvModal, setShowCvModal] = useState(false);
+  const [cvStyleChoice, setCvStyleChoice] = useState<'AUTO' | 'GULF' | 'EUROPE'>('AUTO');
 
   const [generatingLetter, setGeneratingLetter] = useState(false);
   const [coverLetter, setCoverLetter] = useState<CoverLetter | null>(null);
@@ -607,6 +609,47 @@ function EvidenceDrawer({
             <span>Interview Prep</span>
           </button>
         </div>
+
+        {/* Application submission link */}
+        {currentOpp.url ? (
+          <a
+            id="drawer-open-apply-url"
+            href={currentOpp.url}
+            target="_blank"
+            rel="noreferrer"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 8,
+              padding: '11px 14px',
+              borderRadius: 10,
+              marginBottom: 24,
+              background: 'linear-gradient(135deg,#22c55e,#16a34a)',
+              color: '#fff',
+              fontSize: 13,
+              fontWeight: 700,
+              textDecoration: 'none',
+              boxShadow: '0 4px 15px rgba(34,197,94,.25)',
+            }}
+          >
+            🔗 {currentOpp.type === 'FREELANCE' ? 'Open Proposal Page' : 'Open Application Page'}
+          </a>
+        ) : (
+          <div
+            style={{
+              padding: '10px 14px',
+              borderRadius: 10,
+              marginBottom: 24,
+              background: 'rgba(245,158,11,.1)',
+              border: '1px solid rgba(245,158,11,.3)',
+              color: '#fbbf24',
+              fontSize: 12,
+            }}
+          >
+            ⚠ No application URL was captured for this opportunity.
+          </div>
+        )}
 
         {/* Breakdown */}
         {breakdown && (
@@ -902,6 +945,59 @@ function EvidenceDrawer({
               </div>
             </div>
 
+            {/* CV Template Layout Selector */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                background: 'rgba(255,255,255,.04)',
+                padding: '10px 14px',
+                borderRadius: 10,
+                marginBottom: 16,
+                border: '1px solid rgba(255,255,255,.08)',
+                flexWrap: 'wrap',
+                gap: 8,
+              }}
+            >
+              <div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#f1f5f9' }}>
+                  CV Template Layout
+                </div>
+                <div style={{ fontSize: 11, color: '#94a3b8' }}>
+                  {cvStyleChoice === 'GULF'
+                    ? '🇸🇦 Gulf / GCC Executive (Visa status, notice period, mobility, direct contact)'
+                    : cvStyleChoice === 'EUROPE'
+                      ? '🇪🇺 European ATS Standard (GDPR compliant, zero bias fields, metric-heavy)'
+                      : '⚡ Auto-Detect (Gulf layout for GCC jobs, European for UK/EU/Remote)'}
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: 6 }}>
+                {(['AUTO', 'GULF', 'EUROPE'] as const).map((st) => (
+                  <button
+                    key={st}
+                    type="button"
+                    onClick={() => setCvStyleChoice(st)}
+                    style={{
+                      padding: '4px 10px',
+                      borderRadius: 6,
+                      fontSize: 11,
+                      fontWeight: 600,
+                      border:
+                        cvStyleChoice === st
+                          ? '1px solid #6366f1'
+                          : '1px solid rgba(255,255,255,.1)',
+                      background: cvStyleChoice === st ? '#6366f1' : 'transparent',
+                      color: '#fff',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {st === 'AUTO' ? '⚡ Auto' : st === 'GULF' ? '🇸🇦 Gulf' : '🇪🇺 Europe'}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Actions */}
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
               <button
@@ -921,10 +1017,11 @@ function EvidenceDrawer({
               <button
                 type="button"
                 onClick={async () => {
+                  const styleParam = cvStyleChoice === 'AUTO' ? undefined : cvStyleChoice;
                   try {
-                    await api.tailoredCv.downloadPdf(tailoredCv.id);
+                    await api.tailoredCv.downloadPdf(tailoredCv.id, undefined, styleParam);
                   } catch {
-                    window.open(api.tailoredCv.downloadUrl(tailoredCv.id), '_blank');
+                    window.open(api.tailoredCv.downloadUrl(tailoredCv.id, styleParam), '_blank');
                   }
                 }}
                 style={{
@@ -1295,6 +1392,7 @@ export default function JobsDashboard() {
   const [opps, setOpps] = useState<Opportunity[]>([]);
   const [loading, setLoading] = useState(true);
   const [showImport, setShowImport] = useState(false);
+  const [showAtsSettings, setShowAtsSettings] = useState(false);
   const [selectedOpp, setSelectedOpp] = useState<Opportunity | null>(null);
   const [reprocessingId, setReprocessingId] = useState<string | null>(null);
   const [buildingPackId, setBuildingPackId] = useState<string | null>(null);
@@ -1306,7 +1404,12 @@ export default function JobsDashboard() {
     setSyncing(true);
     try {
       const res = await api.connectors.syncAll();
-      alert(`Sync Complete!\nEmail: ${res.email.jobsEnqueued} jobs enqueued\nATS: ${res.ats.jobsEnqueued} jobs enqueued (${res.ats.companiesChecked} companies checked)`);
+      const atsMsg = res.ats
+        ? `ATS Boards (${res.ats.companiesChecked} companies checked):\n• ${res.ats.jobsFound ?? res.ats.jobsEnqueued} total postings found\n• ${res.ats.jobsEnqueued} newly enqueued\n• ${res.ats.duplicatesSkipped ?? 0} duplicates skipped (already tracked)\n• ${res.ats.locationFiltered ?? 0} filtered by location`
+        : 'ATS: no data';
+      alert(
+        `Sync Complete!\n\nEmail Alerts: ${res.email.jobsEnqueued} newly enqueued (${res.email.totalProcessed} processed)\n\n${atsMsg}`,
+      );
       await load();
     } catch (err: unknown) {
       alert(`Sync failed: ${String(err)}`);
@@ -1401,7 +1504,23 @@ export default function JobsDashboard() {
               <h2 className="text-base font-semibold text-foreground">Discovered Pipeline</h2>
               <p className="text-xs text-muted-foreground">Scored against your Master Profile ATS criteria.</p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <a
+                href="/"
+                target="_blank"
+                rel="noreferrer"
+                className="text-xs text-slate-300 hover:text-white transition-colors flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 hover:bg-white/5"
+              >
+                <span>🌐 View Showcase</span>
+              </a>
+              <Button
+                onClick={() => setShowAtsSettings(true)}
+                variant="outline"
+                size="sm"
+                className="gap-1.5 text-xs border-indigo-500/30 text-indigo-300 hover:bg-indigo-500/10"
+              >
+                <span>⚙️ ATS &amp; Location Settings</span>
+              </Button>
               <Button
                 onClick={() => setShowImport(true)}
                 size="sm"
@@ -1558,6 +1677,11 @@ export default function JobsDashboard() {
       </div>
 
       {/* Modals */}
+      <AtsSettingsModal
+        isOpen={showAtsSettings}
+        onClose={() => setShowAtsSettings(false)}
+        onSyncTriggered={load}
+      />
       {showImport && (
         <ImportDialog onClose={() => setShowImport(false)} onImported={handleImported} />
       )}

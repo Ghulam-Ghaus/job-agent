@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState, Suspense } from 'react';
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Bot, Lock, Mail, ArrowRight, ShieldCheck, AlertCircle, Info } from 'lucide-react';
+import { Bot, Lock, Mail, ArrowRight, ArrowLeft, ShieldCheck, AlertCircle, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
@@ -60,6 +61,15 @@ function LoginForm() {
     <div className="min-h-screen flex items-center justify-center p-4 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-950/40 via-background to-background">
       {/* Background ambient glow */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-500/10 blur-[120px] rounded-full pointer-events-none" />
+
+      <Link
+        href="/"
+        id="login-back-to-website"
+        className="absolute top-5 left-5 text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
+      >
+        <ArrowLeft className="h-3.5 w-3.5" />
+        <span>Back to Website</span>
+      </Link>
 
       <Card className="w-full max-w-md border-border/50 bg-card/60 backdrop-blur-2xl shadow-2xl relative">
         <CardHeader className="text-center space-y-2 pb-6">
@@ -157,6 +167,16 @@ function LoginForm() {
               <ShieldCheck className="h-3 w-3 text-emerald-400" />
               <span>Fill Seeded Super Admin credentials</span>
             </button>
+
+            <div className="w-full pt-3 mt-1 border-t border-border/40 text-center">
+              <Link
+                href="/"
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1.5"
+              >
+                <ArrowLeft className="h-3.5 w-3.5" />
+                <span>Return to Portfolio Website</span>
+              </Link>
+            </div>
           </CardFooter>
         </form>
       </Card>

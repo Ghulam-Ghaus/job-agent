@@ -62,6 +62,11 @@ export interface Experience {
   techStack: string[];
 }
 
+export interface AtsTarget {
+  platform: 'greenhouse' | 'lever';
+  slug: string;
+}
+
 export interface JobPreference {
   id: string;
   targetRoles: string[];
@@ -71,6 +76,9 @@ export interface JobPreference {
   blacklistCompanies: string[];
   blacklistKeywords: string[];
   preferredIndustries: string[];
+  atsTargets?: AtsTarget[];
+  locationFilters?: string[];
+  cvStyle?: 'AUTO' | 'GULF' | 'EUROPE';
 }
 
 export interface Cv {
@@ -865,18 +873,29 @@ export const api = {
     syncAll: () =>
       api.post<{
         email: { totalProcessed: number; jobsEnqueued: number; errors: string[] };
-        ats: { companiesChecked: number; jobsEnqueued: number; errors: string[] };
+        ats: {
+          companiesChecked: number;
+          jobsFound: number;
+          jobsEnqueued: number;
+          duplicatesSkipped: number;
+          locationFiltered: number;
+          errors: string[];
+        };
         timestamp: string;
       }>('/connectors/sync'),
     syncEmail: () =>
       api.post<{ totalProcessed: number; jobsEnqueued: number; errors: string[] }>(
         '/connectors/email/sync',
       ),
-    syncAts: (targets?: { platform: 'greenhouse' | 'lever'; slug: string }[]) =>
-      api.post<{ companiesChecked: number; jobsEnqueued: number; errors: string[] }>(
-        '/connectors/ats/sync',
-        { targets },
-      ),
+    syncAts: (targets?: AtsTarget[]) =>
+      api.post<{
+        companiesChecked: number;
+        jobsFound: number;
+        jobsEnqueued: number;
+        duplicatesSkipped: number;
+        locationFiltered: number;
+        errors: string[];
+      }>('/connectors/ats/sync', { targets }),
   },
 
   leads: {
@@ -955,9 +974,14 @@ export const api = {
       return api.get<TailoredCv[]>(`/tailored-cv${qs}`);
     },
     get: (id: string) => api.get<TailoredCv>(`/tailored-cv/${id}`),
-    downloadUrl: (id: string) => `${API_BASE_URL}/tailored-cv/${id}/download`,
-    downloadPdf: (id: string, fallbackFilename?: string) =>
-      downloadFile(`/tailored-cv/${id}/download`, fallbackFilename || `tailored-cv-${id}.pdf`),
+    downloadUrl: (id: string, style?: 'GULF' | 'EUROPE') => {
+      const qs = style ? `?style=${style}` : '';
+      return `${API_BASE_URL}/tailored-cv/${id}/download${qs}`;
+    },
+    downloadPdf: (id: string, fallbackFilename?: string, style?: 'GULF' | 'EUROPE') => {
+      const qs = style ? `?style=${style}` : '';
+      return downloadFile(`/tailored-cv/${id}/download${qs}`, fallbackFilename || `tailored-cv-${id}.pdf`);
+    },
     addSkillFromGap: (data: {
       name: string;
       category?: string;

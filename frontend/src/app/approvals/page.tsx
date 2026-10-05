@@ -389,8 +389,9 @@ function PackReviewCard({
               </a>
             )}
 
-            {isFreelance && opp?.url && (
+            {opp?.url ? (
               <a
+                id="approval-open-apply-url"
                 href={opp.url}
                 target="_blank"
                 rel="noreferrer"
@@ -408,30 +409,48 @@ function PackReviewCard({
                   gap: 6,
                 }}
               >
-                🔗 Open Upwork
+                {isFreelance ? '🔗 Open Upwork' : '🔗 Open Application Page'}
               </a>
+            ) : (
+              <span style={{ padding: '12px 18px', fontSize: 12, color: '#f59e0b' }}>
+                ⚠ No application URL captured — search the company careers page
+              </span>
             )}
-            {isFreelance && (
-              <button
-                type="button"
-                onClick={copyToClipboard}
+            <button
+              type="button"
+              onClick={copyToClipboard}
+              style={{
+                padding: '12px 18px',
+                borderRadius: 10,
+                border: '1px solid rgba(16,185,129,.4)',
+                background: copied ? 'rgba(16,185,129,.25)' : 'rgba(16,185,129,.12)',
+                color: '#34d399',
+                cursor: 'pointer',
+                fontSize: 13,
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                transition: 'all .2s',
+              }}
+            >
+              {copied
+                ? '✅ Copied!'
+                : isFreelance
+                  ? '📋 Copy Proposal'
+                  : '📋 Copy Cover Note'}
+            </button>
+            {opp?.url && (
+              <div
                 style={{
-                  padding: '12px 18px',
-                  borderRadius: 10,
-                  border: '1px solid rgba(16,185,129,.4)',
-                  background: copied ? 'rgba(16,185,129,.25)' : 'rgba(16,185,129,.12)',
-                  color: '#34d399',
-                  cursor: 'pointer',
-                  fontSize: 13,
-                  fontWeight: 700,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  transition: 'all .2s',
+                  width: '100%',
+                  fontSize: 11,
+                  color: '#64748b',
+                  wordBreak: 'break-all',
                 }}
               >
-                {copied ? '✅ Proposal Copied!' : '📋 Copy Proposal'}
-              </button>
+                Apply at: {opp.url}
+              </div>
             )}
             <button
               onClick={handleReject}

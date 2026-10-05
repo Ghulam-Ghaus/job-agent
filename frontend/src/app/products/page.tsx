@@ -118,13 +118,13 @@ export default function ProductsCatalogPage() {
         {/* Page Title & Hero */}
         <div className="text-center space-y-3 max-w-2xl mx-auto">
           <Badge variant="outline" className="border-indigo-500/30 text-indigo-400 text-xs px-3 py-1 font-mono uppercase tracking-wider">
-            Architecture &amp; Solutions
+            Consultancy &amp; Bespoke Architecture
           </Badge>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-            Productized Offerings &amp; Blueprints
+            Engineering Solutions &amp; Strategic Engagements
           </h1>
           <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-            High-leverage engineering blueprints and bespoke agent architectures designed for rapid deployment, verifiable reliability, and strict enterprise security.
+            High-leverage engineering engagements, autonomous AI pipelines, and production full-stack systems delivered by Ghulam Ghaus (GG IT SOLUTIONS) for businesses in Saudi Arabia, UAE, and globally.
           </p>
         </div>
 
@@ -197,9 +197,9 @@ export default function ProductsCatalogPage() {
 
                 <div className="pt-4 border-t border-white/5 space-y-3">
                   <div className="flex items-baseline justify-between">
-                    <span className="text-xs text-slate-400">Starting price</span>
-                    <span className="text-xl font-bold text-white font-mono">
-                      {prod.priceUsd ? `$${prod.priceUsd.toLocaleString()}` : 'Custom Quote'}
+                    <span className="text-xs text-slate-400">Engagement Scope</span>
+                    <span className="text-sm font-semibold text-indigo-300 font-mono">
+                      {prod.priceUsd ? `From $${prod.priceUsd.toLocaleString()}` : 'Custom Milestone'}
                     </span>
                   </div>
 
@@ -208,7 +208,7 @@ export default function ProductsCatalogPage() {
                     className="w-full text-xs h-9 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl gap-1.5 shadow-md shadow-indigo-500/20"
                   >
                     <Send className="h-3.5 w-3.5" />
-                    <span>Engage / Request Solution</span>
+                    <span>Inquire / Request Consultation</span>
                   </Button>
                 </div>
               </div>

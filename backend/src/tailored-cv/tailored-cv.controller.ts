@@ -51,15 +51,25 @@ export class TailoredCvController {
   }
 
   @Get(':id/download')
-  @ApiOperation({ summary: 'Download ATS-friendly tailored CV as PDF' })
+  @ApiOperation({
+    summary: 'Download ATS-friendly tailored CV as PDF (Gulf or European layout)',
+    description:
+      'Layout resolves from ?style=GULF|EUROPE, else the saved CV style preference, else the opportunity location.',
+  })
   async downloadPdf(
     @Param('id') id: string,
     @CurrentUser('id') userId: string,
     @Res() res: Response,
+    @Query('style') style?: string,
   ) {
-    const { buffer, filename } = await this.tailoredCvService.renderPdfBuffer(id, userId);
+    const { buffer, filename, style: used } = await this.tailoredCvService.renderPdfBuffer(
+      id,
+      userId,
+      style,
+    );
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.setHeader('X-CV-Style', used);
     res.setHeader('Content-Length', buffer.length);
     res.send(buffer);
   }
