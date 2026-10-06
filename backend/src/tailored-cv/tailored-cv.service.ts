@@ -175,7 +175,7 @@ RULES:
 2. Group the candidate's verified skills into clear categories, placing the ones demanded by the job first.
 3. Write an impactful 3-4 sentence professional summary tailored to this position, referencing verified years and strengths.
 4. Select and refine the most relevant experience bullets to directly answer what this employer is looking for.
-5. Highlight 2-3 most relevant projects with their actual tech stacks.`;
+5. RELEVANCE-ONLY PROJECT SELECTION: From the candidate's verified projects list, dynamically rank and select ONLY the top 2-3 most relevant projects whose tech stack and domain directly match this job description. Do NOT include irrelevant projects.`;
 
     const generated = await this.llm.generateStructured({
       system:
@@ -495,15 +495,16 @@ RULES:
 
     if (!opp) throw new NotFoundException('Opportunity not found');
 
-    const [profile, skills, experiences, user] = await Promise.all([
+    const [profile, skills, experiences, projects, user] = await Promise.all([
       this.prisma.profile.findUnique({ where: { userId } }),
       this.prisma.skill.findMany({ where: { userId } }),
       this.prisma.experience.findMany({ where: { userId }, orderBy: { startDate: 'desc' } }),
+      this.prisma.project.findMany({ where: { userId } }),
       this.prisma.user.findUnique({ where: { id: userId }, select: { email: true } }),
     ]);
 
     const inputHash = createHash('sha256')
-      .update(`${userId}::cover::${opp.id}::${opp.title}::${skills.length}`)
+      .update(`${userId}::cover::${opp.id}::${opp.title}::${skills.length}::${projects.length}`)
       .digest('hex');
 
     if (!dto.forceRegenerate) {
@@ -521,12 +522,17 @@ RULES:
       `Skills: ${skills.map((s) => s.name).join(', ')}`,
       `Key Roles:`,
       ...experiences.slice(0, 3).map((e) => `  - ${e.title} at ${e.company} (${JSON.stringify(e.techStack)})`),
+      `Verified Projects:`,
+      ...projects.map(
+        (p) =>
+          `  - ${p.title}: ${p.description || ''} (Tech: ${JSON.stringify(p.techStack)})`,
+      ),
     ].join('\n');
 
     const prompt = `CANDIDATE MASTER PROFILE (Ground Truth Only):\n${candidateProfileText}\n\nJOB DETAILS:\nRole: ${opp.title || 'Software Engineer'}\nCompany: ${opp.company || 'Company'}\nLocation: ${opp.country || ''}\nJob Requirements:\n${opp.rawText.slice(0, 2500)}\n\nTask: Write an outstanding, tailored cover letter.
 RULES:
 1. Every qualification, metric, tool, and company MUST be strictly true to candidate profile.
-2. Hook the employer immediately with relevant achievements.
+2. Hook the employer immediately with 1-2 relevant project completions from the candidate's verified projects list that solve problems directly related to this JD.
 3. Keep it professional, human, and between 250-350 words.`;
 
     const generated = await this.llm.generateStructured({

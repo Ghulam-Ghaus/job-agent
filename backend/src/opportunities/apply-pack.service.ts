@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { z } from 'zod';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { LlmService } from '../llm/llm.service.js';
@@ -16,6 +16,16 @@ const VerifierSchema = z.object({
     z.object({
       claim: z.string().describe('The specific claim made in the cover note'),
       reason: z.string().describe('Why this claim could not be verified'),
+    }),
+  ),
+});
+
+const ScreeningAnswersSchema = z.object({
+  answers: z.array(
+    z.object({
+      question: z.string(),
+      answer: z.string().describe('High-impact, concise answer (80-160 words) answering the prompt directly using verified candidate facts'),
+      keyProjectsCited: z.array(z.string()).describe('Titles of verified projects cited in this answer'),
     }),
   ),
 });
@@ -180,5 +190,111 @@ RULES:
       where: { id: pack.id },
       data: { coverNoteEdited: editedNote },
     });
+  }
+
+  /**
+   * Generate grounded, truthful answers to specific HR screening questions for an opportunity.
+   */
+  async generateScreeningAnswers(opportunityId: string, userId: string, questions: string[]) {
+    if (!questions || questions.length === 0) {
+      throw new BadRequestException('At least one question is required');
+    }
+
+    const [opp, profile, skills, experiences, projects, user] = await Promise.all([
+      this.prisma.opportunity.findFirst({
+        where: { id: opportunityId, userId },
+        include: { requirement: true },
+      }),
+      this.prisma.profile.findUnique({ where: { userId } }),
+      this.prisma.skill.findMany({ where: { userId } }),
+      this.prisma.experience.findMany({ where: { userId }, orderBy: { startDate: 'desc' } }),
+      this.prisma.project.findMany({ where: { userId } }),
+      this.prisma.user.findUnique({ where: { id: userId }, select: { email: true } }),
+    ]);
+
+    if (!opp) throw new NotFoundException('Opportunity not found');
+
+    const candidateProfileText = [
+      `Name: ${profile?.fullName || 'Ghulam Ghaus'}`,
+      `Email: ${user?.email || 'admin@jobagent.local'}`,
+      `Headline: ${profile?.headline || 'Senior Full-Stack & AI Engineer'}`,
+      `Location / Country: ${profile?.location || ''} ${profile?.country || 'Pakistan'}`,
+      `Visa / Relocation: ${profile?.visaStatus || 'Open to relocation'}, Willing to relocate: ${profile?.willingToRelocate ?? true}`,
+      `Notice Period: ${profile?.noticePeriodDays ?? 15} days`,
+      `Skills: ${skills.map((s) => s.name).join(', ')}`,
+      `Key Roles:`,
+      ...experiences.slice(0, 3).map((e) => `  - ${e.title} at ${e.company} (${JSON.stringify(e.techStack)})`),
+      `Verified Projects & Case Studies:`,
+      ...projects.map(
+        (p) =>
+          `  - ${p.title}: ${p.description || ''} (Tech: ${JSON.stringify(p.techStack)}, Highlights: ${JSON.stringify(p.highlights)})`,
+      ),
+    ].join('\n');
+
+    const prompt = `CANDIDATE MASTER PROFILE (Ground Truth Only):\n${candidateProfileText}\n\nTARGET JOB & COMPANY:\nRole: ${opp.title || 'Software Engineer'}\nCompany: ${opp.company || 'Hiring Company'}\nLocation: ${opp.country || ''} ${opp.city || ''}\nJob Requirements / Context:\n${(opp.rawText || '').slice(0, 2500)}\n\nHR SCREENING QUESTIONS TO ANSWER:\n${questions.map((q, i) => `${i + 1}. "${q}"`).join('\n')}\n\nTask: Generate compelling, professional, and authentic answers for each HR screening question.
+RULES:
+1. Every qualification, metric, tool, and company MUST be strictly true to candidate profile. Zero hallucinations.
+2. Address the company and role directly. If asked "Why this company / Why this program" (e.g. Tamara, etc.), explain genuine alignment with their mission and connect your verified background directly to what they build.
+3. If asked about internships or co-ops and the candidate has professional freelance/engineering project experience instead, frame real-world production deliverables and client systems truthfully.
+4. Keep each answer concise, confident, and between 80-160 words.
+5. In each answer, cite relevant verified projects from the profile as concrete proof points.`;
+
+    const generated = await this.llm.generateStructured({
+      system:
+        'You are an elite executive career strategist helping a senior engineer answer HR and ATS screening questions. You craft punchy, persuasive, and completely truthful answers grounded strictly in verified profile facts.',
+      prompt,
+      schema: ScreeningAnswersSchema,
+      purpose: 'screening_answers_generation',
+      userId,
+    });
+
+    // Save to ApplyPack.answersFilled
+    const existingPack = await this.prisma.applyPack.findFirst({
+      where: { opportunityId, userId },
+    });
+
+    const newAnswersFilled = generated.answers.map((a) => ({
+      question: a.question,
+      answer: a.answer,
+      keyProjectsCited: a.keyProjectsCited,
+    }));
+
+    if (existingPack) {
+      await this.prisma.applyPack.update({
+        where: { id: existingPack.id },
+        data: {
+          answersFilled: newAnswersFilled,
+        },
+      });
+    }
+
+    // Also upsert into user's AnswerBankItem for permanent reuse
+    for (const a of generated.answers) {
+      const existingBankItem = await this.prisma.answerBankItem.findFirst({
+        where: { userId, question: a.question },
+      });
+      if (existingBankItem) {
+        await this.prisma.answerBankItem.update({
+          where: { id: existingBankItem.id },
+          data: { answer: a.answer },
+        });
+      } else {
+        await this.prisma.answerBankItem.create({
+          data: {
+            userId,
+            question: a.question,
+            answer: a.answer,
+            tags: [opp.company || 'General', opp.title || 'Screening'],
+          },
+        });
+      }
+    }
+
+    return {
+      opportunityId,
+      company: opp.company,
+      title: opp.title,
+      answers: generated.answers,
+    };
   }
 }

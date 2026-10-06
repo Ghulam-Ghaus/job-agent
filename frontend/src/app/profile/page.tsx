@@ -15,6 +15,11 @@ import {
   Loader2,
   Save,
   AlertCircle,
+  FolderGit2,
+  ExternalLink,
+  Pencil,
+  X,
+  Code2,
 } from 'lucide-react';
 import { Sidebar } from '@/components/layout/sidebar';
 import { Header } from '@/components/layout/header';
@@ -29,10 +34,12 @@ import {
   Experience,
   JobPreference,
   Cv,
+  Project,
+  CreateProjectPayload,
 } from '@/lib/api-client';
 
 export default function ProfilePage() {
-  const [activeTab, setActiveTab] = useState<'facts' | 'skills' | 'preferences' | 'cvs' | 'experience'>('skills');
+  const [activeTab, setActiveTab] = useState<'facts' | 'skills' | 'preferences' | 'cvs' | 'experience' | 'projects'>('skills');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -49,6 +56,24 @@ export default function ProfilePage() {
   });
   const [cvs, setCvs] = useState<Cv[]>([]);
   const [experiences, setExperiences] = useState<Experience[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+
+  // ── Project Modal & Edit State ──────────────────────────────────────────
+  const [showProjectModal, setShowProjectModal] = useState(false);
+  const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
+  const [projectForm, setProjectForm] = useState<CreateProjectPayload>({
+    title: '',
+    description: '',
+    techStack: [],
+    highlights: [],
+    tags: [],
+    url: '',
+    repoUrl: '',
+    isPublic: true,
+  });
+  const [techInput, setTechInput] = useState('');
+  const [highlightInput, setHighlightInput] = useState('');
+  const [tagInput, setTagInput] = useState('');
 
   // ── Form helpers for inputs ───────────────────────────────────────────────
   const [newSkill, setNewSkill] = useState({ name: '', level: 'INTERMEDIATE' as const, yearsOfExp: 3, category: 'Backend' });
@@ -70,12 +95,13 @@ export default function ProfilePage() {
   const loadData = useCallback(async () => {
     try {
       setLoading(true);
-      const [profData, skillsData, prefsData, cvsData, expData] = await Promise.all([
+      const [profData, skillsData, prefsData, cvsData, expData, projData] = await Promise.all([
         api.profile.get().catch(() => null),
         api.skills.list().catch(() => []),
         api.preferences.get().catch(() => null),
         api.cvs.list().catch(() => []),
         api.experience.list().catch(() => []),
+        api.projects.list().catch(() => []),
       ]);
 
       if (profData) setProfile(profData);
@@ -83,6 +109,7 @@ export default function ProfilePage() {
       if (prefsData) setPreferences(prefsData);
       if (cvsData) setCvs(cvsData);
       if (expData) setExperiences(expData);
+      if (projData) setProjects(projData);
     } catch {
       setMessage({ type: 'error', text: 'Failed to load master profile facts.' });
     } finally {
@@ -246,6 +273,77 @@ export default function ProfilePage() {
     }
   };
 
+  // ── Project Handlers ───────────────────────────────────────────────────────
+  const handleOpenAddProject = () => {
+    setEditingProjectId(null);
+    setProjectForm({
+      title: '',
+      description: '',
+      techStack: [],
+      highlights: [],
+      tags: [],
+      url: '',
+      repoUrl: '',
+      isPublic: true,
+    });
+    setTechInput('');
+    setHighlightInput('');
+    setTagInput('');
+    setShowProjectModal(true);
+  };
+
+  const handleOpenEditProject = (proj: Project) => {
+    setEditingProjectId(proj.id);
+    setProjectForm({
+      title: proj.title,
+      description: proj.description || '',
+      techStack: Array.isArray(proj.techStack) ? proj.techStack : [],
+      highlights: Array.isArray(proj.highlights) ? proj.highlights : [],
+      tags: Array.isArray(proj.tags) ? proj.tags : [],
+      url: proj.url || '',
+      repoUrl: proj.repoUrl || '',
+      isPublic: proj.isPublic,
+    });
+    setTechInput('');
+    setHighlightInput('');
+    setTagInput('');
+    setShowProjectModal(true);
+  };
+
+  const handleSaveProject = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!projectForm.title.trim()) return;
+
+    try {
+      setSaving(true);
+      if (editingProjectId) {
+        const updated = await api.projects.update(editingProjectId, projectForm);
+        setProjects((prev) => prev.map((p) => (p.id === editingProjectId ? updated : p)));
+        setMessage({ type: 'success', text: `Project "${updated.title}" updated successfully.` });
+      } else {
+        const created = await api.projects.create(projectForm);
+        setProjects((prev) => [created, ...prev]);
+        setMessage({ type: 'success', text: `Project "${created.title}" added to profile.` });
+      }
+      setShowProjectModal(false);
+    } catch (err: unknown) {
+      setMessage({ type: 'error', text: err instanceof Error ? err.message : 'Failed to save project.' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDeleteProject = async (id: string, title: string) => {
+    if (!confirm(`Are you sure you want to delete project "${title}"?`)) return;
+    try {
+      await api.projects.delete(id);
+      setProjects((prev) => prev.filter((p) => p.id !== id));
+      setMessage({ type: 'success', text: `Project "${title}" deleted.` });
+    } catch {
+      setMessage({ type: 'error', text: 'Failed to delete project.' });
+    }
+  };
+
   return (
     <div className="flex h-screen bg-background overflow-hidden">
       <Sidebar />
@@ -294,6 +392,7 @@ export default function ProfilePage() {
               { id: 'preferences', label: 'Job Zones & Search Prefs', icon: SlidersHorizontal },
               { id: 'cvs', label: `CV Documents (${cvs.length})`, icon: FileText },
               { id: 'experience', label: `Experience (${experiences.length})`, icon: Briefcase },
+              { id: 'projects', label: `Projects (${projects.length})`, icon: FolderGit2 },
               { id: 'facts', label: 'Personal & Relocation', icon: User },
             ].map((tab) => {
               const Icon = tab.icon;
@@ -779,6 +878,437 @@ export default function ProfilePage() {
                     </div>
                   </CardContent>
                 </Card>
+              )}
+
+              {/* ── TAB 6: PROJECTS & CASE STUDIES ───────────────────────────────── */}
+              {activeTab === 'projects' && (
+                <div className="space-y-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl bg-card/60 border border-border/50">
+                    <div>
+                      <h2 className="text-base font-bold text-foreground flex items-center gap-2">
+                        <FolderGit2 className="h-4 w-4 text-primary" />
+                        <span>Production & Portfolio Projects ({projects.length})</span>
+                      </h2>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Real-world systems used by the AI agent to ground CV bullets, portfolio claims, and interview prep.
+                      </p>
+                    </div>
+                    <Button onClick={handleOpenAddProject} size="sm" className="gap-1.5 self-start sm:self-auto">
+                      <Plus className="h-3.5 w-3.5" />
+                      <span>Add New Project</span>
+                    </Button>
+                  </div>
+
+                  {projects.length === 0 ? (
+                    <Card className="border-border/50 bg-card/30 p-12 text-center space-y-3">
+                      <div className="mx-auto h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                        <FolderGit2 className="h-6 w-6" />
+                      </div>
+                      <h3 className="text-sm font-semibold text-foreground">No projects registered yet</h3>
+                      <p className="text-xs text-muted-foreground max-w-sm mx-auto">
+                        Add your real production and client projects so the AI can automatically weave them into tailored CVs and cover letters.
+                      </p>
+                      <Button onClick={handleOpenAddProject} size="sm" className="gap-1.5 mt-2">
+                        <Plus className="h-3.5 w-3.5" />
+                        <span>Add Project</span>
+                      </Button>
+                    </Card>
+                  ) : (
+                    <div className="grid grid-cols-1 gap-4">
+                      {projects.map((proj) => {
+                        const techStack = Array.isArray(proj.techStack) ? proj.techStack : [];
+                        const highlights = Array.isArray(proj.highlights) ? proj.highlights : [];
+                        const tags = Array.isArray(proj.tags) ? proj.tags : [];
+                        return (
+                          <Card key={proj.id} className="border-border/50 bg-card/60 hover:border-border transition-all">
+                            <CardHeader className="pb-3 flex flex-row items-start justify-between gap-4">
+                              <div className="space-y-1">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <CardTitle className="text-base font-bold text-foreground">
+                                    {proj.title}
+                                  </CardTitle>
+                                  {tags.map((t, idx) => (
+                                    <Badge key={idx} variant="outline" className="text-[10px] bg-primary/5 border-primary/20 text-primary">
+                                      {t}
+                                    </Badge>
+                                  ))}
+                                </div>
+                                {proj.description && (
+                                  <p className="text-xs text-muted-foreground leading-relaxed">
+                                    {proj.description}
+                                  </p>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-1.5 shrink-0">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleOpenEditProject(proj)}
+                                  className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground"
+                                  title="Edit Project"
+                                >
+                                  <Pencil className="h-3.5 w-3.5" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleDeleteProject(proj.id, proj.title)}
+                                  className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                                  title="Delete Project"
+                                >
+                                  <Trash2 className="h-3.5 w-3.5" />
+                                </Button>
+                              </div>
+                            </CardHeader>
+                            <CardContent className="space-y-3 pt-0">
+                              {/* Tech Stack */}
+                              {techStack.length > 0 && (
+                                <div className="space-y-1">
+                                  <div className="text-[11px] font-medium text-slate-400">Tech Stack:</div>
+                                  <div className="flex flex-wrap gap-1.5">
+                                    {techStack.map((tech, idx) => (
+                                      <span
+                                        key={idx}
+                                        className="text-[11px] px-2 py-0.5 rounded-md bg-secondary text-secondary-foreground font-mono"
+                                      >
+                                        {tech}
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* Highlights */}
+                              {highlights.length > 0 && (
+                                <div className="space-y-1 pt-1 border-t border-border/30">
+                                  <div className="text-[11px] font-medium text-slate-400">Key Highlights:</div>
+                                  <ul className="space-y-1 pl-4 list-disc text-xs text-muted-foreground">
+                                    {highlights.map((h, idx) => (
+                                      <li key={idx} className="leading-snug">
+                                        {h}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+
+                              {/* Links */}
+                              {(proj.url || proj.repoUrl) && (
+                                <div className="flex items-center gap-4 pt-2 border-t border-border/30 text-xs">
+                                  {proj.url && (
+                                    <a
+                                      href={proj.url}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="text-primary hover:underline flex items-center gap-1"
+                                    >
+                                      <ExternalLink className="h-3 w-3" />
+                                      <span>Live Demo</span>
+                                    </a>
+                                  )}
+                                  {proj.repoUrl && (
+                                    <a
+                                      href={proj.repoUrl}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="text-muted-foreground hover:text-foreground flex items-center gap-1"
+                                    >
+                                      <Code2 className="h-3 w-3" />
+                                      <span>Repository</span>
+                                    </a>
+                                  )}
+                                </div>
+                              )}
+                            </CardContent>
+                          </Card>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* ── PROJECT ADD/EDIT MODAL ────────────────────────────────────── */}
+              {showProjectModal && (
+                <div
+                  className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+                  onClick={(e) => e.target === e.currentTarget && setShowProjectModal(false)}
+                >
+                  <Card className="w-full max-w-xl max-h-[90vh] overflow-y-auto border-border/60 bg-[#0f172a] shadow-2xl">
+                    <CardHeader className="flex flex-row items-center justify-between pb-3 border-b border-border/40">
+                      <div>
+                        <CardTitle className="text-base font-bold text-foreground">
+                          {editingProjectId ? 'Edit Project' : 'Add New Project'}
+                        </CardTitle>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          Facts entered here will be used by the AI agent to ground CVs and cover letters.
+                        </p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowProjectModal(false)}
+                        className="h-8 w-8 p-0"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </CardHeader>
+                    <form onSubmit={handleSaveProject}>
+                      <CardContent className="space-y-4 pt-4 text-xs">
+                        <div className="space-y-1">
+                          <label className="font-medium text-foreground">Project Title *</label>
+                          <Input
+                            value={projectForm.title}
+                            onChange={(e) => setProjectForm({ ...projectForm, title: e.target.value })}
+                            placeholder="e.g. Esports Event Management Platform"
+                            required
+                            className="bg-background/80 text-xs"
+                          />
+                        </div>
+
+                        <div className="space-y-1">
+                          <label className="font-medium text-foreground">Description *</label>
+                          <textarea
+                            value={projectForm.description}
+                            onChange={(e) => setProjectForm({ ...projectForm, description: e.target.value })}
+                            placeholder="Briefly describe what problem this system solved and its architecture..."
+                            rows={3}
+                            required
+                            className="w-full rounded-md border border-input bg-background/80 px-3 py-2 text-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                          />
+                        </div>
+
+                        {/* Tech Stack Tags Input */}
+                        <div className="space-y-1.5">
+                          <label className="font-medium text-foreground">Tech Stack Tags</label>
+                          <div className="flex gap-2">
+                            <Input
+                              value={techInput}
+                              onChange={(e) => setTechInput(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  e.preventDefault();
+                                  if (techInput.trim() && !projectForm.techStack?.includes(techInput.trim())) {
+                                    setProjectForm({
+                                      ...projectForm,
+                                      techStack: [...(projectForm.techStack || []), techInput.trim()],
+                                    });
+                                    setTechInput('');
+                                  }
+                                }
+                              }}
+                              placeholder="Type tech and press Enter or click Add (e.g. Next.js, Node.js)"
+                              className="bg-background/80 text-xs"
+                            />
+                            <Button
+                              type="button"
+                              variant="secondary"
+                              size="sm"
+                              onClick={() => {
+                                if (techInput.trim() && !projectForm.techStack?.includes(techInput.trim())) {
+                                  setProjectForm({
+                                    ...projectForm,
+                                    techStack: [...(projectForm.techStack || []), techInput.trim()],
+                                  });
+                                  setTechInput('');
+                                }
+                              }}
+                            >
+                              Add
+                            </Button>
+                          </div>
+                          {projectForm.techStack && projectForm.techStack.length > 0 && (
+                            <div className="flex flex-wrap gap-1.5 pt-1">
+                              {projectForm.techStack.map((tech, idx) => (
+                                <span
+                                  key={idx}
+                                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-secondary text-secondary-foreground font-mono text-[11px]"
+                                >
+                                  <span>{tech}</span>
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setProjectForm({
+                                        ...projectForm,
+                                        techStack: projectForm.techStack?.filter((_, i) => i !== idx),
+                                      })
+                                    }
+                                    className="hover:text-destructive"
+                                  >
+                                    <X className="h-3 w-3" />
+                                  </button>
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Highlights Input */}
+                        <div className="space-y-1.5">
+                          <label className="font-medium text-foreground">Key Highlights / Bullets</label>
+                          <div className="flex gap-2">
+                            <Input
+                              value={highlightInput}
+                              onChange={(e) => setHighlightInput(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  e.preventDefault();
+                                  if (highlightInput.trim()) {
+                                    setProjectForm({
+                                      ...projectForm,
+                                      highlights: [...(projectForm.highlights || []), highlightInput.trim()],
+                                    });
+                                    setHighlightInput('');
+                                  }
+                                }
+                              }}
+                              placeholder="Key achievement or metric (press Enter to add)"
+                              className="bg-background/80 text-xs"
+                            />
+                            <Button
+                              type="button"
+                              variant="secondary"
+                              size="sm"
+                              onClick={() => {
+                                if (highlightInput.trim()) {
+                                  setProjectForm({
+                                    ...projectForm,
+                                    highlights: [...(projectForm.highlights || []), highlightInput.trim()],
+                                  });
+                                  setHighlightInput('');
+                                }
+                              }}
+                            >
+                              Add
+                            </Button>
+                          </div>
+                          {projectForm.highlights && projectForm.highlights.length > 0 && (
+                            <ul className="space-y-1 pl-4 list-disc text-xs text-muted-foreground pt-1">
+                              {projectForm.highlights.map((h, idx) => (
+                                <li key={idx} className="flex items-center justify-between gap-2">
+                                  <span>{h}</span>
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setProjectForm({
+                                        ...projectForm,
+                                        highlights: projectForm.highlights?.filter((_, i) => i !== idx),
+                                      })
+                                    }
+                                    className="text-muted-foreground hover:text-destructive shrink-0"
+                                  >
+                                    <X className="h-3 w-3" />
+                                  </button>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+
+                        {/* Live URL & Repo URL */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div className="space-y-1">
+                            <label className="font-medium text-foreground">Live Demo / URL</label>
+                            <Input
+                              value={projectForm.url || ''}
+                              onChange={(e) => setProjectForm({ ...projectForm, url: e.target.value })}
+                              placeholder="https://..."
+                              className="bg-background/80 text-xs"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="font-medium text-foreground">Repository URL</label>
+                            <Input
+                              value={projectForm.repoUrl || ''}
+                              onChange={(e) => setProjectForm({ ...projectForm, repoUrl: e.target.value })}
+                              placeholder="https://github.com/..."
+                              className="bg-background/80 text-xs"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Tags */}
+                        <div className="space-y-1.5">
+                          <label className="font-medium text-foreground">Domain Tags</label>
+                          <div className="flex gap-2">
+                            <Input
+                              value={tagInput}
+                              onChange={(e) => setTagInput(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  e.preventDefault();
+                                  if (tagInput.trim() && !projectForm.tags?.includes(tagInput.trim())) {
+                                    setProjectForm({
+                                      ...projectForm,
+                                      tags: [...(projectForm.tags || []), tagInput.trim()],
+                                    });
+                                    setTagInput('');
+                                  }
+                                }
+                              }}
+                              placeholder="e.g. AI Agent, Real-time, Gaming"
+                              className="bg-background/80 text-xs"
+                            />
+                            <Button
+                              type="button"
+                              variant="secondary"
+                              size="sm"
+                              onClick={() => {
+                                if (tagInput.trim() && !projectForm.tags?.includes(tagInput.trim())) {
+                                  setProjectForm({
+                                    ...projectForm,
+                                    tags: [...(projectForm.tags || []), tagInput.trim()],
+                                  });
+                                  setTagInput('');
+                                }
+                              }}
+                            >
+                              Add
+                            </Button>
+                          </div>
+                          {projectForm.tags && projectForm.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-1.5 pt-1">
+                              {projectForm.tags.map((t, idx) => (
+                                <span
+                                  key={idx}
+                                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-primary/10 text-primary text-[11px]"
+                                >
+                                  <span>{t}</span>
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setProjectForm({
+                                        ...projectForm,
+                                        tags: projectForm.tags?.filter((_, i) => i !== idx),
+                                      })
+                                    }
+                                    className="hover:text-destructive"
+                                  >
+                                    <X className="h-3 w-3" />
+                                  </button>
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </CardContent>
+                      <div className="p-4 border-t border-border/40 flex justify-end gap-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setShowProjectModal(false)}
+                        >
+                          Cancel
+                        </Button>
+                        <Button type="submit" size="sm" disabled={saving} className="gap-1.5">
+                          {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
+                          <span>{editingProjectId ? 'Update Project' : 'Save Project'}</span>
+                        </Button>
+                      </div>
+                    </form>
+                  </Card>
+                </div>
               )}
             </>
           )}

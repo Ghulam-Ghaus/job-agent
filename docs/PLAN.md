@@ -319,6 +319,48 @@ Do Sprint 7 only.
 DONE WHEN: Projects seeded cleanly, application URLs visible and clickable on every job, ATS settings configurable with location filters, and Gulf/European CV styles auto-switch based on opportunity location.
 ```
 
+### Sprint 8 — Projects Management, Targeted JD CV Selection & Multi-Job Disaggregation
+```text
+Do Sprint 8 only.
+1. Dedicated Projects Tab on Profile:
+   - Add a full-featured "Projects" tab to /profile displaying all projects (Voice Intake, Esports, JobAgent Autopilot, TNA, UMS, VHS, HERO, AMS, HPMS).
+   - Support adding, editing, and deleting projects with fields: title, description, techStack tags, highlights, and repository/live URLs.
+   - Connect frontend to backend ProjectsController via api.projects.
+2. Ingest 3 New/Expanded Projects & Skills Pool (Zero Duplicates):
+   - Project 1: Esports Event Management Platform (Next.js, Node.js, NestJS, Socket.io, Supabase, S3/Bucket, DynamoDB).
+   - Project 2: Real-Time Voice Intake Platform (Enterprise AI Agent) (Python, Node.js, Twilio, SendGrid, Calendar API, WebSockets, OpenAI, Whisper STT, Piper, Cartesia TTS, Voice-to-Voice, LLM, Agentic AI, RAG, Generative AI, AI Agent, FSM Deterministic, n8n, Vapi).
+   - Project 3: JobAgent AI Autopilot (Autonomous Career & Client Agent) (Next.js, NestJS, TypeScript, PostgreSQL, Prisma, Redis, BullMQ, Agentic AI, RAG, Generative AI, AI Agent, FSM Deterministic, n8n, Vapi, PDFKit).
+   - Skills Pool Sync: Safely add unique skills (Agentic AI, RAG, Generative AI, AI Agent, FSM Deterministic, n8n, Vapi, Socket.io, Twilio, Whisper, Cartesia, Piper, DynamoDB, Supabase, Voice to Voice, S3) to Master Skills pool without duplicates.
+3. Relevance-Only JD Matching for CV & Cover Letters:
+   - When generating Tailored CVs or Cover Letters, prompt LLM to rank and select strictly the top 2–3 most relevant projects and corresponding skills for the JD.
+   - Avoid dumping all projects into a single document; ground each bullet in verified profile facts matching the target role.
+4. Matched vs. Missing Skills Breakdown in Dashboard:
+   - In Evidence Drawer and opportunity details, render two clear lists under Technical Skills:
+     - 🟢 Matched Skills: What candidate has that satisfies JD requirements.
+     - 🔴 Missing / Gap Skills: What JD demands that candidate lacks, with 1-click "+ Add to Profile & Rescore" button.
+5. Search Results Disaggregation & Web Content Scraper:
+   - When importing opportunity by URL, fetch HTML webpage content to accurately extract full JD requirements and skills.
+   - If URL is a search results page (e.g. jobs.workable.com/search?...), parse individual job listings so each opportunity receives its own title, company, dedicated apply link, and distinct score.
+DONE WHEN: Projects tab live on /profile, all projects & skills ingested idempotently, CV generator dynamically picks top matching projects for JD, drawer displays both matched and missing skills, and search URLs disaggregate into distinct jobs.
+```
+
+### Sprint 9 — AI Screening Q&A Generator & ATS Form Answers
+```text
+Do Sprint 9 only.
+1. Employer/ATS Screening Questions Endpoint:
+   - Implement `POST /opportunities/:id/screening-answers` with validation DTO accepting `questions: string[]`.
+   - LLM generation grounded strictly in candidate profile facts, notice period, relocation, and 9 real verified production projects (HPMS, The Nursery App, Voice Intake, Esports, Job Agent, UMS, VHS, HERO, AMS).
+   - Zero hallucination policy: genuine alignment for company/program questions (e.g. Tamara Builders Program, fintech systems) and real-world project deliverables for internship/co-op inquiries.
+2. Auto-Persistence & Answer Bank:
+   - Generated answers saved to `ApplyPack.answersFilled` for the opportunity.
+   - Upserted into `AnswerBankItem` for permanent searchability and cross-application reuse.
+3. Interactive UI & 1-Click Copy:
+   - `ScreeningQuestionsModal` with quick presets (Why Tamara/Company, Internship/Co-op placements, Complex technical challenge, Notice/Relocation).
+   - Instant 1-click "📋 Copy Answer" and "📋 Copy All Q&A" for pasting directly into Greenhouse/Lever/Tamara ATS application portals.
+   - Accessible via "💬 Answer HR Questions" on `/approvals` cards and "💬 Screening Q&A" in the Dashboard Evidence Drawer.
+DONE WHEN: User can paste any custom employer screening questions, receive truthful, punchy answers grounded in their real projects, and copy them into application forms in seconds.
+```
+
 ### Later (only if the loop is proven)
 Embeddings (pgvector), Google Calendar, Fiverr inbox drafts, organizations/CASL/plans for the GG IT SOLUTIONS product, optional Ollama pre-filter.
 

@@ -9,7 +9,9 @@ import {
   type VerifierIssue,
   type ScoreBreakdown,
   type JobRequirementFields,
+  type ScreeningAnswerResult,
 } from '@/lib/api-client';
+import { ScreeningQuestionsModal } from '@/components/opportunities/ScreeningQuestionsModal';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -71,6 +73,11 @@ function PackReviewCard({
   const [saving, setSaving] = useState(false);
   const [acting, setActing] = useState<'approving' | 'rejecting' | null>(null);
   const [copied, setCopied] = useState(false);
+  const [showScreeningModal, setShowScreeningModal] = useState(false);
+  const [screeningAnswers, setScreeningAnswers] = useState<ScreeningAnswerResult[]>(
+    (pack.answersFilled as ScreeningAnswerResult[]) || [],
+  );
+  const [copiedAnswerIdx, setCopiedAnswerIdx] = useState<number | null>(null);
 
   const opp = pack.opportunity;
   const match = opp?.match;
@@ -337,8 +344,172 @@ function PackReviewCard({
             </div>
           )}
 
+          {/* Screening Questions Q&A Section */}
+          {screeningAnswers.length > 0 && (
+            <div style={{ marginTop: 18 }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: 8,
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '.05em' }}>
+                    💬 HR Screening Answers ({screeningAnswers.length})
+                  </span>
+                  <span
+                    style={{
+                      fontSize: 10,
+                      padding: '1px 6px',
+                      borderRadius: 10,
+                      background: 'rgba(56, 189, 248, 0.15)',
+                      color: '#38bdf8',
+                    }}
+                  >
+                    Grounded &amp; Saved
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowScreeningModal(true)}
+                  style={{
+                    background: 'rgba(56,189,248,.1)',
+                    border: '1px solid rgba(56,189,248,.3)',
+                    borderRadius: 6,
+                    padding: '3px 8px',
+                    color: '#38bdf8',
+                    cursor: 'pointer',
+                    fontSize: 11,
+                    fontWeight: 600,
+                  }}
+                >
+                  + Add / Edit Questions
+                </button>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {screeningAnswers.map((item, idx) => (
+                  <div
+                    key={idx}
+                    style={{
+                      padding: '12px 14px',
+                      borderRadius: 10,
+                      background: 'rgba(0,0,0,.3)',
+                      border: '1px solid rgba(255,255,255,.07)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                        gap: 10,
+                        marginBottom: 6,
+                      }}
+                    >
+                      <div style={{ fontWeight: 700, fontSize: 12, color: '#f1f5f9' }}>
+                        Q: {item.question}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          await navigator.clipboard.writeText(item.answer);
+                          setCopiedAnswerIdx(idx);
+                          setTimeout(() => setCopiedAnswerIdx(null), 2500);
+                        }}
+                        style={{
+                          flexShrink: 0,
+                          padding: '3px 8px',
+                          borderRadius: 5,
+                          background:
+                            copiedAnswerIdx === idx
+                              ? 'rgba(16,185,129,.2)'
+                              : 'rgba(56,189,248,.15)',
+                          border: `1px solid ${
+                            copiedAnswerIdx === idx
+                              ? 'rgba(16,185,129,.4)'
+                              : 'rgba(56,189,248,.3)'
+                          }`,
+                          color: copiedAnswerIdx === idx ? '#34d399' : '#38bdf8',
+                          cursor: 'pointer',
+                          fontSize: 10,
+                          fontWeight: 600,
+                        }}
+                      >
+                        {copiedAnswerIdx === idx ? '✓ Copied' : '📋 Copy'}
+                      </button>
+                    </div>
+
+                    <div
+                      style={{
+                        color: '#cbd5e1',
+                        fontSize: 12,
+                        lineHeight: 1.6,
+                        whiteSpace: 'pre-wrap',
+                      }}
+                    >
+                      {item.answer}
+                    </div>
+
+                    {item.keyProjectsCited && item.keyProjectsCited.length > 0 && (
+                      <div
+                        style={{
+                          marginTop: 8,
+                          display: 'flex',
+                          gap: 6,
+                          flexWrap: 'wrap',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <span style={{ fontSize: 10, color: '#64748b' }}>Projects:</span>
+                        {item.keyProjectsCited.map((p, pi) => (
+                          <span
+                            key={pi}
+                            style={{
+                              fontSize: 10,
+                              padding: '1px 6px',
+                              borderRadius: 4,
+                              background: 'rgba(99,102,241,.15)',
+                              color: '#a5b4fc',
+                            }}
+                          >
+                            🚀 {p}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Action Buttons */}
           <div style={{ display: 'flex', gap: 10, marginTop: 24, flexWrap: 'wrap' }}>
+            {opp && (
+              <button
+                type="button"
+                onClick={() => setShowScreeningModal(true)}
+                style={{
+                  padding: '12px 18px',
+                  borderRadius: 10,
+                  border: '1px solid rgba(56,189,248,.4)',
+                  background: 'rgba(56,189,248,.12)',
+                  color: '#38bdf8',
+                  cursor: 'pointer',
+                  fontSize: 13,
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                }}
+              >
+                💬 Answer HR Questions {screeningAnswers.length > 0 && `(${screeningAnswers.length})`}
+              </button>
+            )}
+
             {opp && (
               <button
                 type="button"
@@ -491,6 +662,17 @@ function PackReviewCard({
             </button>
           </div>
         </div>
+      )}
+
+      {showScreeningModal && opp && (
+        <ScreeningQuestionsModal
+          opportunityId={opp.id}
+          jobTitle={opp.title}
+          company={opp.company}
+          initialAnswers={screeningAnswers}
+          onClose={() => setShowScreeningModal(false)}
+          onSaved={(newAnswers) => setScreeningAnswers(newAnswers)}
+        />
       )}
     </div>
   );

@@ -15,6 +15,7 @@ import {
   type CoverLetter,
 } from '@/lib/api-client';
 import { AtsSettingsModal } from '@/components/dashboard/ats-settings-modal';
+import { ScreeningQuestionsModal } from '@/components/opportunities/ScreeningQuestionsModal';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -364,6 +365,7 @@ function EvidenceDrawer({
   const [coverLetter, setCoverLetter] = useState<CoverLetter | null>(null);
   const [showLetterModal, setShowLetterModal] = useState(false);
   const [copiedLetter, setCopiedLetter] = useState(false);
+  const [showScreeningModal, setShowScreeningModal] = useState(false);
 
   const req = currentOpp.requirement;
   const match = currentOpp.match;
@@ -371,6 +373,7 @@ function EvidenceDrawer({
   const evidence = req?.evidenceJson as Record<string, string> | undefined;
   const breakdown = match?.breakdownJson as ScoreBreakdown | undefined;
   const gaps = (match?.gapsJson as SkillGap[]) ?? [];
+  const matchedSkills = ((breakdown as any)?.matchedSkills as string[]) ?? [];
 
   // Add 1 skill from gap
   const handleAddSkill = async (skillName: string) => {
@@ -542,13 +545,13 @@ function EvidenceDrawer({
           </div>
         )}
 
-        {/* 3 Main Action Buttons */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 24 }}>
+        {/* 4 Main Action Buttons */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginBottom: 24 }}>
           <button
             onClick={handleGenerateCv}
             disabled={generatingCv}
             style={{
-              padding: '10px 8px',
+              padding: '10px 6px',
               borderRadius: 10,
               border: '1px solid rgba(99,102,241,.4)',
               background: 'rgba(99,102,241,.12)',
@@ -570,7 +573,7 @@ function EvidenceDrawer({
             onClick={handleGenerateCoverLetter}
             disabled={generatingLetter}
             style={{
-              padding: '10px 8px',
+              padding: '10px 6px',
               borderRadius: 10,
               border: '1px solid rgba(168,85,247,.4)',
               background: 'rgba(168,85,247,.12)',
@@ -589,9 +592,30 @@ function EvidenceDrawer({
           </button>
 
           <button
+            onClick={() => setShowScreeningModal(true)}
+            style={{
+              padding: '10px 6px',
+              borderRadius: 10,
+              border: '1px solid rgba(56,189,248,.4)',
+              background: 'rgba(56,189,248,.12)',
+              color: '#7dd3fc',
+              fontSize: 11,
+              fontWeight: 600,
+              cursor: 'pointer',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 4,
+            }}
+          >
+            <span style={{ fontSize: 16 }}>💬</span>
+            <span>Screening Q&amp;A</span>
+          </button>
+
+          <button
             onClick={() => router.push(`/interview-prep?opportunityId=${currentOpp.id}&role=${encodeURIComponent(currentOpp.title || '')}`)}
             style={{
-              padding: '10px 8px',
+              padding: '10px 6px',
               borderRadius: 10,
               border: '1px solid rgba(34,197,94,.4)',
               background: 'rgba(34,197,94,.12)',
@@ -679,76 +703,126 @@ function EvidenceDrawer({
           </section>
         )}
 
-        {/* Skill Gaps with 1-Click Profile Adoption */}
-        {gaps.length > 0 && (
-          <section style={{ marginBottom: 24 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-              <h3 style={{ margin: 0, fontSize: 13, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.05em' }}>
-                Skill Gaps ({gaps.length})
-              </h3>
-              <button
-                onClick={handleAddAllSkills}
-                disabled={addingAll}
-                style={{
-                  background: 'rgba(99,102,241,.15)',
-                  border: '1px solid rgba(99,102,241,.4)',
-                  color: '#818cf8',
-                  borderRadius: 6,
-                  padding: '3px 8px',
-                  fontSize: 10,
-                  fontWeight: 700,
-                  cursor: addingAll ? 'not-allowed' : 'pointer',
-                }}
-              >
-                {addingAll ? '⚡ Adding All…' : '⚡ Add All & Rescore'}
-              </button>
+        {/* Technical Skills Analysis */}
+        <section style={{ marginBottom: 24 }}>
+          <h3 style={{ margin: '0 0 12px', fontSize: 13, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.05em' }}>
+            Technical Skills Analysis
+          </h3>
+
+          {/* Matched Candidate Skills */}
+          {matchedSkills.length > 0 && (
+            <div style={{ marginBottom: 14 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: '#4ade80', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span>🟢 Matched Candidate Skills ({matchedSkills.length})</span>
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {matchedSkills.map((s, idx) => (
+                  <span
+                    key={idx}
+                    style={{
+                      background: 'rgba(34,197,94,.12)',
+                      border: '1px solid rgba(34,197,94,.3)',
+                      color: '#86efac',
+                      borderRadius: 6,
+                      padding: '3px 8px',
+                      fontSize: 11,
+                      fontWeight: 600,
+                    }}
+                  >
+                    ✓ {s}
+                  </span>
+                ))}
+              </div>
             </div>
+          )}
 
-            {gaps.map((g, i) => (
-              <div
-                key={i}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '10px 12px',
-                  borderRadius: 8,
-                  marginBottom: 6,
-                  background: g.required ? 'rgba(239,68,68,.08)' : 'rgba(245,158,11,.06)',
-                  border: `1px solid ${g.required ? 'rgba(239,68,68,.2)' : 'rgba(245,158,11,.15)'}`,
-                }}
-              >
-                <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', minWidth: 0 }}>
-                  <span style={{ fontSize: 14, marginTop: 1 }}>{g.required ? '🔴' : '🟡'}</span>
-                  <div style={{ minWidth: 0 }}>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: '#e2e8f0', wordBreak: 'break-word' }}>{g.skill}</div>
-                    <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>{g.reason}</div>
-                  </div>
+          {/* Skill Gaps with 1-Click Profile Adoption */}
+          {gaps.length > 0 ? (
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#f87171', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span>🔴 Missing / Required Skills ({gaps.length})</span>
                 </div>
-
                 <button
-                  onClick={() => handleAddSkill(g.skill)}
-                  disabled={addingSkill === g.skill}
+                  onClick={handleAddAllSkills}
+                  disabled={addingAll}
                   style={{
-                    marginLeft: 12,
-                    padding: '4px 10px',
+                    background: 'rgba(99,102,241,.15)',
+                    border: '1px solid rgba(99,102,241,.4)',
+                    color: '#818cf8',
                     borderRadius: 6,
-                    background: 'rgba(255,255,255,.08)',
-                    border: '1px solid rgba(255,255,255,.2)',
-                    color: '#f8fafc',
-                    fontSize: 11,
-                    fontWeight: 600,
-                    cursor: addingSkill === g.skill ? 'not-allowed' : 'pointer',
-                    whiteSpace: 'nowrap',
-                    flexShrink: 0,
+                    padding: '3px 8px',
+                    fontSize: 10,
+                    fontWeight: 700,
+                    cursor: addingAll ? 'not-allowed' : 'pointer',
                   }}
                 >
-                  {addingSkill === g.skill ? 'Adding…' : '+ Add to Profile'}
+                  {addingAll ? '⚡ Adding All…' : '⚡ Add All & Rescore'}
                 </button>
               </div>
-            ))}
-          </section>
-        )}
+
+              {gaps.map((g, i) => (
+                <div
+                  key={i}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '10px 12px',
+                    borderRadius: 8,
+                    marginBottom: 6,
+                    background: g.required ? 'rgba(239,68,68,.08)' : 'rgba(245,158,11,.06)',
+                    border: `1px solid ${g.required ? 'rgba(239,68,68,.2)' : 'rgba(245,158,11,.15)'}`,
+                  }}
+                >
+                  <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', minWidth: 0 }}>
+                    <span style={{ fontSize: 14, marginTop: 1 }}>{g.required ? '🔴' : '🟡'}</span>
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: '#e2e8f0', wordBreak: 'break-word' }}>{g.skill}</div>
+                      <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>{g.reason}</div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => handleAddSkill(g.skill)}
+                    disabled={addingSkill === g.skill}
+                    style={{
+                      marginLeft: 12,
+                      padding: '4px 10px',
+                      borderRadius: 6,
+                      background: 'rgba(255,255,255,.08)',
+                      border: '1px solid rgba(255,255,255,.2)',
+                      color: '#f8fafc',
+                      fontSize: 11,
+                      fontWeight: 600,
+                      cursor: addingSkill === g.skill ? 'not-allowed' : 'pointer',
+                      whiteSpace: 'nowrap',
+                      flexShrink: 0,
+                    }}
+                  >
+                    {addingSkill === g.skill ? 'Adding…' : '+ Add to Profile'}
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            matchedSkills.length === 0 && (
+              <div
+                style={{
+                  padding: '10px 12px',
+                  borderRadius: 8,
+                  background: 'rgba(245,158,11,.08)',
+                  border: '1px solid rgba(245,158,11,.2)',
+                  color: '#fbbf24',
+                  fontSize: 11,
+                  lineHeight: 1.5,
+                }}
+              >
+                ℹ No explicit technical skills were detected in the raw text. A neutral baseline (20/40) was applied. You can edit the JD or re-process with full description.
+              </div>
+            )
+          )}
+        </section>
 
         {/* Extracted fields */}
         {fields && (
@@ -820,7 +894,7 @@ function EvidenceDrawer({
                   {field}
                 </div>
                 <div style={{ fontSize: 13, color: '#cbd5e1', fontStyle: 'italic', lineHeight: 1.5 }}>
-                  &ldquo;{quote}&rdquo;
+                  &ldquo;{String(quote)}&rdquo;
                 </div>
               </div>
             ))}
@@ -1178,6 +1252,16 @@ function EvidenceDrawer({
             </div>
           </div>
         </div>
+      )}
+
+      {/* Screening Questions Q&A Modal */}
+      {showScreeningModal && (
+        <ScreeningQuestionsModal
+          opportunityId={currentOpp.id}
+          jobTitle={currentOpp.title}
+          company={currentOpp.company}
+          onClose={() => setShowScreeningModal(false)}
+        />
       )}
     </div>
   );

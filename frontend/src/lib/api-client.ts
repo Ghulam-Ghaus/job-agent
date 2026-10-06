@@ -62,6 +62,34 @@ export interface Experience {
   techStack: string[];
 }
 
+export interface Project {
+  id: string;
+  userId: string;
+  title: string;
+  description?: string;
+  techStack: string[];
+  url?: string;
+  repoUrl?: string;
+  highlights: string[];
+  tags: string[];
+  isPublic: boolean;
+  featured?: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateProjectPayload {
+  title: string;
+  description?: string;
+  techStack?: string[];
+  url?: string;
+  repoUrl?: string;
+  highlights?: string[];
+  tags?: string[];
+  isPublic?: boolean;
+  featured?: boolean;
+}
+
 export interface AtsTarget {
   platform: 'greenhouse' | 'lever';
   slug: string;
@@ -199,6 +227,19 @@ export interface VerifierIssue {
   reason: string;
 }
 
+export interface ScreeningAnswerResult {
+  question: string;
+  answer: string;
+  keyProjectsCited?: string[];
+}
+
+export interface ScreeningAnswersResponse {
+  opportunityId: string;
+  company?: string;
+  title?: string;
+  answers: ScreeningAnswerResult[];
+}
+
 export interface ApplyPack {
   id: string;
   opportunityId: string;
@@ -206,7 +247,7 @@ export interface ApplyPack {
   coverNote: string;
   coverNoteEdited?: string | null;
   selectedCvId?: string | null;
-  answersFilled: { question: string; answer: string }[];
+  answersFilled: ScreeningAnswerResult[];
   verifierStatus: 'pending' | 'passed' | 'flagged';
   verifierIssues: VerifierIssue[];
   createdAt: string;
@@ -828,6 +869,15 @@ export const api = {
     delete: (id: string) => api.delete<void>(`/experience/${id}`),
   },
 
+  projects: {
+    list: () => api.get<Project[]>('/projects'),
+    get: (id: string) => api.get<Project>(`/projects/${id}`),
+    create: (data: CreateProjectPayload) => api.post<Project>('/projects', data),
+    update: (id: string, data: Partial<CreateProjectPayload>) =>
+      api.patch<Project>(`/projects/${id}`, data),
+    delete: (id: string) => api.delete<void>(`/projects/${id}`),
+  },
+
   preferences: {
     get: () => api.get<JobPreference | null>('/preferences'),
     upsert: (data: Partial<JobPreference>) =>
@@ -860,6 +910,8 @@ export const api = {
     getPack: (id: string) => api.get<ApplyPack>(`/opportunities/${id}/apply-pack`),
     updateCoverNote: (id: string, coverNoteEdited: string) =>
       api.patch<ApplyPack>(`/opportunities/${id}/apply-pack/cover-note`, { coverNoteEdited }),
+    generateScreeningAnswers: (id: string, questions: string[]) =>
+      api.post<ScreeningAnswersResponse>(`/opportunities/${id}/screening-answers`, { questions }),
   },
 
   approvals: {

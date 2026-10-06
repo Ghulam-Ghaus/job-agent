@@ -16,6 +16,7 @@ export interface ScoreBreakdown {
   clientTrust?: number;  // max 20
   competition?: number;  // max 15
   scopeClarity?: number; // max 10
+  matchedSkills?: string[];
 }
 
 export interface SkillGap {
@@ -92,6 +93,7 @@ export class ScoringService {
     if (requiredSkills.length > 0) {
       let matched = 0;
       let requiredTotal = 0;
+      const matchedList: string[] = [];
 
       for (const reqSkill of requiredSkills) {
         const norm = normaliseName(reqSkill.name);
@@ -99,6 +101,7 @@ export class ScoringService {
 
         if (userSkillNames.has(norm)) {
           matched++;
+          matchedList.push(reqSkill.name);
         } else {
           gaps.push({
             skill: reqSkill.name,
@@ -111,9 +114,11 @@ export class ScoringService {
       const matchRate =
         requiredTotal > 0 ? matched / requiredSkills.length : matched / requiredSkills.length;
       breakdown.technical = clamp(matchRate * 40, 40);
+      breakdown.matchedSkills = matchedList;
     } else {
       // No skills listed — neutral
       breakdown.technical = 20;
+      breakdown.matchedSkills = [];
     }
 
     // ── 2. Experience years (20 pts) ────────────────────────────────────────
@@ -238,7 +243,8 @@ export class ScoringService {
     }
 
     // ── Total ───────────────────────────────────────────────────────────────
-    const score = Object.values(breakdown).reduce((a, b) => a + b, 0);
+    const { matchedSkills: _m, ...numericBreakdown } = breakdown;
+    const score = Object.values(numericBreakdown).reduce((a, b) => a + (typeof b === 'number' ? b : 0), 0);
 
     // ── Recommend CV ────────────────────────────────────────────────────────
     const defaultCv = cvs.find((c) => c.isDefault);
@@ -288,9 +294,11 @@ export class ScoringService {
     const requiredSkills = fields.skills ?? [];
     if (requiredSkills.length > 0) {
       let matched = 0;
+      const matchedList: string[] = [];
       for (const req of requiredSkills) {
         if (userSkillNames.has(normaliseName(req.name))) {
           matched++;
+          matchedList.push(req.name);
         } else {
           gaps.push({
             skill: req.name,
@@ -300,8 +308,10 @@ export class ScoringService {
         }
       }
       breakdown.technical = clamp((matched / requiredSkills.length) * 25, 25);
+      breakdown.matchedSkills = matchedList;
     } else {
       breakdown.technical = 18; // general scope
+      breakdown.matchedSkills = [];
     }
 
     // 2. Budget Fit (20 pts)

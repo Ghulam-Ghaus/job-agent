@@ -12,6 +12,7 @@ import { OpportunitiesService } from './opportunities.service.js';
 import { CreateOpportunityDto } from './dto/create-opportunity.dto.js';
 import { UpdateOpportunityDto } from './dto/update-opportunity.dto.js';
 import { DecideApprovalDto, UpdateCoverNoteDto } from './dto/approval.dto.js';
+import { GenerateScreeningAnswersDto } from './dto/screening-answers.dto.js';
 import { CurrentUser } from '../auth/decorators/current-user/current-user.decorator.js';
 import { ApplyPackService } from './apply-pack.service.js';
 import { ApprovalService } from './approval.service.js';
@@ -114,5 +115,15 @@ export class OpportunitiesController {
     @Body() dto: UpdateCoverNoteDto,
   ) {
     return this.applyPackService.updateCoverNote(id, userId, dto.coverNoteEdited);
+  }
+
+  @Post(':id/screening-answers')
+  @ApiOperation({ summary: 'Generate grounded answers for custom HR/ATS screening questions' })
+  generateScreeningAnswers(
+    @Param('id') id: string,
+    @CurrentUser('id') userId: string,
+    @Body() dto: GenerateScreeningAnswersDto,
+  ) {
+    return this.applyPackService.generateScreeningAnswers(id, userId, dto.questions);
   }
 }

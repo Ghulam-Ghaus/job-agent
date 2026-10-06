@@ -3,9 +3,10 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../src/generated/prisma/client.js';
 
 /**
- * Idempotent import of production projects into the Master Profile.
+ * Idempotent import of production projects & skills into the Master Profile.
  * Facts below are copied from the owner's own project descriptions — nothing is invented.
- * A project is skipped if an existing one matches by normalized title or alias.
+ * A project is updated or inserted if an existing one matches by normalized title or alias.
+ * Unique skills are upserted into the user's Skill pool with zero duplicates.
  *
  * Usage:  pnpm --filter backend exec tsx prisma/seed-projects.ts [--dry]
  */
@@ -21,17 +22,83 @@ interface SeedProject {
 
 const PROJECTS: SeedProject[] = [
   {
-    title: 'Voice Intake System',
-    aliases: ['voice intake', 'ai voice intake'],
+    title: 'Real-Time Voice Intake Platform (Enterprise AI Agent)',
+    aliases: ['voice intake system', 'voice intake', 'ai voice intake', 'real time voice intake platform'],
     description:
-      'AI-driven voice intake and scheduling platform for the legal industry, designed to handle live phone calls with low-latency audio streaming. Built conversational agents for call qualification and automated booking, with a scalable multi-tenant backend integrating STT/TTS pipelines, Supabase persistence, and external calendaring services.',
-    techStack: ['Python', 'WebSockets', 'Twilio', 'Whisper STT', 'Cartesia TTS', 'Supabase'],
-    highlights: [
-      'Handles live phone calls with low-latency audio streaming',
-      'Conversational agents for call qualification and automated booking',
-      'Multi-tenant backend integrating STT/TTS pipelines and external calendaring services',
+      'AI-powered voice assistant platform for business intake and customer interactions using Twilio and LLMs. Designed for live phone calls with low-latency audio streaming, conversational agents for call qualification, automated booking, and deterministic state machine (FSM) workflows.',
+    techStack: [
+      'Python',
+      'Node.js',
+      'Twilio',
+      'SendGrid',
+      'Google Calendar API',
+      'WebSockets',
+      'OpenAI',
+      'Whisper STT',
+      'Piper',
+      'Cartesia TTS',
+      'Voice to Voice',
+      'LLM',
+      'Agentic AI',
+      'RAG',
+      'Generative AI',
+      'AI Agent',
+      'FSM Deterministic',
+      'n8n',
+      'Vapi',
+      'Supabase',
     ],
-    tags: ['AI', 'Voice AI', 'Legal', 'Real-time'],
+    highlights: [
+      'Handles live phone calls with low-latency audio streaming and Voice-to-Voice pipelines',
+      'Deterministic finite-state machine (FSM) qualification and automated booking workflows',
+      'Multi-tenant backend integrating STT/TTS pipelines, Supabase persistence, and external calendaring/email',
+      'Agentic RAG workflows and tool calling for real-time customer data retrieval',
+    ],
+    tags: ['AI', 'Voice AI', 'Agentic AI', 'Real-time', 'FSM', 'RAG'],
+  },
+  {
+    title: 'Esports Event Management Platform',
+    aliases: ['esports event management platform', 'esports platform', 'esports management'],
+    description:
+      'Enterprise platform for managing gaming tournaments, teams, schedules, and live event management. Features real-time bracket orchestration, live game telemetry, and multi-tier data storage.',
+    techStack: ['Next.js', 'Node.js', 'NestJS', 'Socket.io', 'Supabase', 'S3 / Bucket', 'DynamoDB'],
+    highlights: [
+      'Real-time tournament bracket orchestration and live score tracking using Socket.io and WebSockets',
+      'Team, player, and schedule management with live match event streaming',
+      'Multi-tier cloud storage combining Supabase, S3 buckets, and DynamoDB for high-throughput reads',
+    ],
+    tags: ['Gaming', 'Esports', 'Real-time', 'WebSockets', 'Cloud'],
+  },
+  {
+    title: 'JobAgent AI Autopilot (Autonomous Career & Client Agent)',
+    aliases: ['jobagent ai autopilot', 'jobagent', 'ai job agent', 'job agent'],
+    description:
+      'Autonomous agentic career accelerator and client discovery engine. Crawls corporate ATS portals (Greenhouse, Lever) and freelance boards, scores opportunities via deterministic profile fact-matching, generates JD-targeted vector CVs/letters via PDFKit, enforces human-in-the-loop ApprovalRecords, and dispatches real-time Telegram alerts.',
+    techStack: [
+      'Next.js',
+      'NestJS',
+      'TypeScript',
+      'PostgreSQL',
+      'Prisma',
+      'Redis',
+      'BullMQ',
+      'Agentic AI',
+      'RAG',
+      'Generative AI',
+      'AI Agent',
+      'FSM Deterministic',
+      'n8n',
+      'Vapi',
+      'PDFKit',
+    ],
+    highlights: [
+      'Autonomous multi-channel ingestion with ATS connectors, deduplication engine, and rate limiting',
+      'Deterministic RAG-style profile fact-matching with zero AI hallucination safeguard',
+      'Human-in-the-loop ApprovalRecords requiring explicit user confirmation before application dispatch',
+      'Location-aware vector PDFKit engine auto-generating Gulf Executive vs European Standard CV layouts',
+      'Real-time Telegram notifications and background job orchestration via Redis & BullMQ',
+    ],
+    tags: ['AI Agent', 'Agentic AI', 'RAG', 'Automation', 'Full Stack', 'NestJS'],
   },
   {
     title: 'The Nursery App (TNA)',
@@ -108,6 +175,25 @@ const PROJECTS: SeedProject[] = [
   },
 ];
 
+const SKILLS_TO_SEED = [
+  { name: 'Agentic AI', category: 'AI & Machine Learning', level: 'EXPERT' },
+  { name: 'RAG', category: 'AI & Machine Learning', level: 'EXPERT' },
+  { name: 'Generative AI', category: 'AI & Machine Learning', level: 'EXPERT' },
+  { name: 'AI Agent', category: 'AI & Machine Learning', level: 'EXPERT' },
+  { name: 'FSM Deterministic', category: 'Architecture & Design', level: 'EXPERT' },
+  { name: 'n8n', category: 'Workflow Automation', level: 'INTERMEDIATE' },
+  { name: 'Vapi', category: 'Voice AI', level: 'EXPERT' },
+  { name: 'Socket.io', category: 'Real-time & Networking', level: 'EXPERT' },
+  { name: 'Twilio', category: 'Voice & Telephony', level: 'EXPERT' },
+  { name: 'Whisper', category: 'Speech-to-Text', level: 'EXPERT' },
+  { name: 'Cartesia', category: 'Text-to-Speech', level: 'EXPERT' },
+  { name: 'Piper', category: 'Text-to-Speech', level: 'INTERMEDIATE' },
+  { name: 'DynamoDB', category: 'Databases', level: 'INTERMEDIATE' },
+  { name: 'Supabase', category: 'Databases & BaaS', level: 'EXPERT' },
+  { name: 'Voice to Voice', category: 'Voice AI', level: 'EXPERT' },
+  { name: 'S3', category: 'Cloud & Storage', level: 'EXPERT' },
+] as const;
+
 const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 
 async function main() {
@@ -120,38 +206,81 @@ async function main() {
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) throw new Error(`User ${email} not found`);
 
+  console.log(`\n── 1. Managing Projects for ${email} ──`);
   const existing = await prisma.project.findMany({ where: { userId: user.id } });
-  console.log(`Existing projects (${existing.length}):`);
-  existing.forEach((p) => console.log(`  - ${p.title}`));
+  console.log(`Found ${existing.length} existing project(s) in database.`);
 
-  let created = 0;
+  let createdCount = 0;
+  let updatedCount = 0;
+
   for (const proj of PROJECTS) {
     const keys = [proj.title, ...proj.aliases].map(norm);
     const match = existing.find((e) => {
       const t = norm(e.title);
-      return keys.some((k) => t === k || t.includes(k));
+      return keys.some((k) => t === k || t.includes(k) || k.includes(t));
     });
+
     if (match) {
-      console.log(`SKIP  "${proj.title}" (matches existing "${match.title}")`);
-      continue;
-    }
-    console.log(`${dry ? 'WOULD ADD' : 'ADD'}  "${proj.title}"`);
-    if (!dry) {
-      await prisma.project.create({
-        data: {
-          userId: user.id,
-          title: proj.title,
-          description: proj.description,
-          techStack: proj.techStack,
-          highlights: proj.highlights,
-          tags: proj.tags,
-          isPublic: true,
-        },
-      });
-      created++;
+      console.log(`UPDATE "${proj.title}" (matched existing "${match.title}")`);
+      if (!dry) {
+        await prisma.project.update({
+          where: { id: match.id },
+          data: {
+            title: proj.title,
+            description: proj.description,
+            techStack: proj.techStack,
+            highlights: proj.highlights,
+            tags: proj.tags,
+            isPublic: true,
+          },
+        });
+      }
+      updatedCount++;
+    } else {
+      console.log(`CREATE "${proj.title}"`);
+      if (!dry) {
+        await prisma.project.create({
+          data: {
+            userId: user.id,
+            title: proj.title,
+            description: proj.description,
+            techStack: proj.techStack,
+            highlights: proj.highlights,
+            tags: proj.tags,
+            isPublic: true,
+          },
+        });
+      }
+      createdCount++;
     }
   }
-  console.log(`Done. ${dry ? 'Dry run, nothing written.' : `${created} project(s) created.`}`);
+
+  console.log(`\n── 2. Syncing Skills Pool (Zero Duplicates) ──`);
+  let skillsAdded = 0;
+  for (const s of SKILLS_TO_SEED) {
+    const existingSkill = await prisma.skill.findUnique({
+      where: { userId_name: { userId: user.id, name: s.name } },
+    });
+    if (!existingSkill) {
+      console.log(`ADD SKILL "${s.name}" (${s.category})`);
+      if (!dry) {
+        await prisma.skill.create({
+          data: {
+            userId: user.id,
+            name: s.name,
+            category: s.category,
+            level: s.level,
+            yearsOfExp: 3,
+          },
+        });
+      }
+      skillsAdded++;
+    } else {
+      console.log(`SKIP SKILL "${s.name}" (already present)`);
+    }
+  }
+
+  console.log(`\nDone. Projects: ${createdCount} created, ${updatedCount} updated. Skills: ${skillsAdded} added.`);
   await prisma.$disconnect();
 }
 
