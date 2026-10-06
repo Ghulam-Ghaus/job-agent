@@ -5,6 +5,7 @@ import { CreateOpportunityDto } from './dto/create-opportunity.dto.js';
 import { UpdateOpportunityDto } from './dto/update-opportunity.dto.js';
 import { ExtractionService } from './extraction.service.js';
 import { ScoringService } from './scoring.service.js';
+import { EligibilityRulesService } from './rules/eligibility-rules.service.js';
 
 @Injectable()
 export class OpportunitiesService {
@@ -14,6 +15,7 @@ export class OpportunitiesService {
     private readonly prisma: PrismaService,
     private readonly extraction: ExtractionService,
     private readonly scoring: ScoringService,
+    private readonly eligibility: EligibilityRulesService,
   ) {}
 
   /** Manually ingest → extract → score. Dedup by content hash. */
@@ -95,8 +97,47 @@ export class OpportunitiesService {
           },
         });
 
+        // ── 2.5 Eligibility filter (Feature 1) ──────────────────────────
+        const eligibility = this.eligibility.evaluate({
+          title: fields.title ?? opp.title,
+          rawText: opp.rawText,
+          postedAt: opp.postedAt,
+          yearsRequired: fields.yearsExp,
+          skillsRequired: fields.skills?.map((s) => s.name),
+        });
+
+        if (eligibility.isFilteredOut) {
+          this.logger.warn(`Opp ${opp.id} hard-rejected: ${eligibility.filterReason}`);
+          await this.prisma.opportunity.update({
+            where: { id: opp.id },
+            data: {
+              status: 'FILTERED_OUT',
+              filterReason: eligibility.filterReason,
+              filterFlags: [],
+              scoreAdjustments: [],
+            },
+          });
+          return this.prisma.opportunity.findUnique({
+            where: { id: opp.id },
+            include: { requirement: true, match: true, applyPack: true },
+          });
+        }
+
+        await this.prisma.opportunity.update({
+          where: { id: opp.id },
+          data: {
+            filterFlags: eligibility.softFlags,
+            scoreAdjustments: eligibility.scoreAdjustments as object[],
+          },
+        });
+
         // ── 3. Score against user profile ─────────────────────────────────
-        const matchResult = await this.scoring.score(userId, fields, opp.type);
+        const matchResult = await this.scoring.score(
+          userId,
+          fields,
+          opp.type,
+          eligibility.scoreAdjustments,
+        );
         await this.prisma.opportunityMatch.upsert({
           where: { opportunityId: opp.id },
           create: {
@@ -260,7 +301,45 @@ export class OpportunitiesService {
           },
         });
 
-        const matchResult = await this.scoring.score(userId, fields, opp.type);
+        const eligibility = this.eligibility.evaluate({
+          title: fields.title ?? opp.title,
+          rawText: opp.rawText,
+          postedAt: opp.postedAt,
+          yearsRequired: fields.yearsExp,
+          skillsRequired: fields.skills?.map((s) => s.name),
+        });
+
+        if (eligibility.isFilteredOut) {
+          this.logger.warn(`Opp ${opp.id} from URL ${url} hard-rejected: ${eligibility.filterReason}`);
+          await this.prisma.opportunity.update({
+            where: { id: opp.id },
+            data: {
+              status: 'FILTERED_OUT',
+              filterReason: eligibility.filterReason,
+              filterFlags: [],
+              scoreAdjustments: [],
+            },
+          });
+          return this.prisma.opportunity.findUnique({
+            where: { id: opp.id },
+            include: { requirement: true, match: true, applyPack: true },
+          });
+        }
+
+        await this.prisma.opportunity.update({
+          where: { id: opp.id },
+          data: {
+            filterFlags: eligibility.softFlags,
+            scoreAdjustments: eligibility.scoreAdjustments as object[],
+          },
+        });
+
+        const matchResult = await this.scoring.score(
+          userId,
+          fields,
+          opp.type,
+          eligibility.scoreAdjustments,
+        );
         await this.prisma.opportunityMatch.upsert({
           where: { opportunityId: opp.id },
           create: {
@@ -287,6 +366,47 @@ export class OpportunitiesService {
       this.logger.error(`Failed to ingest single job from URL ${url}: ${String(err)}`);
       return null;
     }
+  }
+
+  /**
+   * User override for an opportunity that was filtered out.
+   * Restores status to QUALIFIED, removes filterReason, and recalculates score.
+   */
+  async overrideFilter(id: string, userId: string) {
+    const opp = await this.prisma.opportunity.findFirst({
+      where: { id, userId },
+      include: { requirement: true },
+    });
+    if (!opp) throw new NotFoundException(`Opportunity ${id} not found`);
+
+    const fields = (opp.requirement?.fieldsJson as any) || { title: opp.title, rawText: opp.rawText };
+    const matchResult = await this.scoring.score(userId, fields, opp.type);
+
+    await this.prisma.opportunityMatch.upsert({
+      where: { opportunityId: opp.id },
+      create: {
+        opportunityId: opp.id,
+        score: matchResult.score,
+        breakdownJson: matchResult.breakdown as object,
+        gapsJson: matchResult.gaps as object[],
+        recommendedCvId: matchResult.recommendedCvId,
+      },
+      update: {
+        score: matchResult.score,
+        breakdownJson: matchResult.breakdown as object,
+        gapsJson: matchResult.gaps as object[],
+        recommendedCvId: matchResult.recommendedCvId,
+      },
+    });
+
+    return this.prisma.opportunity.update({
+      where: { id },
+      data: {
+        status: 'QUALIFIED',
+        filterReason: null,
+      },
+      include: { requirement: true, match: true, applyPack: true },
+    });
   }
 
   private async fetchWebpageContent(url: string): Promise<{ text: string; individualJobUrls?: string[] }> {

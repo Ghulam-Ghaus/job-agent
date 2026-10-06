@@ -51,6 +51,7 @@ function statusBadge(status: string): { label: string; color: string; bg: string
     SHORTLISTED: { label: 'Shortlisted', color: '#67e8f9', bg: 'rgba(6,182,212,.15)' },
     REJECTED: { label: 'Rejected', color: '#f87171', bg: 'rgba(239,68,68,.1)' },
     ARCHIVED: { label: 'Archived', color: '#6b7280', bg: 'rgba(107,114,128,.1)' },
+    FILTERED_OUT: { label: 'Filtered Out', color: '#f87171', bg: 'rgba(239,68,68,.18)' },
   };
   return map[status] ?? { label: status, color: '#94a3b8', bg: 'rgba(148,163,184,.1)' };
 }
@@ -512,6 +513,86 @@ function EvidenceDrawer({
             }}
           >
             ✓ {actionMsg}
+          </div>
+        )}
+
+        {/* Filtered Out Banner */}
+        {currentOpp.status === 'FILTERED_OUT' && (
+          <div
+            style={{
+              padding: '14px 16px',
+              borderRadius: 10,
+              background: 'rgba(239,68,68,.12)',
+              border: '1px solid rgba(239,68,68,.3)',
+              marginBottom: 16,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 12,
+            }}
+          >
+            <div>
+              <div style={{ color: '#f87171', fontWeight: 700, fontSize: 13, marginBottom: 2 }}>
+                🚫 Filtered Out by Eligibility Rules
+              </div>
+              <div style={{ color: '#fca5a5', fontSize: 12 }}>
+                {currentOpp.filterReason ?? 'Does not meet candidate criteria'}
+              </div>
+            </div>
+            <button
+              onClick={async () => {
+                try {
+                  const updated = await api.opportunities.overrideFilter(currentOpp.id);
+                  setCurrentOpp(updated);
+                  onUpdated?.(updated);
+                  setActionMsg('Filter overridden! Fit score calculated.');
+                } catch {
+                  alert('Failed to override filter');
+                }
+              }}
+              style={{
+                padding: '8px 14px',
+                borderRadius: 8,
+                border: 'none',
+                background: '#10b981',
+                color: '#fff',
+                fontSize: 12,
+                fontWeight: 700,
+                cursor: 'pointer',
+                flexShrink: 0,
+              }}
+            >
+              ✓ Override & Score
+            </button>
+          </div>
+        )}
+
+        {/* Soft Warning Flags */}
+        {currentOpp.filterFlags && currentOpp.filterFlags.length > 0 && (
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 14 }}>
+            {currentOpp.filterFlags.map((flag) => {
+              const flagLabels: Record<string, string> = {
+                ARABIC_REQUIRED: '⚠️ Arabic Required / Fluent',
+                CONTRACT_NO_VISA: '⚠️ Contract (No Visa Info)',
+                ONSITE_NO_RELOCATION: '⚠️ Onsite (No Relocation Info)',
+              };
+              return (
+                <span
+                  key={flag}
+                  style={{
+                    padding: '4px 10px',
+                    borderRadius: 6,
+                    fontSize: 11,
+                    fontWeight: 600,
+                    color: '#fbbf24',
+                    background: 'rgba(245,158,11,.15)',
+                    border: '1px solid rgba(245,158,11,.3)',
+                  }}
+                >
+                  {flagLabels[flag] ?? `⚠️ ${flag}`}
+                </span>
+              );
+            })}
           </div>
         )}
 
@@ -1275,6 +1356,7 @@ function OpportunityCard({
   onDelete,
   onReprocess,
   onBuildPack,
+  onOverrideFilter,
   buildingPack,
 }: {
   opp: Opportunity;
@@ -1282,6 +1364,7 @@ function OpportunityCard({
   onDelete: () => void;
   onReprocess: () => void;
   onBuildPack: () => void;
+  onOverrideFilter?: () => void;
   buildingPack: boolean;
 }) {
   const match = opp.match;
@@ -1374,6 +1457,49 @@ function OpportunityCard({
           >
             {badge.label}
           </span>
+          {opp.status === 'FILTERED_OUT' && opp.filterReason && (
+            <span
+              title={opp.filterReason}
+              style={{
+                padding: '2px 8px',
+                borderRadius: 4,
+                fontSize: 11,
+                fontWeight: 600,
+                color: '#fca5a5',
+                background: 'rgba(239,68,68,.18)',
+                border: '1px solid rgba(239,68,68,.35)',
+                whiteSpace: 'nowrap',
+                maxWidth: 260,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              🚫 {opp.filterReason}
+            </span>
+          )}
+          {opp.filterFlags && opp.filterFlags.length > 0 && opp.filterFlags.map((flag) => {
+            const flagLabels: Record<string, string> = {
+              ARABIC_REQUIRED: '⚠️ Arabic',
+              CONTRACT_NO_VISA: '⚠️ Contract (No Visa)',
+              ONSITE_NO_RELOCATION: '⚠️ Onsite',
+            };
+            return (
+              <span
+                key={flag}
+                style={{
+                  padding: '2px 6px',
+                  borderRadius: 4,
+                  fontSize: 10,
+                  fontWeight: 600,
+                  color: '#fbbf24',
+                  background: 'rgba(245,158,11,.15)',
+                  border: '1px solid rgba(245,158,11,.3)',
+                }}
+              >
+                {flagLabels[flag] ?? `⚠️ ${flag}`}
+              </span>
+            );
+          })}
         </div>
         <div style={{ fontSize: 13, color: '#64748b', marginBottom: 6 }}>
           {opp.company ?? '—'} {opp.country ? `· ${opp.country}` : ''} {opp.city ? `· ${opp.city}` : ''}
@@ -1411,6 +1537,27 @@ function OpportunityCard({
         style={{ display: 'flex', gap: 6, flexShrink: 0 }}
         onClick={(e) => e.stopPropagation()}
       >
+        {opp.status === 'FILTERED_OUT' && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onOverrideFilter?.();
+            }}
+            title="Override eligibility filter"
+            style={{
+              padding: '6px 12px',
+              borderRadius: 6,
+              border: '1px solid rgba(16,185,129,.4)',
+              background: 'rgba(16,185,129,.15)',
+              color: '#34d399',
+              cursor: 'pointer',
+              fontSize: 12,
+              fontWeight: 600,
+            }}
+          >
+            ✓ Override
+          </button>
+        )}
         {!opp.requirement && (
           <button
             onClick={onReprocess}
@@ -1482,6 +1629,7 @@ export default function JobsDashboard() {
   const [buildingPackId, setBuildingPackId] = useState<string | null>(null);
   const [filterStatus, setFilterStatus] = useState<string>('ALL');
   const [filterType, setFilterType] = useState<'ALL' | 'JOB' | 'FREELANCE'>('ALL');
+  const [showFilteredOut, setShowFilteredOut] = useState(false);
   const [syncing, setSyncing] = useState(false);
 
   async function handleSyncConnectors() {
@@ -1526,6 +1674,16 @@ export default function JobsDashboard() {
     setOpps((prev) => prev.filter((o) => o.id !== id));
   }
 
+  async function handleOverrideFilter(id: string) {
+    try {
+      const updated = await api.opportunities.overrideFilter(id);
+      setOpps((prev) => prev.map((o) => (o.id === id ? updated : o)));
+      if (selectedOpp?.id === id) setSelectedOpp(updated);
+    } catch (e) {
+      alert(e instanceof Error ? e.message : 'Override failed');
+    }
+  }
+
   async function handleReprocess(id: string) {
     setReprocessingId(id);
     try {
@@ -1551,8 +1709,11 @@ export default function JobsDashboard() {
     }
   }
 
-  const statuses = ['ALL', 'DISCOVERED', 'QUALIFIED', 'DRAFT_READY', 'APPLIED', 'SHORTLISTED', 'REJECTED'];
+  const statuses = ['ALL', 'DISCOVERED', 'QUALIFIED', 'DRAFT_READY', 'APPLIED', 'SHORTLISTED', 'REJECTED', 'FILTERED_OUT'];
   const filtered = opps.filter((o) => {
+    if (!showFilteredOut && filterStatus !== 'FILTERED_OUT' && o.status === 'FILTERED_OUT') {
+      return false;
+    }
     const statusMatch = filterStatus === 'ALL' || o.status === filterStatus;
     const typeMatch = filterType === 'ALL' || o.type === filterType;
     return statusMatch && typeMatch;
@@ -1674,7 +1835,7 @@ export default function JobsDashboard() {
 
         {/* Filter bar */}
         {opps.length > 0 && (
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 20 }}>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', marginBottom: 20 }}>
             {statuses.map((s) => {
               const count = s === 'ALL' ? opps.length : opps.filter((o) => o.status === s).length;
               const active = filterStatus === s;
@@ -1698,6 +1859,32 @@ export default function JobsDashboard() {
                 </button>
               );
             })}
+
+            {/* Toggle Show Filtered Out */}
+            <button
+              onClick={() => setShowFilteredOut(!showFilteredOut)}
+              style={{
+                marginLeft: 'auto',
+                padding: '5px 14px',
+                borderRadius: 20,
+                border: `1px solid ${showFilteredOut ? 'rgba(239,68,68,.5)' : 'rgba(255,255,255,.1)'}`,
+                background: showFilteredOut ? 'rgba(239,68,68,.18)' : 'rgba(255,255,255,.04)',
+                color: showFilteredOut ? '#fca5a5' : '#94a3b8',
+                cursor: 'pointer',
+                fontSize: 12,
+                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                transition: 'all .2s',
+              }}
+            >
+              <span>{showFilteredOut ? '👁️' : '👁️‍🗨️'}</span>
+              <span>
+                {showFilteredOut ? 'Hide Filtered Out' : 'Show Filtered Out'} (
+                {opps.filter((o) => o.status === 'FILTERED_OUT').length})
+              </span>
+            </button>
           </div>
         )}
 
@@ -1752,6 +1939,7 @@ export default function JobsDashboard() {
                 onDelete={() => handleDelete(opp.id)}
                 onReprocess={() => handleReprocess(opp.id)}
                 onBuildPack={() => handleBuildPack(opp.id)}
+                onOverrideFilter={() => handleOverrideFilter(opp.id)}
                 buildingPack={buildingPackId === opp.id}
               />
             ))}

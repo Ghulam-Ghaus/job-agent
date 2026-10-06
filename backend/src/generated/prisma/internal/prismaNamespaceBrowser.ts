@@ -297,6 +297,13 @@ export const OpportunityScalarFieldEnum = {
   rawText: 'rawText',
   language: 'language',
   postedAt: 'postedAt',
+  filterReason: 'filterReason',
+  filterFlags: 'filterFlags',
+  scoreAdjustments: 'scoreAdjustments',
+  outreachStatus: 'outreachStatus',
+  outreachSentAt: 'outreachSentAt',
+  outreachFollowUpDue: 'outreachFollowUpDue',
+  outreachPack: 'outreachPack',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

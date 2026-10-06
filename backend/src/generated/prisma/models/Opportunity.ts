@@ -41,6 +41,10 @@ export type OpportunityMinAggregateOutputType = {
   rawText: string | null
   language: string | null
   postedAt: Date | null
+  filterReason: string | null
+  outreachStatus: string | null
+  outreachSentAt: Date | null
+  outreachFollowUpDue: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -62,6 +66,10 @@ export type OpportunityMaxAggregateOutputType = {
   rawText: string | null
   language: string | null
   postedAt: Date | null
+  filterReason: string | null
+  outreachStatus: string | null
+  outreachSentAt: Date | null
+  outreachFollowUpDue: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -83,6 +91,13 @@ export type OpportunityCountAggregateOutputType = {
   rawText: number
   language: number
   postedAt: number
+  filterReason: number
+  filterFlags: number
+  scoreAdjustments: number
+  outreachStatus: number
+  outreachSentAt: number
+  outreachFollowUpDue: number
+  outreachPack: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -106,6 +121,10 @@ export type OpportunityMinAggregateInputType = {
   rawText?: true
   language?: true
   postedAt?: true
+  filterReason?: true
+  outreachStatus?: true
+  outreachSentAt?: true
+  outreachFollowUpDue?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -127,6 +146,10 @@ export type OpportunityMaxAggregateInputType = {
   rawText?: true
   language?: true
   postedAt?: true
+  filterReason?: true
+  outreachStatus?: true
+  outreachSentAt?: true
+  outreachFollowUpDue?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -148,6 +171,13 @@ export type OpportunityCountAggregateInputType = {
   rawText?: true
   language?: true
   postedAt?: true
+  filterReason?: true
+  filterFlags?: true
+  scoreAdjustments?: true
+  outreachStatus?: true
+  outreachSentAt?: true
+  outreachFollowUpDue?: true
+  outreachPack?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -242,6 +272,13 @@ export type OpportunityGroupByOutputType = {
   rawText: string
   language: string | null
   postedAt: Date | null
+  filterReason: string | null
+  filterFlags: runtime.JsonValue | null
+  scoreAdjustments: runtime.JsonValue | null
+  outreachStatus: string | null
+  outreachSentAt: Date | null
+  outreachFollowUpDue: Date | null
+  outreachPack: runtime.JsonValue | null
   createdAt: Date
   updatedAt: Date
   _count: OpportunityCountAggregateOutputType | null
@@ -284,6 +321,13 @@ export type OpportunityWhereInput = {
   rawText?: Prisma.StringFilter<"Opportunity"> | string
   language?: Prisma.StringNullableFilter<"Opportunity"> | string | null
   postedAt?: Prisma.DateTimeNullableFilter<"Opportunity"> | Date | string | null
+  filterReason?: Prisma.StringNullableFilter<"Opportunity"> | string | null
+  filterFlags?: Prisma.JsonNullableFilter<"Opportunity">
+  scoreAdjustments?: Prisma.JsonNullableFilter<"Opportunity">
+  outreachStatus?: Prisma.StringNullableFilter<"Opportunity"> | string | null
+  outreachSentAt?: Prisma.DateTimeNullableFilter<"Opportunity"> | Date | string | null
+  outreachFollowUpDue?: Prisma.DateTimeNullableFilter<"Opportunity"> | Date | string | null
+  outreachPack?: Prisma.JsonNullableFilter<"Opportunity">
   createdAt?: Prisma.DateTimeFilter<"Opportunity"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Opportunity"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -312,6 +356,13 @@ export type OpportunityOrderByWithRelationInput = {
   rawText?: Prisma.SortOrder
   language?: Prisma.SortOrderInput | Prisma.SortOrder
   postedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  filterReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  filterFlags?: Prisma.SortOrderInput | Prisma.SortOrder
+  scoreAdjustments?: Prisma.SortOrderInput | Prisma.SortOrder
+  outreachStatus?: Prisma.SortOrderInput | Prisma.SortOrder
+  outreachSentAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  outreachFollowUpDue?: Prisma.SortOrderInput | Prisma.SortOrder
+  outreachPack?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
@@ -344,6 +395,13 @@ export type OpportunityWhereUniqueInput = Prisma.AtLeast<{
   rawText?: Prisma.StringFilter<"Opportunity"> | string
   language?: Prisma.StringNullableFilter<"Opportunity"> | string | null
   postedAt?: Prisma.DateTimeNullableFilter<"Opportunity"> | Date | string | null
+  filterReason?: Prisma.StringNullableFilter<"Opportunity"> | string | null
+  filterFlags?: Prisma.JsonNullableFilter<"Opportunity">
+  scoreAdjustments?: Prisma.JsonNullableFilter<"Opportunity">
+  outreachStatus?: Prisma.StringNullableFilter<"Opportunity"> | string | null
+  outreachSentAt?: Prisma.DateTimeNullableFilter<"Opportunity"> | Date | string | null
+  outreachFollowUpDue?: Prisma.DateTimeNullableFilter<"Opportunity"> | Date | string | null
+  outreachPack?: Prisma.JsonNullableFilter<"Opportunity">
   createdAt?: Prisma.DateTimeFilter<"Opportunity"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Opportunity"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -372,6 +430,13 @@ export type OpportunityOrderByWithAggregationInput = {
   rawText?: Prisma.SortOrder
   language?: Prisma.SortOrderInput | Prisma.SortOrder
   postedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  filterReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  filterFlags?: Prisma.SortOrderInput | Prisma.SortOrder
+  scoreAdjustments?: Prisma.SortOrderInput | Prisma.SortOrder
+  outreachStatus?: Prisma.SortOrderInput | Prisma.SortOrder
+  outreachSentAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  outreachFollowUpDue?: Prisma.SortOrderInput | Prisma.SortOrder
+  outreachPack?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.OpportunityCountOrderByAggregateInput
@@ -399,6 +464,13 @@ export type OpportunityScalarWhereWithAggregatesInput = {
   rawText?: Prisma.StringWithAggregatesFilter<"Opportunity"> | string
   language?: Prisma.StringNullableWithAggregatesFilter<"Opportunity"> | string | null
   postedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Opportunity"> | Date | string | null
+  filterReason?: Prisma.StringNullableWithAggregatesFilter<"Opportunity"> | string | null
+  filterFlags?: Prisma.JsonNullableWithAggregatesFilter<"Opportunity">
+  scoreAdjustments?: Prisma.JsonNullableWithAggregatesFilter<"Opportunity">
+  outreachStatus?: Prisma.StringNullableWithAggregatesFilter<"Opportunity"> | string | null
+  outreachSentAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Opportunity"> | Date | string | null
+  outreachFollowUpDue?: Prisma.DateTimeNullableWithAggregatesFilter<"Opportunity"> | Date | string | null
+  outreachPack?: Prisma.JsonNullableWithAggregatesFilter<"Opportunity">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Opportunity"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Opportunity"> | Date | string
 }
@@ -419,6 +491,13 @@ export type OpportunityCreateInput = {
   rawText: string
   language?: string | null
   postedAt?: Date | string | null
+  filterReason?: string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: string | null
+  outreachSentAt?: Date | string | null
+  outreachFollowUpDue?: Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutOpportunitiesInput
@@ -447,6 +526,13 @@ export type OpportunityUncheckedCreateInput = {
   rawText: string
   language?: string | null
   postedAt?: Date | string | null
+  filterReason?: string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: string | null
+  outreachSentAt?: Date | string | null
+  outreachFollowUpDue?: Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   requirement?: Prisma.OpportunityRequirementUncheckedCreateNestedOneWithoutOpportunityInput
@@ -473,6 +559,13 @@ export type OpportunityUpdateInput = {
   rawText?: Prisma.StringFieldUpdateOperationsInput | string
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  filterReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outreachSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachFollowUpDue?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutOpportunitiesNestedInput
@@ -501,6 +594,13 @@ export type OpportunityUncheckedUpdateInput = {
   rawText?: Prisma.StringFieldUpdateOperationsInput | string
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  filterReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outreachSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachFollowUpDue?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requirement?: Prisma.OpportunityRequirementUncheckedUpdateOneWithoutOpportunityNestedInput
@@ -528,6 +628,13 @@ export type OpportunityCreateManyInput = {
   rawText: string
   language?: string | null
   postedAt?: Date | string | null
+  filterReason?: string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: string | null
+  outreachSentAt?: Date | string | null
+  outreachFollowUpDue?: Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -548,6 +655,13 @@ export type OpportunityUpdateManyMutationInput = {
   rawText?: Prisma.StringFieldUpdateOperationsInput | string
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  filterReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outreachSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachFollowUpDue?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -569,6 +683,13 @@ export type OpportunityUncheckedUpdateManyInput = {
   rawText?: Prisma.StringFieldUpdateOperationsInput | string
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  filterReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outreachSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachFollowUpDue?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -605,6 +726,13 @@ export type OpportunityCountOrderByAggregateInput = {
   rawText?: Prisma.SortOrder
   language?: Prisma.SortOrder
   postedAt?: Prisma.SortOrder
+  filterReason?: Prisma.SortOrder
+  filterFlags?: Prisma.SortOrder
+  scoreAdjustments?: Prisma.SortOrder
+  outreachStatus?: Prisma.SortOrder
+  outreachSentAt?: Prisma.SortOrder
+  outreachFollowUpDue?: Prisma.SortOrder
+  outreachPack?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -626,6 +754,10 @@ export type OpportunityMaxOrderByAggregateInput = {
   rawText?: Prisma.SortOrder
   language?: Prisma.SortOrder
   postedAt?: Prisma.SortOrder
+  filterReason?: Prisma.SortOrder
+  outreachStatus?: Prisma.SortOrder
+  outreachSentAt?: Prisma.SortOrder
+  outreachFollowUpDue?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -647,6 +779,10 @@ export type OpportunityMinOrderByAggregateInput = {
   rawText?: Prisma.SortOrder
   language?: Prisma.SortOrder
   postedAt?: Prisma.SortOrder
+  filterReason?: Prisma.SortOrder
+  outreachStatus?: Prisma.SortOrder
+  outreachSentAt?: Prisma.SortOrder
+  outreachFollowUpDue?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -815,6 +951,13 @@ export type OpportunityCreateWithoutUserInput = {
   rawText: string
   language?: string | null
   postedAt?: Date | string | null
+  filterReason?: string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: string | null
+  outreachSentAt?: Date | string | null
+  outreachFollowUpDue?: Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   requirement?: Prisma.OpportunityRequirementCreateNestedOneWithoutOpportunityInput
@@ -841,6 +984,13 @@ export type OpportunityUncheckedCreateWithoutUserInput = {
   rawText: string
   language?: string | null
   postedAt?: Date | string | null
+  filterReason?: string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: string | null
+  outreachSentAt?: Date | string | null
+  outreachFollowUpDue?: Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   requirement?: Prisma.OpportunityRequirementUncheckedCreateNestedOneWithoutOpportunityInput
@@ -897,6 +1047,13 @@ export type OpportunityScalarWhereInput = {
   rawText?: Prisma.StringFilter<"Opportunity"> | string
   language?: Prisma.StringNullableFilter<"Opportunity"> | string | null
   postedAt?: Prisma.DateTimeNullableFilter<"Opportunity"> | Date | string | null
+  filterReason?: Prisma.StringNullableFilter<"Opportunity"> | string | null
+  filterFlags?: Prisma.JsonNullableFilter<"Opportunity">
+  scoreAdjustments?: Prisma.JsonNullableFilter<"Opportunity">
+  outreachStatus?: Prisma.StringNullableFilter<"Opportunity"> | string | null
+  outreachSentAt?: Prisma.DateTimeNullableFilter<"Opportunity"> | Date | string | null
+  outreachFollowUpDue?: Prisma.DateTimeNullableFilter<"Opportunity"> | Date | string | null
+  outreachPack?: Prisma.JsonNullableFilter<"Opportunity">
   createdAt?: Prisma.DateTimeFilter<"Opportunity"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Opportunity"> | Date | string
 }
@@ -917,6 +1074,13 @@ export type OpportunityCreateWithoutRequirementInput = {
   rawText: string
   language?: string | null
   postedAt?: Date | string | null
+  filterReason?: string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: string | null
+  outreachSentAt?: Date | string | null
+  outreachFollowUpDue?: Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutOpportunitiesInput
@@ -944,6 +1108,13 @@ export type OpportunityUncheckedCreateWithoutRequirementInput = {
   rawText: string
   language?: string | null
   postedAt?: Date | string | null
+  filterReason?: string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: string | null
+  outreachSentAt?: Date | string | null
+  outreachFollowUpDue?: Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   match?: Prisma.OpportunityMatchUncheckedCreateNestedOneWithoutOpportunityInput
@@ -985,6 +1156,13 @@ export type OpportunityUpdateWithoutRequirementInput = {
   rawText?: Prisma.StringFieldUpdateOperationsInput | string
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  filterReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outreachSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachFollowUpDue?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutOpportunitiesNestedInput
@@ -1012,6 +1190,13 @@ export type OpportunityUncheckedUpdateWithoutRequirementInput = {
   rawText?: Prisma.StringFieldUpdateOperationsInput | string
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  filterReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outreachSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachFollowUpDue?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   match?: Prisma.OpportunityMatchUncheckedUpdateOneWithoutOpportunityNestedInput
@@ -1037,6 +1222,13 @@ export type OpportunityCreateWithoutMatchInput = {
   rawText: string
   language?: string | null
   postedAt?: Date | string | null
+  filterReason?: string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: string | null
+  outreachSentAt?: Date | string | null
+  outreachFollowUpDue?: Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutOpportunitiesInput
@@ -1064,6 +1256,13 @@ export type OpportunityUncheckedCreateWithoutMatchInput = {
   rawText: string
   language?: string | null
   postedAt?: Date | string | null
+  filterReason?: string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: string | null
+  outreachSentAt?: Date | string | null
+  outreachFollowUpDue?: Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   requirement?: Prisma.OpportunityRequirementUncheckedCreateNestedOneWithoutOpportunityInput
@@ -1105,6 +1304,13 @@ export type OpportunityUpdateWithoutMatchInput = {
   rawText?: Prisma.StringFieldUpdateOperationsInput | string
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  filterReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outreachSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachFollowUpDue?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutOpportunitiesNestedInput
@@ -1132,6 +1338,13 @@ export type OpportunityUncheckedUpdateWithoutMatchInput = {
   rawText?: Prisma.StringFieldUpdateOperationsInput | string
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  filterReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outreachSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachFollowUpDue?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requirement?: Prisma.OpportunityRequirementUncheckedUpdateOneWithoutOpportunityNestedInput
@@ -1157,6 +1370,13 @@ export type OpportunityCreateWithoutApplyPackInput = {
   rawText: string
   language?: string | null
   postedAt?: Date | string | null
+  filterReason?: string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: string | null
+  outreachSentAt?: Date | string | null
+  outreachFollowUpDue?: Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutOpportunitiesInput
@@ -1184,6 +1404,13 @@ export type OpportunityUncheckedCreateWithoutApplyPackInput = {
   rawText: string
   language?: string | null
   postedAt?: Date | string | null
+  filterReason?: string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: string | null
+  outreachSentAt?: Date | string | null
+  outreachFollowUpDue?: Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   requirement?: Prisma.OpportunityRequirementUncheckedCreateNestedOneWithoutOpportunityInput
@@ -1225,6 +1452,13 @@ export type OpportunityUpdateWithoutApplyPackInput = {
   rawText?: Prisma.StringFieldUpdateOperationsInput | string
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  filterReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outreachSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachFollowUpDue?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutOpportunitiesNestedInput
@@ -1252,6 +1486,13 @@ export type OpportunityUncheckedUpdateWithoutApplyPackInput = {
   rawText?: Prisma.StringFieldUpdateOperationsInput | string
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  filterReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outreachSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachFollowUpDue?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requirement?: Prisma.OpportunityRequirementUncheckedUpdateOneWithoutOpportunityNestedInput
@@ -1277,6 +1518,13 @@ export type OpportunityCreateWithoutTailoredCvsInput = {
   rawText: string
   language?: string | null
   postedAt?: Date | string | null
+  filterReason?: string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: string | null
+  outreachSentAt?: Date | string | null
+  outreachFollowUpDue?: Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutOpportunitiesInput
@@ -1304,6 +1552,13 @@ export type OpportunityUncheckedCreateWithoutTailoredCvsInput = {
   rawText: string
   language?: string | null
   postedAt?: Date | string | null
+  filterReason?: string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: string | null
+  outreachSentAt?: Date | string | null
+  outreachFollowUpDue?: Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   requirement?: Prisma.OpportunityRequirementUncheckedCreateNestedOneWithoutOpportunityInput
@@ -1345,6 +1600,13 @@ export type OpportunityUpdateWithoutTailoredCvsInput = {
   rawText?: Prisma.StringFieldUpdateOperationsInput | string
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  filterReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outreachSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachFollowUpDue?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutOpportunitiesNestedInput
@@ -1372,6 +1634,13 @@ export type OpportunityUncheckedUpdateWithoutTailoredCvsInput = {
   rawText?: Prisma.StringFieldUpdateOperationsInput | string
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  filterReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outreachSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachFollowUpDue?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requirement?: Prisma.OpportunityRequirementUncheckedUpdateOneWithoutOpportunityNestedInput
@@ -1397,6 +1666,13 @@ export type OpportunityCreateWithoutCoverLettersInput = {
   rawText: string
   language?: string | null
   postedAt?: Date | string | null
+  filterReason?: string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: string | null
+  outreachSentAt?: Date | string | null
+  outreachFollowUpDue?: Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutOpportunitiesInput
@@ -1424,6 +1700,13 @@ export type OpportunityUncheckedCreateWithoutCoverLettersInput = {
   rawText: string
   language?: string | null
   postedAt?: Date | string | null
+  filterReason?: string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: string | null
+  outreachSentAt?: Date | string | null
+  outreachFollowUpDue?: Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   requirement?: Prisma.OpportunityRequirementUncheckedCreateNestedOneWithoutOpportunityInput
@@ -1465,6 +1748,13 @@ export type OpportunityUpdateWithoutCoverLettersInput = {
   rawText?: Prisma.StringFieldUpdateOperationsInput | string
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  filterReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outreachSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachFollowUpDue?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutOpportunitiesNestedInput
@@ -1492,6 +1782,13 @@ export type OpportunityUncheckedUpdateWithoutCoverLettersInput = {
   rawText?: Prisma.StringFieldUpdateOperationsInput | string
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  filterReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outreachSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachFollowUpDue?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requirement?: Prisma.OpportunityRequirementUncheckedUpdateOneWithoutOpportunityNestedInput
@@ -1517,6 +1814,13 @@ export type OpportunityCreateWithoutInterviewPrepsInput = {
   rawText: string
   language?: string | null
   postedAt?: Date | string | null
+  filterReason?: string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: string | null
+  outreachSentAt?: Date | string | null
+  outreachFollowUpDue?: Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutOpportunitiesInput
@@ -1544,6 +1848,13 @@ export type OpportunityUncheckedCreateWithoutInterviewPrepsInput = {
   rawText: string
   language?: string | null
   postedAt?: Date | string | null
+  filterReason?: string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: string | null
+  outreachSentAt?: Date | string | null
+  outreachFollowUpDue?: Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   requirement?: Prisma.OpportunityRequirementUncheckedCreateNestedOneWithoutOpportunityInput
@@ -1585,6 +1896,13 @@ export type OpportunityUpdateWithoutInterviewPrepsInput = {
   rawText?: Prisma.StringFieldUpdateOperationsInput | string
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  filterReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outreachSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachFollowUpDue?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutOpportunitiesNestedInput
@@ -1612,6 +1930,13 @@ export type OpportunityUncheckedUpdateWithoutInterviewPrepsInput = {
   rawText?: Prisma.StringFieldUpdateOperationsInput | string
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  filterReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outreachSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachFollowUpDue?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requirement?: Prisma.OpportunityRequirementUncheckedUpdateOneWithoutOpportunityNestedInput
@@ -1637,6 +1962,13 @@ export type OpportunityCreateManyUserInput = {
   rawText: string
   language?: string | null
   postedAt?: Date | string | null
+  filterReason?: string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: string | null
+  outreachSentAt?: Date | string | null
+  outreachFollowUpDue?: Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1657,6 +1989,13 @@ export type OpportunityUpdateWithoutUserInput = {
   rawText?: Prisma.StringFieldUpdateOperationsInput | string
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  filterReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outreachSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachFollowUpDue?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requirement?: Prisma.OpportunityRequirementUpdateOneWithoutOpportunityNestedInput
@@ -1683,6 +2022,13 @@ export type OpportunityUncheckedUpdateWithoutUserInput = {
   rawText?: Prisma.StringFieldUpdateOperationsInput | string
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  filterReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outreachSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachFollowUpDue?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   requirement?: Prisma.OpportunityRequirementUncheckedUpdateOneWithoutOpportunityNestedInput
@@ -1709,6 +2055,13 @@ export type OpportunityUncheckedUpdateManyWithoutUserInput = {
   rawText?: Prisma.StringFieldUpdateOperationsInput | string
   language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   postedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  filterReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  filterFlags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  scoreAdjustments?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  outreachStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  outreachSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachFollowUpDue?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  outreachPack?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1779,6 +2132,13 @@ export type OpportunitySelect<ExtArgs extends runtime.Types.Extensions.InternalA
   rawText?: boolean
   language?: boolean
   postedAt?: boolean
+  filterReason?: boolean
+  filterFlags?: boolean
+  scoreAdjustments?: boolean
+  outreachStatus?: boolean
+  outreachSentAt?: boolean
+  outreachFollowUpDue?: boolean
+  outreachPack?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1808,6 +2168,13 @@ export type OpportunitySelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   rawText?: boolean
   language?: boolean
   postedAt?: boolean
+  filterReason?: boolean
+  filterFlags?: boolean
+  scoreAdjustments?: boolean
+  outreachStatus?: boolean
+  outreachSentAt?: boolean
+  outreachFollowUpDue?: boolean
+  outreachPack?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1830,6 +2197,13 @@ export type OpportunitySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   rawText?: boolean
   language?: boolean
   postedAt?: boolean
+  filterReason?: boolean
+  filterFlags?: boolean
+  scoreAdjustments?: boolean
+  outreachStatus?: boolean
+  outreachSentAt?: boolean
+  outreachFollowUpDue?: boolean
+  outreachPack?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1852,11 +2226,18 @@ export type OpportunitySelectScalar = {
   rawText?: boolean
   language?: boolean
   postedAt?: boolean
+  filterReason?: boolean
+  filterFlags?: boolean
+  scoreAdjustments?: boolean
+  outreachStatus?: boolean
+  outreachSentAt?: boolean
+  outreachFollowUpDue?: boolean
+  outreachPack?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type OpportunityOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "type" | "status" | "contentHash" | "fingerprint" | "sourceType" | "sourceRef" | "title" | "company" | "country" | "city" | "url" | "rawText" | "language" | "postedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["opportunity"]>
+export type OpportunityOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "type" | "status" | "contentHash" | "fingerprint" | "sourceType" | "sourceRef" | "title" | "company" | "country" | "city" | "url" | "rawText" | "language" | "postedAt" | "filterReason" | "filterFlags" | "scoreAdjustments" | "outreachStatus" | "outreachSentAt" | "outreachFollowUpDue" | "outreachPack" | "createdAt" | "updatedAt", ExtArgs["result"]["opportunity"]>
 export type OpportunityInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   requirement?: boolean | Prisma.Opportunity$requirementArgs<ExtArgs>
@@ -1902,6 +2283,13 @@ export type $OpportunityPayload<ExtArgs extends runtime.Types.Extensions.Interna
     rawText: string
     language: string | null
     postedAt: Date | null
+    filterReason: string | null
+    filterFlags: runtime.JsonValue | null
+    scoreAdjustments: runtime.JsonValue | null
+    outreachStatus: string | null
+    outreachSentAt: Date | null
+    outreachFollowUpDue: Date | null
+    outreachPack: runtime.JsonValue | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["opportunity"]>
@@ -2350,6 +2738,13 @@ export interface OpportunityFieldRefs {
   readonly rawText: Prisma.FieldRef<"Opportunity", 'String'>
   readonly language: Prisma.FieldRef<"Opportunity", 'String'>
   readonly postedAt: Prisma.FieldRef<"Opportunity", 'DateTime'>
+  readonly filterReason: Prisma.FieldRef<"Opportunity", 'String'>
+  readonly filterFlags: Prisma.FieldRef<"Opportunity", 'Json'>
+  readonly scoreAdjustments: Prisma.FieldRef<"Opportunity", 'Json'>
+  readonly outreachStatus: Prisma.FieldRef<"Opportunity", 'String'>
+  readonly outreachSentAt: Prisma.FieldRef<"Opportunity", 'DateTime'>
+  readonly outreachFollowUpDue: Prisma.FieldRef<"Opportunity", 'DateTime'>
+  readonly outreachPack: Prisma.FieldRef<"Opportunity", 'Json'>
   readonly createdAt: Prisma.FieldRef<"Opportunity", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Opportunity", 'DateTime'>
 }

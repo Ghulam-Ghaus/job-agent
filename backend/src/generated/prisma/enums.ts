@@ -60,7 +60,8 @@ export const OpportunityStatus = {
   OFFER: 'OFFER',
   REJECTED: 'REJECTED',
   WITHDRAWN: 'WITHDRAWN',
-  CLOSED: 'CLOSED'
+  CLOSED: 'CLOSED',
+  FILTERED_OUT: 'FILTERED_OUT'
 } as const
 
 export type OpportunityStatus = (typeof OpportunityStatus)[keyof typeof OpportunityStatus]

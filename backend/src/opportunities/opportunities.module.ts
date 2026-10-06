@@ -8,6 +8,8 @@ import { ApprovalService } from './approval.service.js';
 import { LlmModule } from '../llm/llm.module.js';
 import { PrismaModule } from '../prisma/prisma.module.js';
 
+import { EligibilityRulesService } from './rules/eligibility-rules.service.js';
+
 @Module({
   imports: [LlmModule, PrismaModule],
   controllers: [OpportunitiesController],
@@ -17,6 +19,7 @@ import { PrismaModule } from '../prisma/prisma.module.js';
     ScoringService,
     ApplyPackService,
     ApprovalService,
+    EligibilityRulesService,
   ],
   exports: [
     OpportunitiesService,
@@ -24,6 +27,7 @@ import { PrismaModule } from '../prisma/prisma.module.js';
     ScoringService,
     ApplyPackService,
     ApprovalService,
+    EligibilityRulesService,
   ],
 })
 export class OpportunitiesModule {}

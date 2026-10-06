@@ -9,6 +9,7 @@ import {
 } from '../../opportunities/extraction.service.js';
 import { ScoringService } from '../../opportunities/scoring.service.js';
 import { ApplyPackService } from '../../opportunities/apply-pack.service.js';
+import { EligibilityRulesService } from '../../opportunities/rules/eligibility-rules.service.js';
 import { TelegramService } from '../../telegram/telegram.service.js';
 
 export interface ProcessJobData {
@@ -29,6 +30,7 @@ export class JobProcessorService extends WorkerHost {
     private readonly scoring: ScoringService,
     private readonly applyPack: ApplyPackService,
     private readonly telegram: TelegramService,
+    private readonly eligibility: EligibilityRulesService,
   ) {
     super();
   }
@@ -95,8 +97,51 @@ export class JobProcessorService extends WorkerHost {
       fields = existingReq.fieldsJson as unknown as JobRequirementFields;
     }
 
-    // 3. Score against user profile
-    const matchResult = await this.scoring.score(userId, fields, opp.type);
+    // ── Eligibility filter (Feature 1) ──────────────────────────────────
+    const eligibility = this.eligibility.evaluate({
+      title: fields.title ?? opp.title,
+      rawText: opp.rawText,
+      postedAt: opp.postedAt,
+      yearsRequired: fields.yearsExp,
+      skillsRequired: fields.skills?.map((s) => s.name),
+    });
+
+    if (eligibility.isFilteredOut) {
+      this.logger.warn(
+        `Opp ${opp.id} hard-rejected by eligibility rule '${eligibility.matchedRule}': ${eligibility.filterReason}`,
+      );
+      await this.prisma.opportunity.update({
+        where: { id: opp.id },
+        data: {
+          status: 'FILTERED_OUT',
+          filterReason: eligibility.filterReason,
+          filterFlags: [],
+          scoreAdjustments: [],
+        },
+      });
+      return {
+        opportunityId: opp.id,
+        score: 0,
+        applyPackCreated: false,
+      };
+    }
+
+    // Store soft flags and adjustments
+    await this.prisma.opportunity.update({
+      where: { id: opp.id },
+      data: {
+        filterFlags: eligibility.softFlags,
+        scoreAdjustments: eligibility.scoreAdjustments as object[],
+      },
+    });
+
+    // 3. Score against user profile (with eligibility boosts / penalties)
+    const matchResult = await this.scoring.score(
+      userId,
+      fields,
+      opp.type,
+      eligibility.scoreAdjustments,
+    );
     await this.prisma.opportunityMatch.upsert({
       where: { opportunityId: opp.id },
       create: {

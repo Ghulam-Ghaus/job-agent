@@ -53,6 +53,7 @@ enum OpportunityStatus {
   REJECTED
   WITHDRAWN
   CLOSED
+  FILTERED_OUT
 }
 
 enum LlmProvider {
@@ -312,6 +313,13 @@ model Opportunity {
   rawText     String
   language    String?           @default("en")
   postedAt    DateTime?
+  filterReason        String?
+  filterFlags         Json?             @default("[]")
+  scoreAdjustments    Json?             @default("[]")
+  outreachStatus      String?           @default("not_sent")
+  outreachSentAt      DateTime?
+  outreachFollowUpDue DateTime?
+  outreachPack        Json?
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
 

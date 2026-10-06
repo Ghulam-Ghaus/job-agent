@@ -131,7 +131,14 @@ export type OpportunityStatus =
   | 'VIEWED'
   | 'SHORTLISTED'
   | 'REJECTED'
-  | 'ARCHIVED';
+  | 'ARCHIVED'
+  | 'FILTERED_OUT';
+
+export interface ScoreAdjustment {
+  id: string;
+  label: string;
+  points: number;
+}
 
 export interface ScoreBreakdown {
   technical: number;
@@ -140,6 +147,8 @@ export interface ScoreBreakdown {
   seniority: number;
   salary: number;
   visa: number;
+  adjustments?: ScoreAdjustment[];
+  netAdjustment?: number;
   budgetFit?: number;
   clientTrust?: number;
   competition?: number;
@@ -215,6 +224,9 @@ export interface Opportunity {
   rawText: string;
   language?: string;
   postedAt?: string;
+  filterReason?: string | null;
+  filterFlags?: string[] | null;
+  scoreAdjustments?: ScoreAdjustment[] | null;
   createdAt: string;
   updatedAt: string;
   requirement?: OpportunityRequirement | null;
@@ -910,6 +922,7 @@ export const api = {
     getPack: (id: string) => api.get<ApplyPack>(`/opportunities/${id}/apply-pack`),
     updateCoverNote: (id: string, coverNoteEdited: string) =>
       api.patch<ApplyPack>(`/opportunities/${id}/apply-pack/cover-note`, { coverNoteEdited }),
+    overrideFilter: (id: string) => api.post<Opportunity>(`/opportunities/${id}/override-filter`),
     generateScreeningAnswers: (id: string, questions: string[]) =>
       api.post<ScreeningAnswersResponse>(`/opportunities/${id}/screening-answers`, { questions }),
   },

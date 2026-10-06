@@ -11,6 +11,8 @@ export interface ScoreBreakdown {
   seniority: number;   // max 10
   salary: number;      // max 10
   visa: number;        // max 5
+  adjustments?: Array<{ id: string; label: string; points: number }>;
+  netAdjustment?: number;
   // Freelance specific dimensions
   budgetFit?: number;    // max 20
   clientTrust?: number;  // max 20
@@ -61,6 +63,7 @@ export class ScoringService {
     userId: string,
     fields: JobRequirementFields,
     opportunityType?: 'JOB' | 'FREELANCE' | 'LEAD',
+    scoreAdjustments?: Array<{ id: string; label: string; points: number }>,
   ): Promise<MatchResult> {
     // ── Load user data ──────────────────────────────────────────────────────
     const [profile, skills, experiences, prefs, cvs] = await Promise.all([
@@ -243,18 +246,31 @@ export class ScoringService {
     }
 
     // ── Total ───────────────────────────────────────────────────────────────
-    const { matchedSkills: _m, ...numericBreakdown } = breakdown;
-    const score = Object.values(numericBreakdown).reduce((a, b) => a + (typeof b === 'number' ? b : 0), 0);
+    const baseScore: number =
+      breakdown.technical +
+      breakdown.experience +
+      breakdown.location +
+      breakdown.seniority +
+      breakdown.salary +
+      breakdown.visa;
+    let finalScore: number = baseScore;
+
+    if (scoreAdjustments && scoreAdjustments.length > 0) {
+      const netAdjustment = scoreAdjustments.reduce((sum, a) => sum + a.points, 0);
+      finalScore = clamp(finalScore + netAdjustment, 100);
+      breakdown.adjustments = scoreAdjustments;
+      breakdown.netAdjustment = netAdjustment;
+    }
 
     // ── Recommend CV ────────────────────────────────────────────────────────
     const defaultCv = cvs.find((c) => c.isDefault);
     const recommendedCvId = defaultCv?.id ?? cvs[0]?.id ?? null;
 
     this.logger.log(
-      `Score for userId=${userId}: ${score}/100 (tech=${breakdown.technical}, exp=${breakdown.experience}, loc=${breakdown.location})`,
+      `Score for userId=${userId}: ${finalScore}/100 (base=${baseScore}, adjustments=${breakdown.netAdjustment ?? 0}, tech=${breakdown.technical}, exp=${breakdown.experience}, loc=${breakdown.location})`,
     );
 
-    return { score, breakdown, gaps, recommendedCvId };
+    return { score: finalScore, breakdown, gaps, recommendedCvId };
   }
 
   /**

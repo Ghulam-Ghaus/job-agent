@@ -77,6 +77,12 @@ export class OpportunitiesController {
     return this.opportunitiesService.reprocess(id, userId);
   }
 
+  @Post(':id/override-filter')
+  @ApiOperation({ summary: 'Override eligibility filter: restores status to QUALIFIED and calculates score' })
+  overrideFilter(@Param('id') id: string, @CurrentUser('id') userId: string) {
+    return this.opportunitiesService.overrideFilter(id, userId);
+  }
+
   @Patch(':id')
   @ApiOperation({ summary: 'Update opportunity fields (status, title, etc.)' })
   update(
