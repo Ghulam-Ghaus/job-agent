@@ -10,6 +10,7 @@ import {
 import { ScoringService } from '../../opportunities/scoring.service.js';
 import { ApplyPackService } from '../../opportunities/apply-pack.service.js';
 import { EligibilityRulesService } from '../../opportunities/rules/eligibility-rules.service.js';
+import { OutreachService } from '../../opportunities/outreach/outreach.service.js';
 import { TelegramService } from '../../telegram/telegram.service.js';
 
 export interface ProcessJobData {
@@ -31,6 +32,7 @@ export class JobProcessorService extends WorkerHost {
     private readonly applyPack: ApplyPackService,
     private readonly telegram: TelegramService,
     private readonly eligibility: EligibilityRulesService,
+    private readonly outreach: OutreachService,
   ) {
     super();
   }
@@ -182,6 +184,15 @@ export class JobProcessorService extends WorkerHost {
         } catch (err: unknown) {
           this.logger.error(`Apply pack generation failed for opp ${opp.id}: ${String(err)}`);
         }
+      }
+    }
+
+    // 5. Auto-generate Outreach Pack for shortlisted opportunity (Feature 2: score >= 70)
+    if (matchResult.score >= 70) {
+      try {
+        await this.outreach.generateOutreachPack(opp.id, userId, 70);
+      } catch (err: unknown) {
+        this.logger.warn(`Outreach pack generation failed for opp ${opp.id}: ${String(err)}`);
       }
     }
 

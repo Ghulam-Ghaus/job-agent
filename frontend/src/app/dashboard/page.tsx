@@ -16,6 +16,7 @@ import {
 } from '@/lib/api-client';
 import { AtsSettingsModal } from '@/components/dashboard/ats-settings-modal';
 import { ScreeningQuestionsModal } from '@/components/opportunities/ScreeningQuestionsModal';
+import { OutreachModal } from '@/components/opportunities/OutreachModal';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -367,6 +368,7 @@ function EvidenceDrawer({
   const [showLetterModal, setShowLetterModal] = useState(false);
   const [copiedLetter, setCopiedLetter] = useState(false);
   const [showScreeningModal, setShowScreeningModal] = useState(false);
+  const [showOutreachModal, setShowOutreachModal] = useState(false);
 
   const req = currentOpp.requirement;
   const match = currentOpp.match;
@@ -626,8 +628,8 @@ function EvidenceDrawer({
           </div>
         )}
 
-        {/* 4 Main Action Buttons */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginBottom: 24 }}>
+        {/* 5 Main Action Buttons */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8, marginBottom: 24 }}>
           <button
             onClick={handleGenerateCv}
             disabled={generatingCv}
@@ -694,6 +696,27 @@ function EvidenceDrawer({
           </button>
 
           <button
+            onClick={() => setShowOutreachModal(true)}
+            style={{
+              padding: '10px 6px',
+              borderRadius: 10,
+              border: '1px solid rgba(236,72,153,.4)',
+              background: 'rgba(236,72,153,.12)',
+              color: '#f472b6',
+              fontSize: 11,
+              fontWeight: 600,
+              cursor: 'pointer',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 4,
+            }}
+          >
+            <span style={{ fontSize: 16 }}>🚀</span>
+            <span>Outreach</span>
+          </button>
+
+          <button
             onClick={() => router.push(`/interview-prep?opportunityId=${currentOpp.id}&role=${encodeURIComponent(currentOpp.title || '')}`)}
             style={{
               padding: '10px 6px',
@@ -711,7 +734,7 @@ function EvidenceDrawer({
             }}
           >
             <span style={{ fontSize: 16 }}>🎯</span>
-            <span>Interview Prep</span>
+            <span>Interview</span>
           </button>
         </div>
 
@@ -1344,6 +1367,18 @@ function EvidenceDrawer({
           onClose={() => setShowScreeningModal(false)}
         />
       )}
+
+      {/* Outreach Pack Modal */}
+      {showOutreachModal && (
+        <OutreachModal
+          opportunity={currentOpp}
+          onClose={() => setShowOutreachModal(false)}
+          onUpdated={(updated) => {
+            setCurrentOpp(updated);
+            onUpdated?.(updated);
+          }}
+        />
+      )}
     </div>
   );
 }
@@ -1357,6 +1392,7 @@ function OpportunityCard({
   onReprocess,
   onBuildPack,
   onOverrideFilter,
+  onOpenOutreach,
   buildingPack,
 }: {
   opp: Opportunity;
@@ -1365,6 +1401,7 @@ function OpportunityCard({
   onReprocess: () => void;
   onBuildPack: () => void;
   onOverrideFilter?: () => void;
+  onOpenOutreach?: () => void;
   buildingPack: boolean;
 }) {
   const match = opp.match;
@@ -1457,6 +1494,51 @@ function OpportunityCard({
           >
             {badge.label}
           </span>
+          {/* Outreach Status Chip */}
+          {opp.outreachStatus === 'sent' && (
+            <span
+              style={{
+                padding: '2px 8px',
+                borderRadius: 4,
+                fontSize: 11,
+                fontWeight: 600,
+                color:
+                  opp.outreachFollowUpDue && new Date(opp.outreachFollowUpDue).getTime() <= Date.now()
+                    ? '#f87171'
+                    : '#a5b4fc',
+                background:
+                  opp.outreachFollowUpDue && new Date(opp.outreachFollowUpDue).getTime() <= Date.now()
+                    ? 'rgba(239,68,68,.18)'
+                    : 'rgba(99,102,241,.18)',
+                border: `1px solid ${
+                  opp.outreachFollowUpDue && new Date(opp.outreachFollowUpDue).getTime() <= Date.now()
+                    ? 'rgba(239,68,68,.35)'
+                    : 'rgba(99,102,241,.35)'
+                }`,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {opp.outreachFollowUpDue && new Date(opp.outreachFollowUpDue).getTime() <= Date.now()
+                ? '🚨 Follow-up Due'
+                : '📨 Outreach Sent'}
+            </span>
+          )}
+          {opp.outreachStatus === 'replied' && (
+            <span
+              style={{
+                padding: '2px 8px',
+                borderRadius: 4,
+                fontSize: 11,
+                fontWeight: 600,
+                color: '#6ee7b7',
+                background: 'rgba(16,185,129,.18)',
+                border: '1px solid rgba(16,185,129,.35)',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              🎉 Replied
+            </span>
+          )}
           {opp.status === 'FILTERED_OUT' && opp.filterReason && (
             <span
               title={opp.filterReason}
@@ -1596,6 +1678,25 @@ function OpportunityCard({
           </button>
         )}
         <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onOpenOutreach?.();
+          }}
+          title="Open Tailored Outreach Messages"
+          style={{
+            padding: '6px 10px',
+            borderRadius: 6,
+            border: '1px solid rgba(236,72,153,.3)',
+            background: 'rgba(236,72,153,.1)',
+            color: '#f472b6',
+            cursor: 'pointer',
+            fontSize: 12,
+            fontWeight: 600,
+          }}
+        >
+          ✉️ Outreach
+        </button>
+        <button
           onClick={handleDelete}
           disabled={deleting}
           title="Delete"
@@ -1625,6 +1726,7 @@ export default function JobsDashboard() {
   const [showImport, setShowImport] = useState(false);
   const [showAtsSettings, setShowAtsSettings] = useState(false);
   const [selectedOpp, setSelectedOpp] = useState<Opportunity | null>(null);
+  const [outreachModalOpp, setOutreachModalOpp] = useState<Opportunity | null>(null);
   const [reprocessingId, setReprocessingId] = useState<string | null>(null);
   const [buildingPackId, setBuildingPackId] = useState<string | null>(null);
   const [filterStatus, setFilterStatus] = useState<string>('ALL');
@@ -1709,8 +1811,22 @@ export default function JobsDashboard() {
     }
   }
 
+  const followUpsDueCount = opps.filter(
+    (o) =>
+      o.outreachStatus === 'sent' &&
+      o.outreachFollowUpDue &&
+      new Date(o.outreachFollowUpDue).getTime() <= Date.now(),
+  ).length;
+
   const statuses = ['ALL', 'DISCOVERED', 'QUALIFIED', 'DRAFT_READY', 'APPLIED', 'SHORTLISTED', 'REJECTED', 'FILTERED_OUT'];
   const filtered = opps.filter((o) => {
+    if (filterStatus === 'FOLLOW_UPS_DUE') {
+      return (
+        o.outreachStatus === 'sent' &&
+        o.outreachFollowUpDue &&
+        new Date(o.outreachFollowUpDue).getTime() <= Date.now()
+      );
+    }
     if (!showFilteredOut && filterStatus !== 'FILTERED_OUT' && o.status === 'FILTERED_OUT') {
       return false;
     }
@@ -1782,20 +1898,28 @@ export default function JobsDashboard() {
               { label: 'Total', value: opps.length, icon: '📋' },
               { label: 'Qualified', value: opps.filter((o) => o.status === 'QUALIFIED').length, icon: '✅' },
               { label: 'Applied', value: opps.filter((o) => o.status === 'APPLIED').length, icon: '📨' },
+              {
+                label: 'Follow-ups Due',
+                value: followUpsDueCount,
+                icon: '🔔',
+                highlight: followUpsDueCount > 0,
+              },
               { label: 'Avg Score', value: avgScore != null ? `${avgScore}` : '—', icon: '🎯' },
             ].map((s) => (
               <div
                 key={s.label}
                 style={{
-                  background: 'rgba(255,255,255,.03)',
-                  border: '1px solid rgba(255,255,255,.07)',
+                  background: (s as any).highlight ? 'rgba(239,68,68,.1)' : 'rgba(255,255,255,.03)',
+                  border: `1px solid ${(s as any).highlight ? 'rgba(239,68,68,.3)' : 'rgba(255,255,255,.07)'}`,
                   borderRadius: 10,
                   padding: '14px 18px',
                 }}
               >
                 <div style={{ fontSize: 20, marginBottom: 4 }}>{s.icon}</div>
-                <div style={{ fontSize: 24, fontWeight: 800, color: '#f1f5f9' }}>{s.value}</div>
-                <div style={{ fontSize: 12, color: '#64748b' }}>{s.label}</div>
+                <div style={{ fontSize: 24, fontWeight: 800, color: (s as any).highlight ? '#f87171' : '#f1f5f9' }}>
+                  {s.value}
+                </div>
+                <div style={{ fontSize: 12, color: (s as any).highlight ? '#fca5a5' : '#64748b' }}>{s.label}</div>
               </div>
             ))}
           </div>
@@ -1859,6 +1983,35 @@ export default function JobsDashboard() {
                 </button>
               );
             })}
+
+            {/* Follow-ups Due Filter Pill */}
+            <button
+              onClick={() => setFilterStatus(filterStatus === 'FOLLOW_UPS_DUE' ? 'ALL' : 'FOLLOW_UPS_DUE')}
+              style={{
+                padding: '5px 12px',
+                borderRadius: 20,
+                border: `1px solid ${
+                  filterStatus === 'FOLLOW_UPS_DUE'
+                    ? 'rgba(239,68,68,.6)'
+                    : followUpsDueCount > 0
+                    ? 'rgba(239,68,68,.3)'
+                    : 'rgba(255,255,255,.07)'
+                }`,
+                background:
+                  filterStatus === 'FOLLOW_UPS_DUE'
+                    ? 'rgba(239,68,68,.25)'
+                    : followUpsDueCount > 0
+                    ? 'rgba(239,68,68,.1)'
+                    : 'transparent',
+                color: filterStatus === 'FOLLOW_UPS_DUE' || followUpsDueCount > 0 ? '#f87171' : '#64748b',
+                cursor: 'pointer',
+                fontSize: 12,
+                fontWeight: 600,
+                transition: 'all .2s',
+              }}
+            >
+              🔔 Follow-ups Due ({followUpsDueCount})
+            </button>
 
             {/* Toggle Show Filtered Out */}
             <button
@@ -1940,6 +2093,7 @@ export default function JobsDashboard() {
                 onReprocess={() => handleReprocess(opp.id)}
                 onBuildPack={() => handleBuildPack(opp.id)}
                 onOverrideFilter={() => handleOverrideFilter(opp.id)}
+                onOpenOutreach={() => setOutreachModalOpp(opp)}
                 buildingPack={buildingPackId === opp.id}
               />
             ))}
@@ -1964,6 +2118,17 @@ export default function JobsDashboard() {
           onUpdated={(updated) => {
             setOpps((prev) => prev.map((o) => (o.id === updated.id ? updated : o)));
             setSelectedOpp(updated);
+          }}
+        />
+      )}
+      {outreachModalOpp && (
+        <OutreachModal
+          opportunity={outreachModalOpp}
+          onClose={() => setOutreachModalOpp(null)}
+          onUpdated={(updated) => {
+            setOpps((prev) => prev.map((o) => (o.id === updated.id ? updated : o)));
+            if (selectedOpp?.id === updated.id) setSelectedOpp(updated);
+            setOutreachModalOpp(updated);
           }}
         />
       )}

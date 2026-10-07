@@ -227,11 +227,31 @@ export interface Opportunity {
   filterReason?: string | null;
   filterFlags?: string[] | null;
   scoreAdjustments?: ScoreAdjustment[] | null;
+  outreachStatus?: 'not_sent' | 'sent' | 'replied' | null;
+  outreachSentAt?: string | null;
+  outreachFollowUpDue?: string | null;
+  outreachPack?: OutreachPackResult | null;
   createdAt: string;
   updatedAt: string;
   requirement?: OpportunityRequirement | null;
   match?: OpportunityMatch | null;
   applyPack?: ApplyPack | null;
+}
+
+export interface OutreachPackResult {
+  recruiterDm: string;
+  connectionNote: string;
+  founderDm: string | null;
+  referralRequest: string;
+  followUpDm: string;
+  isStartup: boolean;
+  linkedInUrls: {
+    talentAcquisition: string;
+    engineeringManager: string;
+  };
+  highlightedProfileItems: string[];
+  unknownTechnologiesFlagged: string[];
+  generatedAt: string;
 }
 
 export interface VerifierIssue {
@@ -925,6 +945,12 @@ export const api = {
     overrideFilter: (id: string) => api.post<Opportunity>(`/opportunities/${id}/override-filter`),
     generateScreeningAnswers: (id: string, questions: string[]) =>
       api.post<ScreeningAnswersResponse>(`/opportunities/${id}/screening-answers`, { questions }),
+    generateOutreach: (id: string, scoreThreshold?: number) =>
+      api.post<OutreachPackResult>(`/opportunities/${id}/outreach/generate`, { scoreThreshold }),
+    updateOutreachStatus: (id: string, status: 'not_sent' | 'sent' | 'replied') =>
+      api.patch<Opportunity>(`/opportunities/${id}/outreach/status`, { status }),
+    getFollowUpsDue: () =>
+      api.get<Opportunity[]>('/opportunities/outreach/follow-ups-due'),
   },
 
   approvals: {

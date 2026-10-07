@@ -6,6 +6,7 @@ import { ScoringService } from '../../opportunities/scoring.service.js';
 import { ApplyPackService } from '../../opportunities/apply-pack.service.js';
 import { TelegramService } from '../../telegram/telegram.service.js';
 import { EligibilityRulesService } from '../../opportunities/rules/eligibility-rules.service.js';
+import { OutreachService } from '../../opportunities/outreach/outreach.service.js';
 
 describe('JobProcessorService', () => {
   let service: JobProcessorService;
@@ -40,6 +41,10 @@ describe('JobProcessorService', () => {
           useValue: { sendOpportunityCard: vi.fn().mockResolvedValue(true) },
         },
         EligibilityRulesService,
+        {
+          provide: OutreachService,
+          useValue: { generateOutreachPack: vi.fn() },
+        },
       ],
     }).compile();
 

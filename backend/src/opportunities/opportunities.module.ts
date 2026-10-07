@@ -9,6 +9,7 @@ import { LlmModule } from '../llm/llm.module.js';
 import { PrismaModule } from '../prisma/prisma.module.js';
 
 import { EligibilityRulesService } from './rules/eligibility-rules.service.js';
+import { OutreachService } from './outreach/outreach.service.js';
 
 @Module({
   imports: [LlmModule, PrismaModule],
@@ -20,6 +21,7 @@ import { EligibilityRulesService } from './rules/eligibility-rules.service.js';
     ApplyPackService,
     ApprovalService,
     EligibilityRulesService,
+    OutreachService,
   ],
   exports: [
     OpportunitiesService,
@@ -28,6 +30,7 @@ import { EligibilityRulesService } from './rules/eligibility-rules.service.js';
     ApplyPackService,
     ApprovalService,
     EligibilityRulesService,
+    OutreachService,
   ],
 })
 export class OpportunitiesModule {}

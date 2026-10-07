@@ -13,9 +13,11 @@ import { CreateOpportunityDto } from './dto/create-opportunity.dto.js';
 import { UpdateOpportunityDto } from './dto/update-opportunity.dto.js';
 import { DecideApprovalDto, UpdateCoverNoteDto } from './dto/approval.dto.js';
 import { GenerateScreeningAnswersDto } from './dto/screening-answers.dto.js';
+import { UpdateOutreachStatusDto, GenerateOutreachPackDto } from './dto/outreach.dto.js';
 import { CurrentUser } from '../auth/decorators/current-user/current-user.decorator.js';
 import { ApplyPackService } from './apply-pack.service.js';
 import { ApprovalService } from './approval.service.js';
+import { OutreachService } from './outreach/outreach.service.js';
 
 @ApiTags('Opportunities')
 @ApiCookieAuth('accessToken')
@@ -25,6 +27,7 @@ export class OpportunitiesController {
     private readonly opportunitiesService: OpportunitiesService,
     private readonly applyPackService: ApplyPackService,
     private readonly approvalService: ApprovalService,
+    private readonly outreachService: OutreachService,
   ) {}
 
   // ─── Approval Queue (Must precede :id routes to prevent shadowing) ─────────
@@ -63,6 +66,12 @@ export class OpportunitiesController {
   @ApiOperation({ summary: 'List all my opportunities with match scores' })
   findAll(@CurrentUser('id') userId: string) {
     return this.opportunitiesService.findAll(userId);
+  }
+
+  @Get('outreach/follow-ups-due')
+  @ApiOperation({ summary: 'List opportunities where outreach was sent and follow-up is due' })
+  getFollowUpsDue(@CurrentUser('id') userId: string) {
+    return this.outreachService.getFollowUpsDue(userId);
   }
 
   @Get(':id')
@@ -131,5 +140,25 @@ export class OpportunitiesController {
     @Body() dto: GenerateScreeningAnswersDto,
   ) {
     return this.applyPackService.generateScreeningAnswers(id, userId, dto.questions);
+  }
+
+  @Post(':id/outreach/generate')
+  @ApiOperation({ summary: 'Generate tailored outreach message pack (recruiter, connection, founder, referral, follow-up)' })
+  generateOutreach(
+    @Param('id') id: string,
+    @CurrentUser('id') userId: string,
+    @Body() dto: GenerateOutreachPackDto,
+  ) {
+    return this.outreachService.generateOutreachPack(id, userId, dto.scoreThreshold);
+  }
+
+  @Patch(':id/outreach/status')
+  @ApiOperation({ summary: 'Update outreach status (not_sent, sent, replied) and schedule 7-day follow-up' })
+  updateOutreachStatus(
+    @Param('id') id: string,
+    @CurrentUser('id') userId: string,
+    @Body() dto: UpdateOutreachStatusDto,
+  ) {
+    return this.outreachService.updateOutreachStatus(id, userId, dto.status);
   }
 }
