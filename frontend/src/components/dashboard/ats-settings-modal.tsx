@@ -12,9 +12,10 @@ import {
   RefreshCw,
   Loader2,
   Sparkles,
+  Search,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { api, type AtsTarget } from '@/lib/api-client';
+import { api, type AtsTarget, type AtsDetectionResult } from '@/lib/api-client';
 
 const DEFAULT_TARGETS: AtsTarget[] = [
   { platform: 'greenhouse', slug: 'careem' },
@@ -52,8 +53,14 @@ export function AtsSettingsModal({
   const [saveSuccess, setSaveSuccess] = useState(false);
 
   const [targets, setTargets] = useState<AtsTarget[]>(DEFAULT_TARGETS);
-  const [newPlatform, setNewPlatform] = useState<'greenhouse' | 'lever'>('greenhouse');
+  const [newPlatform, setNewPlatform] = useState<'greenhouse' | 'lever' | 'ashby' | 'workable'>('greenhouse');
   const [newSlug, setNewSlug] = useState('');
+
+  // ATS Detector state
+  const [detectorUrl, setDetectorUrl] = useState('');
+  const [detecting, setDetecting] = useState(false);
+  const [detectionResult, setDetectionResult] = useState<AtsDetectionResult | null>(null);
+  const [detectorError, setDetectorError] = useState<string | null>(null);
 
   const [locations, setLocations] = useState<string[]>(['Saudi Arabia', 'UAE', 'Remote']);
   const [newLocation, setNewLocation] = useState('');
@@ -106,6 +113,32 @@ export function AtsSettingsModal({
     if (locations.some((l) => l.toLowerCase() === loc.toLowerCase())) return;
     setLocations([...locations, loc]);
     if (!locToAdd) setNewLocation('');
+  };
+
+  const handleDetectAts = async (urlToDetect?: string) => {
+    const target = (urlToDetect ?? detectorUrl).trim();
+    if (!target) return;
+    try {
+      setDetecting(true);
+      setDetectorError(null);
+      setDetectionResult(null);
+      const res = await api.connectors.detectAts(target);
+      setDetectionResult(res);
+    } catch (err: unknown) {
+      setDetectorError(err instanceof Error ? err.message : 'Failed to analyze careers page');
+    } finally {
+      setDetecting(false);
+    }
+  };
+
+  const handleAddDetectedTarget = (result: AtsDetectionResult) => {
+    if (!result.provider || !result.slug) return;
+    const supported = ['greenhouse', 'lever', 'ashby', 'workable'].includes(result.provider);
+    if (!supported) return;
+    const platform = result.provider as 'greenhouse' | 'lever' | 'ashby' | 'workable';
+    const slug = result.slug.toLowerCase();
+    if (targets.some((t) => t.platform === platform && t.slug === slug)) return;
+    setTargets([...targets, { platform, slug }]);
   };
 
   const handleRemoveLocation = (index: number) => {
@@ -269,7 +302,166 @@ export function AtsSettingsModal({
               </div>
             </div>
 
-            {/* Section 2: Target Companies */}
+            {/* Section 2: Instant ATS Careers Page Detector */}
+            <div className="space-y-3 bg-gradient-to-b from-indigo-500/[0.08] to-purple-500/[0.04] border border-indigo-500/20 rounded-xl p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Search className="h-4 w-4 text-indigo-400" />
+                  <span className="text-xs font-semibold text-white uppercase tracking-wider">
+                    Instant ATS Detector
+                  </span>
+                </div>
+                <span className="text-[11px] text-indigo-300 font-mono">
+                  8 Providers · 7d Cache · robots.txt safe
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-300 leading-relaxed">
+                Paste any company’s career page URL. The agent detects if they use <strong>Greenhouse, Lever, Ashby, Workable, SmartRecruiters, Recruitee, Personio, or BambooHR</strong> and verifies public board access.
+              </p>
+
+              {/* Quick Presets */}
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-[10px] text-slate-400 uppercase font-mono mr-1">Test targets:</span>
+                {[
+                  { name: 'Maqsam', url: 'https://www.maqsam.com' },
+                  { name: 'Salla', url: 'https://salla.com' },
+                  { name: 'Tamara', url: 'https://tamara.co/careers' },
+                  { name: 'Tabby', url: 'https://tabby.ai/careers' },
+                  { name: 'Careem', url: 'https://boards.greenhouse.io/careem' },
+                ].map((item) => (
+                  <button
+                    key={item.name}
+                    type="button"
+                    disabled={detecting}
+                    onClick={() => {
+                      setDetectorUrl(item.url);
+                      void handleDetectAts(item.url);
+                    }}
+                    className="text-[11px] px-2 py-0.5 rounded border border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 transition-colors"
+                  >
+                    {item.name}
+                  </button>
+                ))}
+              </div>
+
+              {/* Input Row */}
+              <div className="flex items-center gap-2 pt-1">
+                <input
+                  type="text"
+                  placeholder="https://company.com/careers or https://jobs.lever.co/company..."
+                  value={detectorUrl}
+                  onChange={(e) => setDetectorUrl(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      void handleDetectAts();
+                    }
+                  }}
+                  className="flex-1 bg-black/40 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-500"
+                />
+                <Button
+                  type="button"
+                  size="sm"
+                  disabled={detecting || !detectorUrl.trim()}
+                  onClick={() => handleDetectAts()}
+                  className="h-8 text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-semibold"
+                >
+                  {detecting ? (
+                    <>
+                      <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" /> Detecting…
+                    </>
+                  ) : (
+                    <>
+                      <Search className="h-3.5 w-3.5 mr-1" /> Detect ATS
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              {/* Error */}
+              {detectorError && (
+                <div className="p-2.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-300 text-xs">
+                  ⚠ {detectorError}
+                </div>
+              )}
+
+              {/* Detection Result Card */}
+              {detectionResult && (
+                <div className="p-3.5 rounded-lg bg-black/50 border border-white/15 space-y-2">
+                  {detectionResult.detected ? (
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between flex-wrap gap-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-base">🎯</span>
+                          <span className="text-xs font-bold text-white capitalize">
+                            {detectionResult.provider}
+                          </span>
+                          {detectionResult.slug && (
+                            <code className="text-xs px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                              slug: {detectionResult.slug}
+                            </code>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${
+                              detectionResult.verified
+                                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                                : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                            }`}
+                          >
+                            {detectionResult.verified
+                              ? '✓ Verified Public API'
+                              : `${Math.round(detectionResult.confidence * 100)}% Confidence`}
+                          </span>
+                          {detectionResult.source === 'cache' && (
+                            <span className="text-[10px] text-slate-400">⚡ 7d cache</span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* 1-Click Add Button */}
+                      {['greenhouse', 'lever', 'ashby', 'workable'].includes(detectionResult.provider || '') &&
+                        detectionResult.slug && (
+                          <div className="pt-1 flex items-center justify-between">
+                            <span className="text-[11px] text-slate-400">
+                              Free public job board ingestion available for {detectionResult.provider}.
+                            </span>
+                            <Button
+                              type="button"
+                              size="sm"
+                              onClick={() => handleAddDetectedTarget(detectionResult)}
+                              disabled={targets.some(
+                                (t) =>
+                                  t.platform === detectionResult.provider &&
+                                  t.slug.toLowerCase() === (detectionResult.slug || '').toLowerCase(),
+                              )}
+                              className="h-7 text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-medium"
+                            >
+                              {targets.some(
+                                (t) =>
+                                  t.platform === detectionResult.provider &&
+                                  t.slug.toLowerCase() === (detectionResult.slug || '').toLowerCase(),
+                              )
+                                ? '✓ Already Added'
+                                : `+ Add "${detectionResult.slug}" to Target Boards`}
+                            </Button>
+                          </div>
+                        )}
+                    </div>
+                  ) : (
+                    <div className="text-xs text-amber-300/90 flex items-center gap-2">
+                      <span>ℹ</span>
+                      <span>
+                        No standard ATS found for this URL (may be custom careers portal or protected by robots.txt).
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Section 3: Target Companies */}
             <div className="space-y-3 bg-white/[0.02] border border-white/5 rounded-xl p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -279,57 +471,62 @@ export function AtsSettingsModal({
                   </span>
                 </div>
                 <span className="text-[11px] text-slate-400 font-mono">
-                  Greenhouse &amp; Lever APIs
+                  Greenhouse, Lever, Ashby, Workable
                 </span>
               </div>
               <p className="text-[11px] text-slate-400 leading-relaxed">
-                Enter the exact company board slug used by Greenhouse (<code>boards.greenhouse.io/[slug]</code>) or Lever (<code>jobs.lever.co/[slug]</code>).
+                Add public ATS company boards to sync on-demand or automatically during background runs.
               </p>
 
               {/* Companies List */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
-                {targets.map((t, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-center justify-between px-3 py-2 rounded-lg bg-black/40 border border-white/10 text-xs"
-                  >
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span
-                        className={`text-[9px] px-1.5 py-0.5 rounded font-mono uppercase font-bold ${
-                          t.platform === 'greenhouse'
-                            ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                            : 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
-                        }`}
-                      >
-                        {t.platform === 'greenhouse' ? 'GH' : 'LEVER'}
-                      </span>
-                      <span className="font-semibold text-white truncate">{t.slug}</span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveTarget(idx)}
-                      className="text-slate-500 hover:text-red-400 transition-colors p-1"
-                      title="Remove board"
+                {targets.map((t, idx) => {
+                  const badgeMap: Record<string, { label: string; cls: string }> = {
+                    greenhouse: { label: 'GH', cls: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' },
+                    lever: { label: 'LEVER', cls: 'bg-purple-500/20 text-purple-300 border-purple-500/30' },
+                    ashby: { label: 'ASHBY', cls: 'bg-pink-500/20 text-pink-300 border-pink-500/30' },
+                    workable: { label: 'WORKABLE', cls: 'bg-sky-500/20 text-sky-300 border-sky-500/30' },
+                  };
+                  const badge = badgeMap[t.platform] ?? { label: t.platform.toUpperCase(), cls: 'bg-slate-500/20 text-slate-300 border-slate-500/30' };
+                  return (
+                    <div
+                      key={idx}
+                      className="flex items-center justify-between px-3 py-2 rounded-lg bg-black/40 border border-white/10 text-xs"
                     >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                ))}
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className={`text-[9px] px-1.5 py-0.5 rounded font-mono uppercase font-bold border ${badge.cls}`}>
+                          {badge.label}
+                        </span>
+                        <span className="font-semibold text-white truncate">{t.slug}</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveTarget(idx)}
+                        className="text-slate-500 hover:text-red-400 transition-colors p-1"
+                        title="Remove board"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  );
+                })}
               </div>
 
               {/* Add Company Input */}
               <div className="flex items-center gap-2 pt-2">
                 <select
                   value={newPlatform}
-                  onChange={(e) => setNewPlatform(e.target.value as 'greenhouse' | 'lever')}
+                  onChange={(e) => setNewPlatform(e.target.value as 'greenhouse' | 'lever' | 'ashby' | 'workable')}
                   className="bg-black/40 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500"
                 >
                   <option value="greenhouse">Greenhouse</option>
                   <option value="lever">Lever</option>
+                  <option value="ashby">Ashby</option>
+                  <option value="workable">Workable</option>
                 </select>
                 <input
                   type="text"
-                  placeholder="company-slug (e.g. postman, tabby, talabat)..."
+                  placeholder="company-slug (e.g. salla, tamara, careem)..."
                   value={newSlug}
                   onChange={(e) => setNewSlug(e.target.value)}
                   onKeyDown={(e) => {

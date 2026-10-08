@@ -4,6 +4,7 @@ import { QueuesModule } from '../queues/queues.module.js';
 import { PrismaModule } from '../prisma/prisma.module.js';
 import { EmailService } from './email/email.service.js';
 import { AtsService } from './ats/ats.service.js';
+import { AtsDetectorService } from './ats/ats-detector.service.js';
 import { SchedulerService } from './scheduler.service.js';
 import { ConnectorsController } from './connectors.controller.js';
 import { PlacesService } from './places/places.service.js';
@@ -11,7 +12,7 @@ import { PlacesService } from './places/places.service.js';
 @Module({
   imports: [ConfigModule, QueuesModule, PrismaModule],
   controllers: [ConnectorsController],
-  providers: [EmailService, AtsService, SchedulerService, PlacesService],
-  exports: [EmailService, AtsService, SchedulerService, PlacesService],
+  providers: [EmailService, AtsService, AtsDetectorService, SchedulerService, PlacesService],
+  exports: [EmailService, AtsService, AtsDetectorService, SchedulerService, PlacesService],
 })
 export class ConnectorsModule {}

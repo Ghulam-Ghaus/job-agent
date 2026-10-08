@@ -3,7 +3,7 @@ import { PipelineService } from '../../queues/pipeline/pipeline.service.js';
 import { PrismaService } from '../../prisma/prisma.service.js';
 
 export interface AtsCompanyTarget {
-  platform: 'greenhouse' | 'lever';
+  platform: 'greenhouse' | 'lever' | 'ashby' | 'workable';
   slug: string;
 }
 
@@ -124,10 +124,16 @@ export class AtsService {
     for (const target of targets) {
       result.companiesChecked++;
       try {
-        const jobs =
-          target.platform === 'greenhouse'
-            ? await this.fetchGreenhouse(target.slug)
-            : await this.fetchLever(target.slug);
+        let jobs: AtsJob[] = [];
+        if (target.platform === 'greenhouse') {
+          jobs = await this.fetchGreenhouse(target.slug);
+        } else if (target.platform === 'lever') {
+          jobs = await this.fetchLever(target.slug);
+        } else if (target.platform === 'ashby') {
+          jobs = await this.fetchAshby(target.slug);
+        } else if (target.platform === 'workable') {
+          jobs = await this.fetchWorkable(target.slug);
+        }
         result.jobsFound += jobs.length;
         await this.ingest(userId, jobs, filters, result);
       } catch (err: unknown) {
@@ -262,6 +268,103 @@ export class AtsService {
           `Commitment: ${item.categories?.commitment ?? 'Full-time'}`,
           `Application URL: ${item.hostedUrl}`,
           `Description:\n${(item.descriptionPlain ?? '').slice(0, 4000)}`,
+        ].join('\n'),
+      };
+    });
+  }
+
+  private async fetchAshby(slug: string): Promise<AtsJob[]> {
+    const url = `https://api.ashbyhq.com/posting-api/job-board/${encodeURIComponent(slug)}`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({}),
+    });
+
+    if (!res.ok) {
+      if (res.status === 404 || res.status === 400) {
+        this.logger.debug(`Ashby board not found for ${slug}`);
+        return [];
+      }
+      throw new Error(`Ashby API responded with HTTP ${res.status}`);
+    }
+
+    const data = (await res.json()) as {
+      jobs?: Array<{
+        id: string;
+        title: string;
+        department?: string;
+        location?: string;
+        isRemote?: boolean;
+        jobUrl?: string;
+        descriptionPlain?: string;
+        descriptionHtml?: string;
+      }>;
+    };
+
+    return (data.jobs ?? []).map((job) => {
+      const loc = job.location || (job.isRemote ? 'Remote' : 'Unknown');
+      const cleanDesc = (job.descriptionPlain ?? (job.descriptionHtml ?? '').replace(/<[^>]+>/g, ' '))
+        .replace(/&nbsp;/g, ' ')
+        .trim();
+      const jobUrl = job.jobUrl || `https://jobs.ashbyhq.com/${slug}/${job.id}`;
+
+      return {
+        url: jobUrl,
+        location: loc,
+        rawText: [
+          `Job Title: ${job.title}`,
+          `Company: ${slug}`,
+          `Location: ${loc}`,
+          `Department: ${job.department ?? 'Engineering'}`,
+          `Application URL: ${jobUrl}`,
+          `Description:\n${cleanDesc.slice(0, 4000)}`,
+        ].join('\n'),
+      };
+    });
+  }
+
+  private async fetchWorkable(slug: string): Promise<AtsJob[]> {
+    const url = `https://apply.workable.com/api/v1/widget/accounts/${encodeURIComponent(slug)}`;
+    const res = await fetch(url, { headers: { Accept: 'application/json' } });
+
+    if (!res.ok) {
+      if (res.status === 404) {
+        this.logger.debug(`Workable board not found for ${slug}`);
+        return [];
+      }
+      throw new Error(`Workable API responded with HTTP ${res.status}`);
+    }
+
+    const data = (await res.json()) as {
+      jobs?: Array<{
+        title: string;
+        shortcode: string;
+        city?: string;
+        country?: string;
+        telecommuting?: boolean;
+        description?: string;
+        url?: string;
+      }>;
+    };
+
+    return (data.jobs ?? []).map((job) => {
+      const loc = [job.city, job.country].filter(Boolean).join(', ') || (job.telecommuting ? 'Remote' : 'Unknown');
+      const cleanDesc = (job.description ?? '')
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/&nbsp;/g, ' ')
+        .trim();
+      const jobUrl = job.url || `https://apply.workable.com/${slug}/j/${job.shortcode}`;
+
+      return {
+        url: jobUrl,
+        location: loc,
+        rawText: [
+          `Job Title: ${job.title}`,
+          `Company: ${slug}`,
+          `Location: ${loc}`,
+          `Application URL: ${jobUrl}`,
+          `Description:\n${cleanDesc.slice(0, 4000)}`,
         ].join('\n'),
       };
     });

@@ -91,8 +91,29 @@ export interface CreateProjectPayload {
 }
 
 export interface AtsTarget {
-  platform: 'greenhouse' | 'lever';
+  platform: 'greenhouse' | 'lever' | 'ashby' | 'workable';
   slug: string;
+}
+
+export type AtsProvider =
+  | 'greenhouse'
+  | 'lever'
+  | 'ashby'
+  | 'workable'
+  | 'smartrecruiters'
+  | 'recruitee'
+  | 'personio'
+  | 'bamboohr';
+
+export interface AtsDetectionResult {
+  detected: boolean;
+  provider: AtsProvider | null;
+  slug: string | null;
+  confidence: number;
+  apiAvailable: boolean;
+  verified?: boolean;
+  careersUrl: string;
+  source?: 'cache' | 'network';
 }
 
 export interface JobPreference {
@@ -987,6 +1008,13 @@ export const api = {
         locationFiltered: number;
         errors: string[];
       }>('/connectors/ats/sync', { targets }),
+    detectAts: (url: string) =>
+      api.post<AtsDetectionResult>('/connectors/ats/detect', { url }),
+    addAtsTarget: (target: AtsTarget) =>
+      api.post<{ success: boolean; targets: AtsTarget[]; added: boolean }>(
+        '/connectors/ats/targets/add',
+        target,
+      ),
   },
 
   leads: {

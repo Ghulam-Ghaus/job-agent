@@ -89,4 +89,90 @@ describe('AtsService', () => {
     vi.unstubAllGlobals();
     vi.useRealTimers();
   });
+
+  it('syncs Ashby job boards correctly', async () => {
+    vi.useFakeTimers();
+    prisma.jobPreference.findUnique.mockResolvedValue({
+      atsTargets: [{ platform: 'ashby', slug: 'salla' }],
+      locationFilters: ['Saudi Arabia'],
+    });
+    prisma.opportunity.findMany.mockResolvedValue([]);
+
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          jobs: [
+            {
+              id: 'job-1',
+              title: 'Senior Backend Engineer',
+              location: 'Riyadh, Saudi Arabia',
+              department: 'Engineering',
+              jobUrl: 'https://jobs.ashbyhq.com/salla/job-1',
+              descriptionPlain: 'FastAPI, NestJS and high-throughput systems',
+            },
+          ],
+        }),
+      }),
+    );
+
+    const pending = service.syncAtsPostings('user-1');
+    await vi.advanceTimersByTimeAsync(1500);
+    const result = await pending;
+
+    expect(result.jobsFound).toBe(1);
+    expect(result.jobsEnqueued).toBe(1);
+    expect(addJob).toHaveBeenCalledWith(
+      expect.objectContaining({
+        userId: 'user-1',
+        url: 'https://jobs.ashbyhq.com/salla/job-1',
+        type: 'JOB',
+        sourceType: 'ATS',
+      }),
+    );
+
+    vi.unstubAllGlobals();
+    vi.useRealTimers();
+  });
+
+  it('syncs Workable widget boards correctly', async () => {
+    vi.useFakeTimers();
+    prisma.jobPreference.findUnique.mockResolvedValue({
+      atsTargets: [{ platform: 'workable', slug: 'tamara' }],
+      locationFilters: ['Riyadh'],
+    });
+    prisma.opportunity.findMany.mockResolvedValue([]);
+
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          jobs: [
+            {
+              title: 'Platform Engineer',
+              shortcode: 'ABC1234',
+              city: 'Riyadh',
+              country: 'Saudi Arabia',
+              url: 'https://apply.workable.com/tamara/j/ABC1234',
+              description: 'TypeScript, PostgreSQL, payments',
+            },
+          ],
+        }),
+      }),
+    );
+
+    const pending = service.syncAtsPostings('user-1');
+    await vi.advanceTimersByTimeAsync(1500);
+    const result = await pending;
+
+    expect(result.jobsFound).toBe(1);
+    expect(result.jobsEnqueued).toBe(1);
+
+    vi.unstubAllGlobals();
+    vi.useRealTimers();
+  });
 });

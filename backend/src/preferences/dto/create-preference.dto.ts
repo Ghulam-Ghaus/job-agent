@@ -13,9 +13,9 @@ import {
 } from 'class-validator';
 
 export class AtsTargetDto {
-  @ApiPropertyOptional({ enum: ['greenhouse', 'lever'] })
-  @IsIn(['greenhouse', 'lever'])
-  platform!: 'greenhouse' | 'lever';
+  @ApiPropertyOptional({ enum: ['greenhouse', 'lever', 'ashby', 'workable'] })
+  @IsIn(['greenhouse', 'lever', 'ashby', 'workable'])
+  platform!: 'greenhouse' | 'lever' | 'ashby' | 'workable';
 
   @ApiPropertyOptional({ description: 'Company board slug, e.g. "careem"' })
   @IsString()
