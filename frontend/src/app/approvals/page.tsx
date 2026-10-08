@@ -333,14 +333,40 @@ function PackReviewCard({
               <div style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '.05em' }}>
                 Match Breakdown
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
-                {Object.entries(match.breakdownJson as ScoreBreakdown).map(([key, val]) => (
-                  <div key={key} style={{ background: 'rgba(255,255,255,.03)', borderRadius: 8, padding: '8px 12px', textAlign: 'center' }}>
-                    <div style={{ fontSize: 18, fontWeight: 800, color: '#f1f5f9' }}>{val}</div>
-                    <div style={{ fontSize: 10, color: '#64748b', textTransform: 'capitalize' }}>{key}</div>
-                  </div>
-                ))}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(90px, 1fr))', gap: 8 }}>
+                {Object.entries(match.breakdownJson as ScoreBreakdown)
+                  .filter(([, val]) => typeof val === 'number')
+                  .map(([key, val]) => (
+                    <div key={key} style={{ background: 'rgba(255,255,255,.03)', borderRadius: 8, padding: '8px 12px', textAlign: 'center' }}>
+                      <div style={{ fontSize: 18, fontWeight: 800, color: '#f1f5f9' }}>{val as number}</div>
+                      <div style={{ fontSize: 10, color: '#64748b', textTransform: 'capitalize' }}>{key}</div>
+                    </div>
+                  ))}
               </div>
+
+              {/* Score Adjustments Pills (e.g. GCC/KSA priority, high remote fit) */}
+              {Array.isArray((match.breakdownJson as any)?.adjustments) &&
+                (match.breakdownJson as any).adjustments.length > 0 && (
+                  <div style={{ marginTop: 10, display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center' }}>
+                    <span style={{ fontSize: 11, color: '#94a3b8', fontWeight: 600 }}>Adjustments:</span>
+                    {(match.breakdownJson as any).adjustments.map((adj: any) => (
+                      <span
+                        key={adj.id || adj.label}
+                        style={{
+                          fontSize: 11,
+                          fontWeight: 600,
+                          padding: '2px 8px',
+                          borderRadius: 6,
+                          background: adj.points >= 0 ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+                          color: adj.points >= 0 ? '#6ee7b7' : '#fca5a5',
+                          border: `1px solid ${adj.points >= 0 ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
+                        }}
+                      >
+                        {adj.points > 0 ? `+${adj.points}` : adj.points} {adj.label}
+                      </span>
+                    ))}
+                  </div>
+                )}
             </div>
           )}
 
