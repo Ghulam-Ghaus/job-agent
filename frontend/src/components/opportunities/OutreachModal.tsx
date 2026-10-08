@@ -23,7 +23,7 @@ export function OutreachModal({
   const [error, setError] = useState<string | null>(null);
   const [actionMsg, setActionMsg] = useState<string | null>(null);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'recruiter' | 'connection' | 'founder' | 'referral' | 'followup'>('recruiter');
+  const [activeTab, setActiveTab] = useState<'recruiter' | 'connection' | 'founder' | 'referral' | 'followup' | 'coldemail'>('recruiter');
 
   // Local draft state for editing before copying
   const [draftRecruiter, setDraftRecruiter] = useState(pack?.recruiterDm ?? '');
@@ -31,6 +31,8 @@ export function OutreachModal({
   const [draftFounder, setDraftFounder] = useState(pack?.founderDm ?? '');
   const [draftReferral, setDraftReferral] = useState(pack?.referralRequest ?? '');
   const [draftFollowUp, setDraftFollowUp] = useState(pack?.followUpDm ?? '');
+  const [draftEmailSubject, setDraftEmailSubject] = useState(pack?.coldEmail?.subject ?? '');
+  const [draftEmailBody, setDraftEmailBody] = useState(pack?.coldEmail?.body ?? '');
 
   const company = currentOpp.company || 'Company';
   const jobTitle = currentOpp.title || 'Role';
@@ -58,6 +60,8 @@ export function OutreachModal({
       setDraftFounder(res.founderDm || '');
       setDraftReferral(res.referralRequest);
       setDraftFollowUp(res.followUpDm);
+      setDraftEmailSubject(res.coldEmail?.subject ?? '');
+      setDraftEmailBody(res.coldEmail?.body ?? '');
       
       const updatedOpp: Opportunity = {
         ...currentOpp,
@@ -484,6 +488,7 @@ export function OutreachModal({
                     : []),
                   { id: 'referral', label: 'Referral Request', max: 450, count: draftReferral.length },
                   { id: 'followup', label: '7-Day Follow-Up', max: 450, count: draftFollowUp.length },
+                  { id: 'coldemail', label: '📧 Cold Email', max: 2000, count: draftEmailBody.length },
                 ].map((t) => {
                   const active = activeTab === t.id;
                   return (
@@ -761,6 +766,120 @@ export function OutreachModal({
                       }}
                     >
                       {copiedKey === 'followup' ? '✓ Copied to Clipboard!' : '📋 Copy Follow-Up Message'}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'coldemail' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ fontSize: 12, color: '#94a3b8' }}>
+                      Tailored Cold Email (Structured subject line &amp; comprehensive pitch for direct email outreach)
+                    </div>
+                    <span
+                      style={{
+                        fontSize: 11,
+                        fontWeight: 700,
+                        color: '#10b981',
+                        background: 'rgba(16, 185, 129, 0.1)',
+                        padding: '2px 8px',
+                        borderRadius: 6,
+                        border: '1px solid rgba(16, 185, 129, 0.2)',
+                      }}
+                    >
+                      {draftEmailBody.split(/\s+/).filter(Boolean).length} words · {draftEmailBody.length} chars
+                    </span>
+                  </div>
+
+                  {/* Subject Line Field */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: '#cbd5e1' }}>
+                      Subject Line:
+                    </label>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <input
+                        type="text"
+                        value={draftEmailSubject}
+                        onChange={(e) => setDraftEmailSubject(e.target.value)}
+                        placeholder={`Application / Interest: ${jobTitle} - Ghulam Ghaus`}
+                        style={{
+                          flex: 1,
+                          background: 'rgba(15, 23, 42, 0.6)',
+                          border: '1px solid rgba(255, 255, 255, 0.1)',
+                          borderRadius: 8,
+                          padding: '8px 12px',
+                          color: '#f1f5f9',
+                          fontSize: 13,
+                          fontFamily: 'inherit',
+                        }}
+                      />
+                      <button
+                        onClick={() => handleCopy(draftEmailSubject, 'coldemail_subject')}
+                        style={{
+                          padding: '8px 14px',
+                          borderRadius: 8,
+                          border: '1px solid rgba(99, 102, 241, 0.3)',
+                          background: 'rgba(99, 102, 241, 0.15)',
+                          color: '#c7d2fe',
+                          fontSize: 12,
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {copiedKey === 'coldemail_subject' ? '✓ Copied!' : '📋 Copy Subject'}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Email Body Field */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: '#cbd5e1' }}>
+                      Email Body:
+                    </label>
+                    <textarea
+                      rows={9}
+                      value={draftEmailBody}
+                      onChange={(e) => setDraftEmailBody(e.target.value)}
+                      placeholder="Hi [Name],&#10;&#10;I am writing to express my strong interest in the role..."
+                      style={{
+                        width: '100%',
+                        background: 'rgba(15, 23, 42, 0.6)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: 10,
+                        padding: '12px 14px',
+                        color: '#f1f5f9',
+                        fontSize: 13,
+                        lineHeight: 1.6,
+                        fontFamily: 'inherit',
+                        resize: 'vertical',
+                        boxSizing: 'border-box',
+                      }}
+                    />
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: 11, color: '#64748b' }}>
+                      💡 Tip: Customize the recipient name before sending. Grounded in your real profile experience.
+                    </span>
+                    <button
+                      onClick={() => handleCopy(draftEmailBody, 'coldemail_body')}
+                      style={{
+                        padding: '8px 16px',
+                        borderRadius: 8,
+                        border: '1px solid rgba(99, 102, 241, 0.3)',
+                        background: 'rgba(99, 102, 241, 0.15)',
+                        color: '#c7d2fe',
+                        fontSize: 12,
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 6,
+                      }}
+                    >
+                      {copiedKey === 'coldemail_body' ? '✓ Copied to Clipboard!' : '📋 Copy Email Body'}
                     </button>
                   </div>
                 </div>

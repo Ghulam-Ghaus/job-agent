@@ -1818,6 +1818,12 @@ export default function JobsDashboard() {
       new Date(o.outreachFollowUpDue).getTime() <= Date.now(),
   ).length;
 
+  const discoveredCount = opps.filter((o) => o.status !== 'FILTERED_OUT').length;
+  const qualifiedCount = opps.filter((o) => ['QUALIFIED', 'DRAFT_READY', 'APPLIED', 'SHORTLISTED', 'INTERVIEW'].includes(o.status)).length;
+  const outreachSentCount = opps.filter((o) => o.outreachStatus === 'sent' || o.outreachStatus === 'replied' || o.status === 'APPLIED').length;
+  const repliedCount = opps.filter((o) => o.outreachStatus === 'replied').length;
+  const interviewCount = opps.filter((o) => o.status === 'INTERVIEW' || o.status === 'SHORTLISTED').length;
+
   const statuses = ['ALL', 'DISCOVERED', 'QUALIFIED', 'DRAFT_READY', 'APPLIED', 'SHORTLISTED', 'REJECTED', 'FILTERED_OUT'];
   const filtered = opps.filter((o) => {
     if (filterStatus === 'FOLLOW_UPS_DUE') {
@@ -1826,6 +1832,21 @@ export default function JobsDashboard() {
         o.outreachFollowUpDue &&
         new Date(o.outreachFollowUpDue).getTime() <= Date.now()
       );
+    }
+    if (filterStatus === 'FUNNEL_DISCOVERED') {
+      return o.status !== 'FILTERED_OUT';
+    }
+    if (filterStatus === 'FUNNEL_QUALIFIED') {
+      return ['QUALIFIED', 'DRAFT_READY', 'APPLIED', 'SHORTLISTED', 'INTERVIEW'].includes(o.status);
+    }
+    if (filterStatus === 'FUNNEL_OUTREACH') {
+      return o.outreachStatus === 'sent' || o.outreachStatus === 'replied' || o.status === 'APPLIED';
+    }
+    if (filterStatus === 'FUNNEL_REPLIED') {
+      return o.outreachStatus === 'replied';
+    }
+    if (filterStatus === 'FUNNEL_INTERVIEW') {
+      return o.status === 'INTERVIEW' || o.status === 'SHORTLISTED';
     }
     if (!showFilteredOut && filterStatus !== 'FILTERED_OUT' && o.status === 'FILTERED_OUT') {
       return false;
@@ -1891,6 +1912,128 @@ export default function JobsDashboard() {
               </Button>
             </div>
           </div>
+
+        {/* Visual Funnel Progression Banner */}
+        {opps.length > 0 && (
+          <div
+            style={{
+              background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.8))',
+              border: '1px solid rgba(99, 102, 241, 0.25)',
+              borderRadius: 14,
+              padding: '16px 20px',
+              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14, flexWrap: 'wrap', gap: 8 }}>
+              <div>
+                <span style={{ fontSize: 13, fontWeight: 700, color: '#f1f5f9', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span>⚡ Pipeline Conversion Funnel</span>
+                  <span style={{ fontSize: 11, fontWeight: 500, color: '#94a3b8' }}>
+                    (Click stage to filter view)
+                  </span>
+                </span>
+              </div>
+              <div style={{ fontSize: 11, color: '#a5b4fc', background: 'rgba(99, 102, 241, 0.12)', padding: '3px 10px', borderRadius: 999, border: '1px solid rgba(99, 102, 241, 0.25)' }}>
+                {discoveredCount > 0 ? `${Math.round((interviewCount / discoveredCount) * 100)}% overall funnel conversion` : '0%'}
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 10 }}>
+              {[
+                {
+                  id: 'FUNNEL_DISCOVERED',
+                  stage: '1. Discovered',
+                  icon: '🔍',
+                  count: discoveredCount,
+                  rate: discoveredCount > 0 ? `${Math.round((qualifiedCount / discoveredCount) * 100)}% qual.` : null,
+                  color: '#93c5fa',
+                  border: 'rgba(59, 130, 246, 0.4)',
+                  bg: 'rgba(59, 130, 246, 0.15)',
+                },
+                {
+                  id: 'FUNNEL_QUALIFIED',
+                  stage: '2. Qualified',
+                  icon: '🎯',
+                  count: qualifiedCount,
+                  rate: qualifiedCount > 0 ? `${Math.round((outreachSentCount / qualifiedCount) * 100)}% outreach` : null,
+                  color: '#6ee7b7',
+                  border: 'rgba(16, 185, 129, 0.4)',
+                  bg: 'rgba(16, 185, 129, 0.15)',
+                },
+                {
+                  id: 'FUNNEL_OUTREACH',
+                  stage: '3. Outreach Sent',
+                  icon: '🚀',
+                  count: outreachSentCount,
+                  rate: outreachSentCount > 0 ? `${Math.round((repliedCount / Math.max(outreachSentCount, 1)) * 100)}% reply` : null,
+                  color: '#a5b4fc',
+                  border: 'rgba(99, 102, 241, 0.4)',
+                  bg: 'rgba(99, 102, 241, 0.15)',
+                },
+                {
+                  id: 'FUNNEL_REPLIED',
+                  stage: '4. Replied',
+                  icon: '💬',
+                  count: repliedCount,
+                  rate: repliedCount > 0 ? `${Math.round((interviewCount / Math.max(repliedCount, 1)) * 100)}% intv.` : null,
+                  color: '#fde047',
+                  border: 'rgba(234, 179, 8, 0.4)',
+                  bg: 'rgba(234, 179, 8, 0.15)',
+                },
+                {
+                  id: 'FUNNEL_INTERVIEW',
+                  stage: '5. Interview',
+                  icon: '🏆',
+                  count: interviewCount,
+                  rate: 'Goal',
+                  color: '#f472b6',
+                  border: 'rgba(236, 72, 153, 0.4)',
+                  bg: 'rgba(236, 72, 153, 0.15)',
+                },
+              ].map((step) => {
+                const isSelected = filterStatus === step.id;
+                return (
+                  <button
+                    key={step.id}
+                    onClick={() => setFilterStatus(isSelected ? 'ALL' : step.id)}
+                    style={{
+                      background: isSelected ? step.bg : 'rgba(255, 255, 255, 0.03)',
+                      border: `1px solid ${isSelected ? step.border : 'rgba(255, 255, 255, 0.08)'}`,
+                      borderRadius: 10,
+                      padding: '10px 14px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 4,
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      transition: 'all 0.18s ease',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: step.color, display: 'flex', alignItems: 'center', gap: 5 }}>
+                        <span>{step.icon}</span> {step.stage}
+                      </span>
+                      {step.rate && (
+                        <span style={{ fontSize: 10, fontWeight: 600, color: '#94a3b8', background: 'rgba(255,255,255,0.06)', padding: '1px 6px', borderRadius: 4 }}>
+                          {step.rate}
+                        </span>
+                      )}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginTop: 2 }}>
+                      <span style={{ fontSize: 20, fontWeight: 800, color: isSelected ? '#ffffff' : '#f1f5f9' }}>
+                        {step.count}
+                      </span>
+                      <span style={{ fontSize: 11, color: '#64748b' }}>
+                        opportunities
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         {/* Stats row */}
         {opps.length > 0 && (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))', gap: 12, marginBottom: 24 }}>

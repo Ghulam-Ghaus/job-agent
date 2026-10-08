@@ -3,12 +3,18 @@ import { z } from 'zod';
 import { PrismaService } from '../../prisma/prisma.service.js';
 import { LlmService } from '../../llm/llm.service.js';
 
+export interface ColdEmail {
+  subject: string;
+  body: string;
+}
+
 export interface OutreachPackResult {
   recruiterDm: string;
   connectionNote: string;
   founderDm: string | null;
   referralRequest: string;
   followUpDm: string;
+  coldEmail: ColdEmail;
   isStartup: boolean;
   linkedInUrls: {
     talentAcquisition: string;
@@ -25,6 +31,10 @@ const OutreachGeneratedSchema = z.object({
   founderDm: z.string().nullable().describe('Variant message for startup founder/CTO (max 450 chars). Emphasizes rapid execution, architecture, and reliability.'),
   referralRequest: z.string().describe('Referral request message for an existing engineer at company (max 450 chars). Polite, asks for advice or referral.'),
   followUpDm: z.string().describe('Follow-up message to send after 7 days (max 450 chars). Friendly, brief check-in.'),
+  coldEmail: z.object({
+    subject: z.string().describe('Direct, specific email subject line.'),
+    body: z.string().describe('Full professional cold outreach email body (2-3 paragraphs, bullet points with real achievements, relocation/visa transparency, call to action).'),
+  }).optional(),
   highlightedProfileItems: z.array(z.string()).describe('1-2 real profile projects or achievements highlighted in the messages.'),
 });
 
@@ -172,6 +182,8 @@ HARD RULES:
       engineeringManager: `https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(companyName)}%20engineering%20manager`,
     };
 
+    const coldEmail = generated.coldEmail ?? this.buildFallbackColdEmail(companyName, jobTitle, profile?.fullName ?? 'Engineer');
+
     const packResult: OutreachPackResult = {
       recruiterDm,
       connectionNote,
@@ -179,6 +191,7 @@ HARD RULES:
       isStartup,
       referralRequest,
       followUpDm,
+      coldEmail,
       linkedInUrls,
       highlightedProfileItems: generated.highlightedProfileItems ?? ['Real-time Voice AI pipeline', 'NestJS / PostgreSQL backend'],
       unknownTechnologiesFlagged,
@@ -347,13 +360,23 @@ HARD RULES:
     const referralRequest = `Hi! Hope you're well. I came across the ${role} role at ${company} and your engineering work. I have 4+ yrs in Node.js, NestJS & Voice AI. Would you be open to a quick chat or passing along my resume if there's mutual fit? No worries if not!`;
     const followUpDm = `Hi! Following up on my note regarding the ${role} role at ${company}. Still very interested in contributing my Node/NestJS and Voice AI background. Open to relocation (sponsorship needed) or remote. Thanks for your time!`;
 
+    const coldEmail = this.buildFallbackColdEmail(company, role, name);
+
     return {
       recruiterDm,
       connectionNote,
       founderDm,
       referralRequest,
       followUpDm,
+      coldEmail,
       highlightedProfileItems: ['Real-time Voice AI pipeline', 'NestJS & PostgreSQL scalable APIs'],
+    };
+  }
+
+  buildFallbackColdEmail(company: string, role: string, name: string): ColdEmail {
+    return {
+      subject: `Backend & Voice AI Engineer · Candidate for ${role} at ${company}`,
+      body: `Hi ${company} Hiring Team,\n\nI noticed the ${role} opening at ${company} and wanted to reach out directly. With 4+ years of backend engineering experience specializing in Node.js/NestJS, Python (FastAPI), and high-throughput real-time systems, my background maps directly to your engineering requirements.\n\nKey highlights from my verified work:\n• Architected a real-time Voice AI platform with sub-second latency leveraging WebSockets, Twilio Media Streams, Whisper, and Cartesia.\n• Built and scaled production NestJS & PostgreSQL services handling high-concurrency requests.\n• Experience with AWS serverless (Lambda, EventBridge) and microservices architecture.\n\nI am currently based in Pakistan and fully open to international relocation (requiring visa sponsorship) or remote collaboration. I would welcome the opportunity to discuss how my technical expertise can support ${company}'s goals.\n\nBest regards,\n${name}`,
     };
   }
 }

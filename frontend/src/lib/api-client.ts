@@ -151,7 +151,11 @@ export type OpportunityStatus =
   | 'APPLIED'
   | 'VIEWED'
   | 'SHORTLISTED'
+  | 'INTERVIEW'
+  | 'OFFER'
   | 'REJECTED'
+  | 'WITHDRAWN'
+  | 'CLOSED'
   | 'ARCHIVED'
   | 'FILTERED_OUT';
 
@@ -259,12 +263,18 @@ export interface Opportunity {
   applyPack?: ApplyPack | null;
 }
 
+export interface ColdEmail {
+  subject: string;
+  body: string;
+}
+
 export interface OutreachPackResult {
   recruiterDm: string;
   connectionNote: string;
   founderDm: string | null;
   referralRequest: string;
   followUpDm: string;
+  coldEmail?: ColdEmail;
   isStartup: boolean;
   linkedInUrls: {
     talentAcquisition: string;

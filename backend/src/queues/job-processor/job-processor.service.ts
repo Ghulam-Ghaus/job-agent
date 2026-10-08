@@ -99,6 +99,61 @@ export class JobProcessorService extends WorkerHost {
       fields = existingReq.fieldsJson as unknown as JobRequirementFields;
     }
 
+    // ── Cross-source Deduplication (Extra 1) ──────────────────────────
+    const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, ' ').replace(/\s+/g, ' ').trim();
+    const cNorm = norm(fields.company ?? opp.company ?? '');
+    const tNorm = norm(fields.title ?? opp.title ?? '');
+    const lNorm = norm(fields.country ?? opp.country ?? opp.city ?? '');
+    const fingerprint = cNorm && tNorm ? `${cNorm}:::${tNorm}:::${lNorm}` : null;
+
+    if (fingerprint) {
+      const existingDuplicate = await this.prisma.opportunity.findFirst({
+        where: {
+          userId,
+          fingerprint,
+          id: { not: opp.id },
+          status: { notIn: ['FILTERED_OUT', 'CLOSED', 'WITHDRAWN'] },
+        },
+      });
+
+      if (existingDuplicate) {
+        const currentLen = opp.rawText?.length || 0;
+        const existingLen = existingDuplicate.rawText?.length || 0;
+
+        if (existingLen >= currentLen) {
+          // Existing record already has an equal or more comprehensive description
+          this.logger.log(`Opp ${opp.id} deduplicated: already tracked by ${existingDuplicate.id} (${existingDuplicate.sourceType})`);
+          await this.prisma.opportunity.update({
+            where: { id: opp.id },
+            data: {
+              status: 'CLOSED',
+              fingerprint,
+              filterReason: `Duplicate posting of ${existingDuplicate.title ?? 'job'} at ${existingDuplicate.company ?? 'company'} (already tracked from ${existingDuplicate.sourceType || 'ATS'})`,
+            },
+          });
+          return {
+            opportunityId: opp.id,
+            score: 0,
+            applyPackCreated: false,
+          };
+        } else {
+          // New posting has richer description: supersede older record
+          await this.prisma.opportunity.update({
+            where: { id: existingDuplicate.id },
+            data: {
+              status: 'CLOSED',
+              filterReason: `Superseded by richer description from ${opp.sourceType || 'source'}`,
+            },
+          });
+        }
+      }
+
+      await this.prisma.opportunity.update({
+        where: { id: opp.id },
+        data: { fingerprint },
+      });
+    }
+
     // ── Eligibility filter (Feature 1) ──────────────────────────────────
     const eligibility = this.eligibility.evaluate({
       title: fields.title ?? opp.title,
@@ -193,6 +248,24 @@ export class JobProcessorService extends WorkerHost {
         await this.outreach.generateOutreachPack(opp.id, userId, 70);
       } catch (err: unknown) {
         this.logger.warn(`Outreach pack generation failed for opp ${opp.id}: ${String(err)}`);
+      }
+    }
+
+    // 6. Auto-notification if score >= 75 and posted in last 48 hours (Extra 2)
+    const postedTime = opp.postedAt ? new Date(opp.postedAt).getTime() : Date.now();
+    const isRecent = Date.now() - postedTime <= 48 * 60 * 60 * 1000;
+    if (matchResult.score >= 75 && isRecent) {
+      try {
+        await this.prisma.notification.create({
+          data: {
+            userId,
+            title: `🎯 Top Fit Job (${matchResult.score}/100): ${fields.title ?? opp.title ?? 'Role'}`,
+            body: `${fields.company ?? opp.company ?? 'Company'} · Fit score: ${matchResult.score}/100. Outreach materials prepared.`,
+            link: `/dashboard`,
+          },
+        });
+      } catch (err: unknown) {
+        this.logger.debug(`Failed to create in-app notification: ${String(err)}`);
       }
     }
 
