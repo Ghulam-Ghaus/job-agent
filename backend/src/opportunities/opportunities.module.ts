@@ -1,4 +1,5 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { OpportunitiesService } from './opportunities.service.js';
 import { OpportunitiesController } from './opportunities.controller.js';
 import { ExtractionService } from './extraction.service.js';
@@ -7,12 +8,17 @@ import { ApplyPackService } from './apply-pack.service.js';
 import { ApprovalService } from './approval.service.js';
 import { LlmModule } from '../llm/llm.module.js';
 import { PrismaModule } from '../prisma/prisma.module.js';
-
+import { TailoredCvModule } from '../tailored-cv/tailored-cv.module.js';
 import { EligibilityRulesService } from './rules/eligibility-rules.service.js';
 import { OutreachService } from './outreach/outreach.service.js';
 
 @Module({
-  imports: [LlmModule, PrismaModule],
+  imports: [
+    LlmModule,
+    PrismaModule,
+    ConfigModule,
+    forwardRef(() => TailoredCvModule),
+  ],
   controllers: [OpportunitiesController],
   providers: [
     OpportunitiesService,

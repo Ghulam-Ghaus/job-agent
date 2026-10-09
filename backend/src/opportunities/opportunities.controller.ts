@@ -6,12 +6,16 @@ import {
   Param,
   Patch,
   Post,
+  UploadedFiles,
+  UseInterceptors,
 } from '@nestjs/common';
-import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { ApiCookieAuth, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { memoryStorage } from 'multer';
 import { OpportunitiesService } from './opportunities.service.js';
 import { CreateOpportunityDto } from './dto/create-opportunity.dto.js';
 import { UpdateOpportunityDto } from './dto/update-opportunity.dto.js';
-import { DecideApprovalDto, UpdateCoverNoteDto } from './dto/approval.dto.js';
+import { DecideApprovalDto, UpdateCoverNoteDto, SendDirectEmailDto } from './dto/approval.dto.js';
 import { GenerateScreeningAnswersDto } from './dto/screening-answers.dto.js';
 import { UpdateOutreachStatusDto, GenerateOutreachPackDto } from './dto/outreach.dto.js';
 import { CurrentUser } from '../auth/decorators/current-user/current-user.decorator.js';
@@ -52,6 +56,19 @@ export class OpportunitiesController {
     @Body() dto: DecideApprovalDto,
   ) {
     return this.approvalService.decide(packId, userId, dto.decision, dto.notes);
+  }
+
+  @Post('queue/:packId/send-email')
+  @ApiOperation({ summary: 'Send direct application email via Resend with attachments and approve pack' })
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FilesInterceptor('files', 5, { storage: memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } }))
+  sendDirectEmail(
+    @Param('packId') packId: string,
+    @CurrentUser('id') userId: string,
+    @Body() dto: SendDirectEmailDto,
+    @UploadedFiles() files?: Express.Multer.File[],
+  ) {
+    return this.approvalService.sendDirectEmail(packId, userId, dto, files);
   }
 
   // ─── Opportunities CRUD & Actions ──────────────────────────────────────────

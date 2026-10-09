@@ -989,6 +989,16 @@ export const api = {
     decided: () => api.get<ApprovalRecord[]>('/opportunities/queue/decided'),
     decide: (packId: string, decision: 'approved' | 'rejected', notes?: string) =>
       api.post<ApprovalRecord>(`/opportunities/queue/${packId}/decide`, { decision, notes }),
+    sendEmail: (packId: string, formData: FormData) =>
+      uploadFile<{
+        success: boolean;
+        emailId?: string;
+        recipient: string;
+        replyTo?: string;
+        from?: string;
+        attachmentsCount: number;
+        approvalRecord: ApprovalRecord;
+      }>(`/opportunities/queue/${packId}/send-email`, formData),
   },
 
   connectors: {

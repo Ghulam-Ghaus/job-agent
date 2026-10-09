@@ -12,6 +12,7 @@ import {
   type ScreeningAnswerResult,
 } from '@/lib/api-client';
 import { ScreeningQuestionsModal } from '@/components/opportunities/ScreeningQuestionsModal';
+import { DirectEmailModal } from '@/components/opportunities/DirectEmailModal';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -74,6 +75,7 @@ function PackReviewCard({
   const [acting, setActing] = useState<'approving' | 'rejecting' | null>(null);
   const [copied, setCopied] = useState(false);
   const [showScreeningModal, setShowScreeningModal] = useState(false);
+  const [showDirectEmailModal, setShowDirectEmailModal] = useState(false);
   const [screeningAnswers, setScreeningAnswers] = useState<ScreeningAnswerResult[]>(
     (pack.answersFilled as ScreeningAnswerResult[]) || [],
   );
@@ -637,6 +639,27 @@ function PackReviewCard({
                   ? '📋 Copy Proposal'
                   : '📋 Copy Cover Note'}
             </button>
+            <button
+              type="button"
+              onClick={() => setShowDirectEmailModal(true)}
+              style={{
+                padding: '12px 18px',
+                borderRadius: 10,
+                border: '1px solid rgba(99,102,241,.5)',
+                background: 'linear-gradient(135deg, rgba(99,102,241,.2), rgba(139,92,246,.25))',
+                color: '#c7d2fe',
+                cursor: 'pointer',
+                fontSize: 13,
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                boxShadow: '0 2px 10px rgba(99,102,241,.2)',
+                transition: 'all .2s',
+              }}
+            >
+              ✉️ Direct Email Recruiter
+            </button>
             {opp?.url && (
               <div
                 style={{
@@ -698,6 +721,17 @@ function PackReviewCard({
           initialAnswers={screeningAnswers}
           onClose={() => setShowScreeningModal(false)}
           onSaved={(newAnswers) => setScreeningAnswers(newAnswers)}
+        />
+      )}
+
+      {showDirectEmailModal && (
+        <DirectEmailModal
+          pack={{ ...pack, coverNoteEdited: editedNote }}
+          onClose={() => setShowDirectEmailModal(false)}
+          onSent={() => {
+            setShowDirectEmailModal(false);
+            onApprove();
+          }}
         />
       )}
     </div>
