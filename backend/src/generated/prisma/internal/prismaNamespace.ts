@@ -422,7 +422,8 @@ export const ModelName = {
   Product: 'Product',
   TailoredCv: 'TailoredCv',
   CoverLetter: 'CoverLetter',
-  InterviewPrep: 'InterviewPrep'
+  InterviewPrep: 'InterviewPrep',
+  ClientQuery: 'ClientQuery'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -438,7 +439,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "session" | "auditLog" | "setting" | "profile" | "experience" | "skill" | "project" | "cv" | "answerBankItem" | "jobPreference" | "opportunity" | "opportunityRequirement" | "opportunityMatch" | "llmCall" | "notification" | "applyPack" | "approvalRecord" | "company" | "contact" | "outreachMessage" | "suppressionEntry" | "product" | "tailoredCv" | "coverLetter" | "interviewPrep"
+    modelProps: "user" | "session" | "auditLog" | "setting" | "profile" | "experience" | "skill" | "project" | "cv" | "answerBankItem" | "jobPreference" | "opportunity" | "opportunityRequirement" | "opportunityMatch" | "llmCall" | "notification" | "applyPack" | "approvalRecord" | "company" | "contact" | "outreachMessage" | "suppressionEntry" | "product" | "tailoredCv" | "coverLetter" | "interviewPrep" | "clientQuery"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2366,6 +2367,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ClientQuery: {
+      payload: Prisma.$ClientQueryPayload<ExtArgs>
+      fields: Prisma.ClientQueryFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ClientQueryFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClientQueryPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ClientQueryFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClientQueryPayload>
+        }
+        findFirst: {
+          args: Prisma.ClientQueryFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClientQueryPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ClientQueryFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClientQueryPayload>
+        }
+        findMany: {
+          args: Prisma.ClientQueryFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClientQueryPayload>[]
+        }
+        create: {
+          args: Prisma.ClientQueryCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClientQueryPayload>
+        }
+        createMany: {
+          args: Prisma.ClientQueryCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ClientQueryCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClientQueryPayload>[]
+        }
+        delete: {
+          args: Prisma.ClientQueryDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClientQueryPayload>
+        }
+        update: {
+          args: Prisma.ClientQueryUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClientQueryPayload>
+        }
+        deleteMany: {
+          args: Prisma.ClientQueryDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ClientQueryUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ClientQueryUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClientQueryPayload>[]
+        }
+        upsert: {
+          args: Prisma.ClientQueryUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClientQueryPayload>
+        }
+        aggregate: {
+          args: Prisma.ClientQueryAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateClientQuery>
+        }
+        groupBy: {
+          args: Prisma.ClientQueryGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ClientQueryGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ClientQueryCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ClientQueryCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -2853,6 +2928,24 @@ export const InterviewPrepScalarFieldEnum = {
 export type InterviewPrepScalarFieldEnum = (typeof InterviewPrepScalarFieldEnum)[keyof typeof InterviewPrepScalarFieldEnum]
 
 
+export const ClientQueryScalarFieldEnum = {
+  id: 'id',
+  sessionId: 'sessionId',
+  channel: 'channel',
+  query: 'query',
+  response: 'response',
+  action: 'action',
+  toolName: 'toolName',
+  latencyMs: 'latencyMs',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+} as const
+
+export type ClientQueryScalarFieldEnum = (typeof ClientQueryScalarFieldEnum)[keyof typeof ClientQueryScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -3272,6 +3365,7 @@ export type GlobalOmitConfig = {
   tailoredCv?: Prisma.TailoredCvOmit
   coverLetter?: Prisma.CoverLetterOmit
   interviewPrep?: Prisma.InterviewPrepOmit
+  clientQuery?: Prisma.ClientQueryOmit
 }
 
 /* Types for Logging */

@@ -161,24 +161,23 @@ export default function ProductsCatalogPage() {
             {filteredProducts.map((prod) => (
               <div
                 key={prod.id}
-                className="p-6 rounded-3xl bg-card/25 border border-white/5 hover:border-indigo-500/40 transition-all flex flex-col justify-between gap-6 relative group"
+                className="p-6 rounded-3xl bg-card/25 border border-white/5 hover:border-indigo-500/40 transition-all flex flex-col justify-between gap-6 relative group h-full"
               >
-                {prod.badge && (
-                  <div className="absolute top-4 right-4">
-                    <Badge className="bg-indigo-500/20 text-indigo-300 border-indigo-500/40 text-[10px] font-mono">
-                      {prod.badge}
-                    </Badge>
-                  </div>
-                )}
-
                 <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-indigo-400">
-                    <Bot className="h-4 w-4" />
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400">
-                      {prod.category.replace(/_/g, ' ')}
-                    </span>
+                  <div className="flex items-center justify-between gap-2 border-b border-white/5 pb-2.5">
+                    <div className="flex items-center gap-1.5 text-indigo-400">
+                      <Bot className="h-3.5 w-3.5" />
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400">
+                        {prod.category.replace(/_/g, ' ')}
+                      </span>
+                    </div>
+                    {prod.badge && (
+                      <Badge className="bg-indigo-500/15 text-indigo-300 border-indigo-500/30 text-[10px] font-mono">
+                        {prod.badge}
+                      </Badge>
+                    )}
                   </div>
-                  <h3 className="text-lg font-bold text-white">{prod.title}</h3>
+                  <h3 className="text-lg font-bold text-white leading-snug">{prod.title}</h3>
                   {prod.tagline && (
                     <p className="text-xs font-medium text-indigo-300">{prod.tagline}</p>
                   )}

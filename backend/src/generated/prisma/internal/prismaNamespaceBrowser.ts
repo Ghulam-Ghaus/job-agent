@@ -76,7 +76,8 @@ export const ModelName = {
   Product: 'Product',
   TailoredCv: 'TailoredCv',
   CoverLetter: 'CoverLetter',
-  InterviewPrep: 'InterviewPrep'
+  InterviewPrep: 'InterviewPrep',
+  ClientQuery: 'ClientQuery'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -541,6 +542,24 @@ export const InterviewPrepScalarFieldEnum = {
 } as const
 
 export type InterviewPrepScalarFieldEnum = (typeof InterviewPrepScalarFieldEnum)[keyof typeof InterviewPrepScalarFieldEnum]
+
+
+export const ClientQueryScalarFieldEnum = {
+  id: 'id',
+  sessionId: 'sessionId',
+  channel: 'channel',
+  query: 'query',
+  response: 'response',
+  action: 'action',
+  toolName: 'toolName',
+  latencyMs: 'latencyMs',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+} as const
+
+export type ClientQueryScalarFieldEnum = (typeof ClientQueryScalarFieldEnum)[keyof typeof ClientQueryScalarFieldEnum]
 
 
 export const SortOrder = {

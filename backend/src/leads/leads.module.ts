@@ -7,11 +7,12 @@ import { LeadsService } from './leads.service.js';
 import { LeadsController } from './leads.controller.js';
 import { NeedAnalyzerService } from './need-analyzer/need-analyzer.service.js';
 import { OutreachService } from './outreach/outreach.service.js';
+import { OutboundDemoService } from './outbound-demo.service.js';
 
 @Module({
   imports: [ConfigModule, PrismaModule, ConnectorsModule, LlmModule],
   controllers: [LeadsController],
-  providers: [LeadsService, NeedAnalyzerService, OutreachService],
-  exports: [LeadsService, NeedAnalyzerService, OutreachService],
+  providers: [LeadsService, NeedAnalyzerService, OutreachService, OutboundDemoService],
+  exports: [LeadsService, NeedAnalyzerService, OutreachService, OutboundDemoService],
 })
 export class LeadsModule {}

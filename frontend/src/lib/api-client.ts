@@ -459,12 +459,70 @@ export interface PublicProfile {
   location: string;
   country: string | null;
   slug: string;
+  avatarUrl?: string | null;
+  availability?: {
+    gulf: boolean;
+    international: boolean;
+    statusText: string;
+    arabicStatusText: string;
+    regions: string[];
+  };
+  pillars?: {
+    solutionsArchitecture: string[];
+    backendEngineering: string[];
+    frontendExcellence: string[];
+  };
+  telemetry?: {
+    eventsProcessed: string;
+    scoringAccuracy: string;
+    unverifiedClaims: string;
+    voiceTurnaroundMs: string;
+    uptime: string;
+  };
   skills: PublicSkill[];
   projects: PublicProject[];
   githubUrl: string | null;
   linkedinUrl: string | null;
   portfolioUrl: string | null;
 }
+
+export interface JarvisChatResponse {
+  reply: string;
+  action:
+    | 'switch_tab'
+    | 'book_consultation'
+    | 'show_architecture'
+    | 'capture_lead'
+    | 'none';
+  actionPayload?: string;
+  toolName: string;
+  toolOutput: string;
+  citations: string[];
+}
+
+export interface RecordClientQueryPayload {
+  query: string;
+  response?: string;
+  channel?: 'TEXT' | 'VOICE';
+  action?: string;
+  toolName?: string;
+  latencyMs?: number;
+  sessionId?: string;
+  metadata?: Record<string, unknown>;
+}
+
+export interface PublicTelemetry {
+  status: string;
+  uptimeSeconds: number;
+  dbLatencyMs: number;
+  activeWorkers: number;
+  totalQueriesHandled: number;
+  totalLeadsIngested: number;
+  opportunitiesEvaluated: number;
+  verificationAccuracy: string;
+  safetySendCapRemaining: number;
+}
+
 
 export interface PublicProduct {
   id: string;
@@ -1081,6 +1139,20 @@ export const api = {
       message: string;
       productSlug?: string;
     }) => api.post<{ success: boolean; message: string }>('/public/inquiry', data),
+    askJarvis: (
+      message: string,
+      history?: Array<{ role: 'user' | 'assistant'; content: string }>,
+      sessionId?: string,
+    ) =>
+      api.post<JarvisChatResponse>('/public/jarvis/chat', {
+        message,
+        history,
+        sessionId,
+      }),
+    getVoiceToken: () => api.get<{ token: string; expiresIn: number }>('/public/voice/token'),
+    recordQuery: (data: RecordClientQueryPayload) =>
+      api.post<{ success: boolean; id: string }>('/public/jarvis/query', data),
+    getTelemetry: () => api.get<PublicTelemetry>('/public/telemetry'),
   },
 
   admin: {

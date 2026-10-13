@@ -654,3 +654,26 @@ model InterviewPrep {
   @@index([inputHash])
   @@map("interview_preps")
 }
+
+// ─── Sprint 7: Client Queries & Ghaus Interactions ────────────────────────────
+
+model ClientQuery {
+  id        String   @id @default(cuid())
+  sessionId String?
+  channel   String   @default("TEXT") // TEXT | VOICE
+  query     String
+  response  String?
+  action    String? // switch_tab | book_consultation | show_architecture | none
+  toolName  String?
+  latencyMs Int?
+  ipAddress String?
+  userAgent String?
+  metadata  Json?    @default("{}")
+  createdAt DateTime @default(now())
+
+  @@index([channel])
+  @@index([createdAt])
+  @@index([sessionId])
+  @@map("client_queries")
+}
+

@@ -171,3 +171,8 @@ export type CoverLetter = Prisma.CoverLetterModel
  * 
  */
 export type InterviewPrep = Prisma.InterviewPrepModel
+/**
+ * Model ClientQuery
+ * 
+ */
+export type ClientQuery = Prisma.ClientQueryModel

@@ -37,4 +37,11 @@ describe('PublicController', () => {
     expect(res).toEqual([]);
     expect(serviceMock.getPublicProducts).toHaveBeenCalled();
   });
+
+  it('should return a short-lived voice token', async () => {
+    serviceMock.getVoiceToken = vi.fn().mockResolvedValue({ token: 'jwt-abc', expiresIn: 60 });
+    const res = await controller.getVoiceToken();
+    expect(res).toEqual({ token: 'jwt-abc', expiresIn: 60 });
+    expect(serviceMock.getVoiceToken).toHaveBeenCalled();
+  });
 });

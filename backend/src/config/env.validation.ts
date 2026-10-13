@@ -1,5 +1,5 @@
 import { plainToInstance } from 'class-transformer';
-import { IsEnum, IsInt, IsString, IsUrl, Min, validateSync } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString, IsUrl, Min, validateSync } from 'class-validator';
 
 enum NodeEnv {
   Development = 'development',
@@ -41,6 +41,10 @@ class EnvironmentVariables {
 
   @IsString()
   SUPER_ADMIN_PASSWORD!: string;
+
+  @IsString()
+  @IsOptional()
+  DEEPGRAM_API_KEY?: string;
 }
 
 export function validate(config: Record<string, unknown>): EnvironmentVariables {
