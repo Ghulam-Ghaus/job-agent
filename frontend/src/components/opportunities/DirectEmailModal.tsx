@@ -90,7 +90,7 @@ export function DirectEmailModal({ pack, onClose, onSent }: DirectEmailModalProp
     if (attachCv && opp?.id) {
       try {
         const cv = await api.tailoredCv.generate({ opportunityId: opp.id });
-        await api.tailoredCv.downloadPdf(cv.id);
+        await api.tailoredCv.downloadPdf(cv.id, undefined, 'GULF');
       } catch {
         // Continue opening gmail anyway
       }

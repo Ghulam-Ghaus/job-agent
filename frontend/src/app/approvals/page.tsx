@@ -544,7 +544,7 @@ function PackReviewCard({
                 onClick={async () => {
                   try {
                     const cv = await api.tailoredCv.generate({ opportunityId: opp.id });
-                    await api.tailoredCv.downloadPdf(cv.id);
+                    await api.tailoredCv.downloadPdf(cv.id, undefined, 'GULF');
                   } catch {
                     alert('Failed to generate or download tailored CV');
                   }

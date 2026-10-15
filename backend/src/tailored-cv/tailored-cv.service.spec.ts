@@ -185,8 +185,9 @@ describe('TailoredCvService', () => {
       expect(detectCvStyle('Riyadh, Saudi Arabia')).toBe('GULF');
       expect(detectCvStyle('Dubai')).toBe('GULF');
       expect(detectCvStyle('London, UK')).toBe('EUROPE');
-      expect(detectCvStyle('Remote')).toBe('EUROPE');
-      expect(detectCvStyle(undefined)).toBe('EUROPE');
+      expect(detectCvStyle('Berlin, Germany')).toBe('EUROPE');
+      expect(detectCvStyle('Remote')).toBe('GULF');
+      expect(detectCvStyle(undefined)).toBe('GULF');
     });
 
     it('auto-selects the Gulf layout for a Saudi opportunity', async () => {
@@ -214,6 +215,16 @@ describe('TailoredCvService', () => {
       prismaMock.jobPreference.findUnique = vi.fn().mockResolvedValue({ cvStyle: 'GULF' });
       const pdf = await service.renderPdfBuffer('tcv-1', 'user-1', 'europe');
       expect(pdf.style).toBe('EUROPE');
+    });
+
+    it('renders exactly a 2-page PDF for GULF style without page budget overflow', async () => {
+      prismaMock.tailoredCv.findFirst = vi.fn().mockResolvedValue(cvRow('Saudi Arabia'));
+      const pdf = await service.renderPdfBuffer('tcv-1', 'user-1', 'gulf');
+      expect(pdf.style).toBe('GULF');
+      expect(pdf.buffer.length).toBeGreaterThan(10000);
+      const pdfStr = pdf.buffer.toString('latin1');
+      const pageMatches = pdfStr.match(/\/Type\s*\/Page\b/g);
+      expect(pageMatches?.length).toBe(2);
     });
   });
 });

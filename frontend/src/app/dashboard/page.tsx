@@ -361,7 +361,7 @@ function EvidenceDrawer({
   const [generatingCv, setGeneratingCv] = useState(false);
   const [tailoredCv, setTailoredCv] = useState<TailoredCv | null>(null);
   const [showCvModal, setShowCvModal] = useState(false);
-  const [cvStyleChoice, setCvStyleChoice] = useState<'AUTO' | 'GULF' | 'EUROPE'>('AUTO');
+  const [cvStyleChoice, setCvStyleChoice] = useState<'AUTO' | 'GULF' | 'EUROPE'>('GULF');
 
   const [generatingLetter, setGeneratingLetter] = useState(false);
   const [coverLetter, setCoverLetter] = useState<CoverLetter | null>(null);
