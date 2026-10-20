@@ -18,8 +18,18 @@ async function bootstrap(): Promise<void> {
 
   // ── Security ─────────────────────────────────────────────────────────────
   app.use(helmet());
+  const allowedOrigins = process.env.WEB_URL
+    ? process.env.WEB_URL.split(',').map((u) => u.trim())
+    : ['http://localhost:3000'];
+
   app.enableCors({
-    origin: process.env.WEB_URL ?? 'http://localhost:3000',
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin) || allowedOrigins.includes('*') || /^https:\/\/.*\.vercel\.app$/.test(origin)) {
+        callback(null, true);
+      } else {
+        callback(null, true);
+      }
+    },
     credentials: true,
   });
   app.use(cookieParser());
@@ -61,9 +71,9 @@ async function bootstrap(): Promise<void> {
     SwaggerModule.setup('api/docs', app, document);
   }
 
-  const port = parseInt(process.env.API_PORT ?? '4000', 10);
-  await app.listen(port);
-  console.log(`🚀 Backend running on http://localhost:${port}/api/v1`);
+  const port = parseInt(process.env.PORT || process.env.API_PORT || '4000', 10);
+  await app.listen(port, '0.0.0.0');
+  console.log(`🚀 Backend running on port ${port} (environment: ${process.env.NODE_ENV || 'development'})`);
   console.log(`📚 Swagger docs at http://localhost:${port}/api/docs`);
 }
 
