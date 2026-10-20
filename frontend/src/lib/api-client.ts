@@ -704,6 +704,25 @@ export interface InterviewPrep {
   opportunity?: { id: string; title: string; company: string } | null;
 }
 
+export type CoachMode = 'standard' | 'short' | 'deep_technical' | 'simple_english' | 'bullet_points';
+
+export interface CoachedAnswer {
+  answer: string;
+  keyTalkingPoints: string[];
+  speakingDurationSec: number;
+  profileConnection: string;
+  modeApplied: string;
+}
+
+export interface InterviewCoachRequest {
+  question: string;
+  mode?: CoachMode;
+  targetRole?: string;
+  comment?: string;
+  previousAnswer?: string;
+  forceRegenerate?: boolean;
+}
+
 export class ApiClientError extends Error {
   constructor(
     public statusCode: number,
@@ -1239,6 +1258,16 @@ export const api = {
         prep: InterviewPrep;
       }>(`/interview-prep/${prepId}/tasks/${taskId}/toggle`, { done }),
     delete: (id: string) => api.delete<void>(`/interview-prep/${id}`),
+    coach: (data: InterviewCoachRequest) =>
+      api.post<CoachedAnswer>('/interview-prep/coach', data),
+  },
+
+  answerBank: {
+    create: (data: { question: string; answer: string; tags?: string[] }) =>
+      api.post<{ id: string; question: string; answer: string; tags: string[] }>('/answer-bank', data),
+    list: () =>
+      api.get<Array<{ id: string; question: string; answer: string; tags: string[] }>>('/answer-bank'),
+    delete: (id: string) => api.delete<void>(`/answer-bank/${id}`),
   },
 
   health: {

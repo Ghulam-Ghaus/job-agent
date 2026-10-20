@@ -13,6 +13,7 @@ import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { InterviewPrepService } from './interview-prep.service.js';
 import {
   GenerateInterviewPrepDto,
+  InterviewCoachDto,
   ToggleTaskDto,
 } from './dto/create-interview-prep.dto.js';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth/jwt-auth.guard.js';
@@ -24,6 +25,15 @@ import { CurrentUser } from '../auth/decorators/current-user/current-user.decora
 @Controller('interview-prep')
 export class InterviewPrepController {
   constructor(private readonly interviewPrepService: InterviewPrepService) {}
+
+  @Post('coach')
+  @ApiOperation({ summary: 'Interactive technical interview coach & answer optimizer' })
+  coach(
+    @CurrentUser('id') userId: string,
+    @Body() dto: InterviewCoachDto,
+  ) {
+    return this.interviewPrepService.coachAnswer(userId, dto);
+  }
 
   @Post('generate')
   @ApiOperation({ summary: 'Generate a role-based interview preparation & learning roadmap' })
