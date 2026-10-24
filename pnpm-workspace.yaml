@@ -7,6 +7,16 @@ allowBuilds:
   '@scarf/scarf': true
   argon2: true
   esbuild: true
+  msgpackr-extract: true
   prisma: true
   unrs-resolver: true
-  msgpackr-extract: true
+
+onlyBuiltDependencies:
+  - '@prisma/engines'
+  - '@prisma/client'
+  - '@scarf/scarf'
+  - argon2
+  - esbuild
+  - msgpackr-extract
+  - prisma
+  - unrs-resolver

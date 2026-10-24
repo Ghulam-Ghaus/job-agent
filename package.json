@@ -9,5 +9,17 @@
     "test:e2e": "pnpm --filter backend run test:e2e",
     "db:migrate": "pnpm --filter backend exec prisma migrate dev",
     "db:seed": "pnpm --filter backend exec prisma db seed"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/engines",
+      "@prisma/client",
+      "@scarf/scarf",
+      "argon2",
+      "esbuild",
+      "msgpackr-extract",
+      "prisma",
+      "unrs-resolver"
+    ]
   }
 }

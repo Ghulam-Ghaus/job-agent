@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsOptional, IsString, IsUrl } from 'class-validator';
-import { OpportunityType } from '../../generated/prisma/index.js';
+import { OpportunityType } from '../../generated/prisma/enums.js';
 
 export class CreateOpportunityDto {
   @ApiPropertyOptional() @IsOptional() @IsString() text?: string;
